@@ -1,0 +1,28 @@
+# depslib dependency file v1.0
+1530490258 source:c:\users\ctrek\documents\programming\c++\dataanalyzer2.0\main.cpp
+	<iostream>
+	<fstream>
+	<cmath>
+	"data_analyzer.h"
+	"dataio.h"
+	"timer.h"
+
+1530474291 source:c:\users\ctrek\documents\programming\c++\dataanalyzer2.0\src\data_analyzer.cpp
+	<iostream>
+	<chrono>
+	<windows.h>
+	"data_analyzer.h"
+
+1530472697 c:\users\ctrek\documents\programming\c++\dataanalyzer2.0\include\data_analyzer.h
+
+1530472697 source:c:\users\ctrek\documents\programming\c++\dataanalyzer2.0\include\data_analyzer.h
+
+1530485879 source:c:\users\ctrek\documents\programming\c++\dataanalyzer2.0\src\dataio.cpp
+	<vector>
+	"dataio.h"
+	"config.h"
+
+1530490430 source:c:\users\ctrek\documents\programming\c++\dataanalyzer2.0\src\timer.cpp
+	<iostream>
+	<chrono>
+

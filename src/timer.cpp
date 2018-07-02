@@ -10,8 +10,12 @@ namespace timer {
     }
     void stop(string str) {
         auto timer_stopped=chrono::high_resolution_clock::now();
-        int64_t time = std::chrono::duration_cast<std::chrono::microseconds>(timer_stopped-timer_started).count();
-        string label = "us";
+        int64_t time = std::chrono::duration_cast<std::chrono::nanoseconds>(timer_stopped-timer_started).count();
+        string label = "ns";
+        if(time>10000) {
+            time/=1000;
+            label="us";
+        }
         if(time>10000) {
             time/=1000;
             label="ms";

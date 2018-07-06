@@ -20,6 +20,28 @@ namespace dataio {
             this->timeIndex = timeIndex;
             this->data = data;
         }
+        Graph clip(int position, int length) {
+            vector<vector<double>> clippedData(length, vector<double>(data[0].size()));
+
+            for(int i=position; i<position+length; i++) {
+                for(unsigned int j=0; j<data[i].size(); j++) {
+                    clippedData[i-position][j] = data[i][j];
+                }
+            }
+
+            Graph g;
+            g.init(dimensions, timeIndex, clippedData);
+            return g;
+        }
+        vector<double> getPlotArray(int index) {
+            vector<double> out = *new vector<double>(data.size());
+
+            for(unsigned int i=0; i<data.size(); i++) {
+                out[i] = data[i][index];
+            }
+
+            return out;
+        }
         string toString() {
             stringstream out;
             out << "Graph[" << this << "]" << endl;
@@ -47,10 +69,17 @@ namespace dataio {
         uint32_t length;
         uint32_t corrections;
         double averageError;
-        
+
         vector<double> body[PATTERN_LENGTH];
         vector<double> resultBody[PATTERN_LENGTH];
-        
+
+        vector<double> getResultBodyDimension(int dim) {
+            vector<double> out = *new vector<double>(PATTERN_LENGTH);
+            for(unsigned int i=0; i<PATTERN_LENGTH; i++) {
+                out[i] = resultBody[i][dim];
+            }
+            return out;
+        }
         string toString() {
             stringstream out;
             out << "Pattern[" << this << "]" << endl;
@@ -80,25 +109,79 @@ namespace dataio {
                 out << ((x!=length-1) ? "}, " : "}");
             }
             out << "}" << endl;
-            
+
             return out.str();
         }
     };
     struct Match {
     public:
+        uint16_t pid;
         uint16_t length;
         double error;
-        double data[PATTERN_LENGTH];
-        
+        vector<double> data = vector<double>(PATTERN_LENGTH);
+
         double slopeIntercept;
         double translation;
         double patternZero;
+
+        vector<double> translateData(vector<double> body) {
+            vector<double> out = *new vector<double>(body.size());
+            for(unsigned int i=0; i<body.size(); i++) {
+                out[i] = (slopeIntercept * (body[i] - patternZero) + patternZero + translation);
+            }
+            return out;
+        }
+        string toString() {
+            stringstream out;
+            out << "Match[" << this << "]" << endl;
+            out << "\tpid: " << pid << endl;
+            out << "\tlength: " << length << endl;
+            out << "\terror: " << error << endl;
+            out << "\tslopeIntercept: " << slopeIntercept << endl;
+            out << "\ttranslation: " << translation << endl;
+            out << "\tpatternZero: " << patternZero << endl;
+            out << "\tresultData: {";
+            for(unsigned int i=0; i<PATTERN_LENGTH; i++) {
+                out << data[i] << ((i==PATTERN_LENGTH-1)?"":",");
+            }
+            out << "}" << endl;
+
+            return out.str();
+        }
     };
     struct MatchList {
 
     };
     struct Prediction {
+    public:
+        uint64_t patternId;
+        uint16_t matchIndex;
+        vector<double> result;
+        double bellWeight;
+        double patternPercentage;
 
+        void init(uint64_t patternId, uint16_t matchIndex, vector<double> result, double bellWeight, double patternPercentage) {
+            this->patternId = patternId;
+            this->matchIndex = matchIndex;
+            this->result = result;
+            this->bellWeight = bellWeight;
+            this->patternPercentage = patternPercentage;
+        }
+        string toString() {
+            stringstream out;
+            out << "Prediction[" << this << "]" << endl;
+            out << "\tpatternId: " << patternId << endl;
+            out << "\tmatchIndex: " << matchIndex << endl;
+            out << "\tbellWeight: " << bellWeight << endl;
+            out << "\tpatternPercentage: " << patternPercentage << endl;
+            out << "\tresult: {";
+            for(unsigned int i=0; i<result.size(); i++) {
+                out << result[i] << ((i==result.size()-1)?"":",");
+            }
+            out << "}" << endl;
+
+            return out.str();
+        }
     };
 }
 

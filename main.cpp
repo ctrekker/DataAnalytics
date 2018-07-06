@@ -10,6 +10,7 @@ using namespace dataio;
 
 Pattern patterns[PATTERN_NUMBER];
 vector<Match> matches;
+vector<Prediction> predictions;
 
 Graph *createSineGraph(unsigned int length) {
     Graph *out = new Graph;
@@ -35,9 +36,14 @@ int main()
 {
     Graph sine = *createSineGraph(1000);
     Graph cosine = *createCosineGraph(1000);
-    
+
     analyze::create_patterns(patterns, sine);
-    analyze::train(matches, cosine, patterns);
-    
+    analyze::train(&matches, patterns, cosine);
+    analyze::predict(&predictions, patterns, matches, cosine, 65500, PATTERN_NUMBER-1, 1, cosine.data.size());
+
+    for(unsigned int i=0; i<predictions.size(); i++) {
+        cout << predictions[i].toString();
+    }
+
     return 0;
 }

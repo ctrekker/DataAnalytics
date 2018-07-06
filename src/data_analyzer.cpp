@@ -14,10 +14,10 @@ namespace analyze {
     void create_patterns(Pattern *patternArr, Graph graph) {
         std::cout << "Creating patterns..." << std::endl;
         timer::start();
-        
+
         for(int i=0; i<PATTERN_NUMBER; i++) {
             int startPos = rand() % (graph.data.size() - PATTERN_LENGTH*2);
-            
+
             Pattern p;
             p.id = i;
             p.dimensions = graph.dimensions;
@@ -25,30 +25,127 @@ namespace analyze {
             p.length = PATTERN_LENGTH;
             p.corrections = 0;
             p.averageError = DBL_MAX;
-            
+
             for(unsigned int x=0; x<p.length; x++) {
                 p.body[x] = graph.data[startPos+x];
                 p.resultBody[x] = graph.data[startPos+x+p.length];
             }
             patternArr[i] = p;
         }
-        
+
         timer::stop("Created patterns");
     }
-    void train(vector<Match> matchArr, Graph graph, Pattern* patterns) {
+    void train(vector<Match>* matchArr, Pattern* patterns, Graph graph) {
         std::cout << "Training model..." << std::endl;
         timer::start();
-        
+
         for(int i=0; i<PATTERN_NUMBER; i++) {
             Pattern p = patterns[i];
-            vector<Match> matchList;
-            patternMatch(&matchList, graph, p, true);
+            patternMatch(matchArr, graph, p, true);
         }
-        
+
         timer::stop("Trained model");
     }
-    void predict() {
+    bool predict(vector<Prediction>* predictions, Pattern *patterns, vector<Match> matches, Graph graph, uint64_t patternStart, uint64_t patternEnd, int layer, int initialGraphSize) {
+        cout << "Predicting outcomes..." << endl;
+        timer::start();
+        bool added = false;
 
+        for(uint64_t pid=patternStart; pid<=patternEnd; pid++) {
+            Pattern p = patterns[pid];
+            vector<Match> mList;
+            getMatchesByPid(&mList, &matches, pid);
+
+            vector<Match> data;
+            patternMatch(&data, graph, p, false);
+
+            double totalBellWeight = 0;
+            for(uint64_t i=0; i<mList.size(); i++) {
+                Match m = mList[i];
+                //if(m==nullptr) continue;
+                double bell = bellCurve(TRAINING_THRESHOLD, 1, m.error);
+                totalBellWeight += bell;
+            }
+
+            short int matchIndex = 0;
+
+            double lowestError = DBL_MAX;
+            Match* bestMatch = nullptr;
+            for(uint64_t i=0; i<mList.size(); i++) {
+                Match* m = &mList[i];
+                if(abs(m->error)<lowestError) {
+                    lowestError = abs(m->error);
+                    bestMatch = m;
+                }
+            }
+            //for(Match currentMatch : mList) {
+            //    if(currentMatch)
+            //}
+            if(bestMatch == nullptr) {
+                continue;
+            }
+            double bellWeight = bellCurve(TRAINING_THRESHOLD, 1, bestMatch->error);
+            if(bellWeight < PREDICTION_ACCEPTANCE_THRESHOLD) {
+                continue;
+            }
+            for(uint64_t i=0; i<data.size(); i++) {
+                Match matchData=data[i];
+                vector<double> rawPredictedData = sequenceTranslate(graph.data[graph.data.size()-1][1], matchData.translateData(sequenceTransform(p.getResultBodyDimension(1), bestMatch->data)));
+                vector<double> predictedData = combineSequence(graph.clip(initialGraphSize, graph.data.size()-initialGraphSize).getPlotArray(1),
+                                                       rawPredictedData);
+
+                Prediction prediction;
+                Prediction rawPrediction;
+
+                prediction.init(pid, matchIndex, predictedData, bellWeight, bellWeight/totalBellWeight);
+                prediction.init(pid, matchIndex, rawPredictedData, bellWeight, bellWeight/totalBellWeight);
+                if(PREDICTION_HANDLER == PredictionHandler::MERGED) {
+                    predictions->push_back(prediction);
+                }
+                else if(PREDICTION_HANDLER == PredictionHandler::SEPARATE) {
+                    if(!PREDICTION_RECURSIVE||layer>=PREDICTION_MAX_RECURSIVE_ATTEMPTS) {
+                        predictions->push_back(prediction);
+                    }
+                    else {
+                        vector<vector<double>> addedData(graph.data.size()+rawPrediction.result.size(), vector<double>(graph.dimensions));
+                        double diff = graph.getPlotArray(graph.timeIndex)[graph.data.size()-1]-graph.getPlotArray(graph.timeIndex)[graph.data.size()-2];
+                        double lastTime = graph.getPlotArray(graph.timeIndex)[graph.data.size()-1];
+                        for(unsigned int x=0; x<addedData.size(); x++) {
+                            for(unsigned int y=0; y<addedData[0].size(); y++) {
+                                if(x<graph.data.size()) {
+                                    addedData[x][y] = graph.data[x][y];
+                                }
+                                else {
+                                    if(y==0) {
+                                        addedData[x][y] = lastTime+diff*((x+1)-graph.data.size());
+                                    }
+                                    else {
+                                        addedData[x][y] = rawPrediction.result[x-graph.data.size()];
+                                    }
+                                }
+                            }
+                        }
+
+                        Graph addedGraph;
+                        addedGraph.init(graph.dimensions, graph.timeIndex, addedData);
+                        if(!predict(predictions, patterns, matches, addedGraph, patternStart, patternEnd, layer+1, initialGraphSize)) {
+                            predictions->push_back(prediction);
+                        }
+                    }
+                }
+            }
+        }
+        timer::stop("Predicted outcomes");
+        return added;
+    }
+    void printVector(vector<double> d) {
+        for(unsigned int i=0; i<d.size(); i++) {
+            cout << d[i];
+            if(d.size()-1!=i) {
+                cout << ",";
+            }
+        }
+        cout << endl;
     }
     void patternMatch(vector<Match>* matches, Graph graph, Pattern pattern, bool knownResult) {
         if(knownResult) {
@@ -60,7 +157,7 @@ namespace analyze {
     }
     void patternMatch(vector<Match>* matches, Graph graph, Pattern pattern, int start, int end, bool doResult) {
         vector<double>* pBody = pattern.body;
-        
+
         for(int i = start; i < end; i++) {
             double totalError = 0;
             double translation = graph.data[i][1] - pBody[0][1];
@@ -72,9 +169,9 @@ namespace analyze {
             double si = (g1 - g0) / (p1 - p0);
             double endError = DBL_MAX;
             if(isnan(si)) si = 1;
-            
-            double gResultMod[PATTERN_LENGTH];
-            
+
+            vector<double> gResultMod(PATTERN_LENGTH);
+
             for(int j = 0; j < PATTERN_LENGTH; j++) {
                 vector<double>* graphPoint = &graph.data[i + j];
                 vector<double>* patternPoint = &pBody[j];
@@ -85,22 +182,80 @@ namespace analyze {
                     endError = abs(pm - gv);
                 }
                 totalError += abs(pm - gv);
-                
+
                 if(doResult) gResultMod[j] = graph.data[i + j + PATTERN_LENGTH][1];
             }
-
             if(totalError < TRAINING_THRESHOLD && endError < TRAINING_END_THRESHOLD) {
                 Match match;
-                copy(gResultMod, gResultMod+PATTERN_LENGTH, match.data);
+                match.data = gResultMod;
                 match.slopeIntercept = si;
                 match.translation = translation;
                 match.patternZero = p0;
                 match.error = totalError;
+                match.pid = pattern.id;
                 matches->push_back(match);
                 if(!doResult) {
-                    // Not implemented
+
                 }
             }
         }
+    }
+
+    void getMatchesByPid(vector<Match>* matchOut, vector<Match>* matches, uint64_t pid) {
+        for(uint64_t i=0; i<matches->size(); i++) {
+            if((*matches)[i].pid==pid) {
+                matchOut->push_back((*matches)[i]);
+            }
+        }
+    }
+
+    double bellCurve(double val) {
+        return bellCurve(1, 1, val);
+    }
+    double bellCurve(double width, double height, double val) {
+        val /= width;
+        return height * exp(pow(2*val, 2));
+    }
+
+    vector<double> sequenceTransform(vector<double> set1, vector<double> set2) {
+        int length = set2.size();
+        vector<double> translatedSet = *new vector<double>(length);
+
+        double s1_0 = set1[0];
+        double s2_0 = set2[0];
+        double s1_1 = set1[1];
+        double s2_1 = set2[1];
+        double translation = s1_0 - s2_0;
+        double si = (s1_1 - s1_0) / (s2_1 - s2_0);
+        for(int i=0; i<length; i++) {
+            double pv = set2[i];
+            double s2_mod = (si * (pv - s2_0) + s2_0 + translation);
+            translatedSet[i] = s2_mod;
+        }
+        return translatedSet;
+    }
+    vector<double> sequenceTranslate(double base, vector<double> ls) {
+        int listLength = ls.size();
+        vector<double> out = *new vector<double>(listLength);
+        double translation = base - ls[0];
+        for(int i=0; i<listLength; i++) {
+            out[i] = ls[i] + translation;
+        }
+        return out;
+    }
+    vector<double> combineSequence(vector<double> first, vector<double> second) {
+        int firstLength = first.size();
+        int secondLength = second.size();
+        int outLength = firstLength + secondLength;
+        vector<double> out = *new vector<double>(outLength);
+        for(int i=0; i<outLength; i++) {
+            if(i<firstLength) {
+                out[i] = first[i];
+            }
+            else {
+                out[i] = second[i - firstLength];
+            }
+        }
+        return out;
     }
 }

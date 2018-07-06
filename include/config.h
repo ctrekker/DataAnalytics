@@ -5,11 +5,11 @@ enum PredictionHandler {
     SEPARATE, MERGED
 };
 
-const static int PATTERN_NUMBER = 10000;
+const static int PATTERN_NUMBER = 1000;
 const static int PATTERN_LENGTH = 30;
 
-const static double TRAINING_THRESHOLD = 0.01;
-const static double TRAINING_END_THRESHOLD = 0.001;
+const static double TRAINING_THRESHOLD = 1;
+const static double TRAINING_END_THRESHOLD = 0.1;
 
 const static int PREDICTION_HANDLER = PredictionHandler::SEPARATE;
 const static bool PREDICTION_RECURSIVE = false;

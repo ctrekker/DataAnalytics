@@ -39,10 +39,10 @@ int main()
 
     analyze::create_patterns(patterns, sine);
     analyze::train(&matches, patterns, cosine);
-    analyze::predict(&predictions, patterns, matches, cosine, 65500, PATTERN_NUMBER-1, 1, cosine.data.size());
+    analyze::predict(&predictions, patterns, matches, cosine, 0, PATTERN_NUMBER-1, 1, cosine.data.size());
 
     for(unsigned int i=0; i<predictions.size(); i++) {
-        cout << predictions[i].toString();
+        cout << predictions[i].toString() << endl;
     }
 
     return 0;

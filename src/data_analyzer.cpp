@@ -47,7 +47,9 @@ namespace analyze {
         timer::stop("Trained model");
     }
     bool predict(vector<Prediction>* predictions, Pattern *patterns, vector<Match> matches, Graph graph, uint64_t patternStart, uint64_t patternEnd, int layer, int initialGraphSize) {
-        cout << "Predicting outcomes..." << endl;
+        if(layer==1) {
+            cout << "Predicting outcomes..." << endl;
+        }
         timer::start();
         bool added = false;
 
@@ -82,6 +84,7 @@ namespace analyze {
             //    if(currentMatch)
             //}
             if(bestMatch == nullptr) {
+                cout << pid << " nomatch" << endl;
                 continue;
             }
             double bellWeight = bellCurve(TRAINING_THRESHOLD, 1, bestMatch->error);
@@ -98,7 +101,7 @@ namespace analyze {
                 Prediction rawPrediction;
 
                 prediction.init(pid, matchIndex, predictedData, bellWeight, bellWeight/totalBellWeight);
-                prediction.init(pid, matchIndex, rawPredictedData, bellWeight, bellWeight/totalBellWeight);
+                rawPrediction.init(pid, matchIndex, rawPredictedData, bellWeight, bellWeight/totalBellWeight);
                 if(PREDICTION_HANDLER == PredictionHandler::MERGED) {
                     predictions->push_back(prediction);
                 }
@@ -134,8 +137,16 @@ namespace analyze {
                     }
                 }
             }
+            if(layer<PREDICTION_MAX_RECURSIVE_ATTEMPTS) {
+                for(int gt=layer-1; gt>0; gt--) {
+                    cout << ">";
+                }
+                cout << "Finished " << pid << endl;
+            }
         }
-        timer::stop("Predicted outcomes");
+        if(layer==1) {
+            timer::stop("Predicted outcomes");
+        }
         return added;
     }
     void printVector(vector<double> d) {

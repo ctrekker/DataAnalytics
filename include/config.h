@@ -6,13 +6,13 @@ enum PredictionHandler {
 };
 
 const static int PATTERN_NUMBER = 1000;
-const static int PATTERN_LENGTH = 30;
+const static int PATTERN_LENGTH = 300;
 
-const static double TRAINING_THRESHOLD = 1;
-const static double TRAINING_END_THRESHOLD = 0.1;
+const static double TRAINING_THRESHOLD = 0.1;
+const static double TRAINING_END_THRESHOLD = 0.01;
 
 const static int PREDICTION_HANDLER = PredictionHandler::SEPARATE;
-const static bool PREDICTION_RECURSIVE = false;
+const static bool PREDICTION_RECURSIVE = true;
 const static int PREDICTION_MAX_RECURSIVE_ATTEMPTS = 3;
 const static double PREDICTION_ACCEPTANCE_THRESHOLD = 1.0;
 

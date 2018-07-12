@@ -4,12 +4,14 @@
 #include "data_analyzer.h"
 #include "dataio.h"
 #include "timer.h"
+#include "stream.h"
+#include "save.h"
 
 using namespace std;
 using namespace dataio;
 
-Pattern patterns[PATTERN_NUMBER];
-vector<Match> matches;
+vector<Pattern> patterns(PATTERN_NUMBER);
+vector<MatchList> matches;
 vector<Prediction> predictions;
 
 Graph *createSineGraph(unsigned int length) {
@@ -41,8 +43,26 @@ int main()
     analyze::train(&matches, patterns, cosine);
     analyze::predict(&predictions, patterns, matches, cosine, 0, PATTERN_NUMBER-1, 1, cosine.data.size());
 
+//    for(unsigned int i=0; i<matches.size(); i++) {
+//        MatchList mList = matches[i];
+//        cout << mList.toString() << endl;
+//    }
 
-    ofstream file("out.csv");
+    timer::start();
+    ofstream patternFile("F:/patterns.bin", ios::binary | ios::app);
+    save::patternList(&patterns, &patternFile);
+    timer::stop("Wrote patterns to disk");
+    patternFile.close();
+
+    timer::start();
+    ofstream matchFile("F:/matches.bin", ios::binary | ios::app);
+    //save::matchList(&matches)
+    timer::stop("Wrote matches to disk");
+    patternFile.close();
+
+
+
+    ofstream file("F:/out.csv");
     for(unsigned int i=0; i<cosine.data.size(); i++) {
         for(unsigned int j=0; j<cosine.data[i].size(); j++) {
             file << cosine.data[i][j];
@@ -53,10 +73,9 @@ int main()
         file << endl;
     }
 
-    int pn=0;
-    int pgn=0;
+    unsigned int pn=0;
+    unsigned int pgn=0;
     for(unsigned int i=0; i<predictions.size(); i++) {
-        //cout << predictions[i].toString();
         if(predictions[i].result.size()>pgn) {
             pn=i;
             pgn=predictions[i].result.size();
@@ -65,11 +84,13 @@ int main()
 
     cout << "PN:" << pn << ";PGN:" << pgn << endl;
 
-    for(unsigned int i=0; i<predictions[pn].result.size(); i++) {
-        file << (cosine.data.size()+i) << ",";
-        file << predictions[pn].result[i] << endl;
+    if(pgn>0) {
+        for(unsigned int i=0; i<predictions[pn].result.size(); i++) {
+            file << (cosine.data.size()+i) << ",";
+            file << predictions[pn].result[i] << endl;
+        }
+        cout << predictions[pn].toString() << endl;
     }
-    //cout << predictions[pn].toString() << endl;
     file.close();
 
     return 0;

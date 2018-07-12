@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <sstream>
+#include <float.h>
 #include "dataio.h"
 #include "config.h"
 
@@ -70,8 +71,8 @@ namespace dataio {
         uint32_t corrections;
         double averageError;
 
-        vector<double> body[PATTERN_LENGTH];
-        vector<double> resultBody[PATTERN_LENGTH];
+        vector<vector<double>> body;
+        vector<vector<double>> resultBody;
 
         vector<double> getResultBodyDimension(int dim) {
             vector<double> out = *new vector<double>(PATTERN_LENGTH);
@@ -117,7 +118,7 @@ namespace dataio {
     public:
         uint64_t pid;
         uint16_t length;
-        double error;
+        double error = DBL_MAX;
         vector<double> data = vector<double>(PATTERN_LENGTH);
 
         double slopeIntercept;
@@ -150,7 +151,36 @@ namespace dataio {
         }
     };
     struct MatchList {
+    public:
+        uint64_t id;
+        uint16_t currentIndex = 0;
+        uint32_t totalMatches = 0;
+        vector<Match> matches;
 
+        void addMatch(Match m) {
+            while(matches.size()<MATCH_BUFFER_SIZE) {
+                matches.push_back(*(new Match));
+            }
+            matches[currentIndex]=m;
+            currentIndex++;
+            if(currentIndex>=MATCH_BUFFER_SIZE) {
+                currentIndex=0;
+            }
+            totalMatches++;
+        }
+        string toString() {
+            stringstream out;
+            out << "-----MatchList[" << this << "]-----" << endl;
+            out << "\tid: " << id << endl;
+            out << "\tcurrentIndex: " << currentIndex << endl;
+            out << "\tttotalMatches: " << totalMatches << endl;
+            out << "\tmatches: " << endl;
+            for(unsigned int i=0; i<matches.size(); i++) {
+                out << matches[i].toString();
+            }
+
+            return out.str();
+        }
     };
     struct Prediction {
     public:

@@ -1,18 +1,28 @@
 #ifndef CONFIG_H_INCLUDED
 #define CONFIG_H_INCLUDED
 
+
+
+using namespace std;
+
 enum PredictionHandler {
     SEPARATE, MERGED
 };
 
-const static int PATTERN_NUMBER = 1000;
-const static int PATTERN_LENGTH = 300;
+const static string SWAP_DIR = "F:/swap";
+const static string SAVE_DIR = "F:/save";
+const static string ARCH_DIR = "F:/arch";
 
-const static double TRAINING_THRESHOLD = 0.1;
-const static double TRAINING_END_THRESHOLD = 0.01;
+const static int PATTERN_NUMBER = 1000;
+const static int PATTERN_LENGTH = 30;
+
+const static double TRAINING_THRESHOLD = 0.01;
+const static double TRAINING_END_THRESHOLD = 0.001;
+
+const static short int MATCH_BUFFER_SIZE = 25;
 
 const static int PREDICTION_HANDLER = PredictionHandler::SEPARATE;
-const static bool PREDICTION_RECURSIVE = true;
+const static bool PREDICTION_RECURSIVE = false;
 const static int PREDICTION_MAX_RECURSIVE_ATTEMPTS = 3;
 const static double PREDICTION_ACCEPTANCE_THRESHOLD = 1.0;
 

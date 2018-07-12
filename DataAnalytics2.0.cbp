@@ -37,9 +37,13 @@
 		<Unit filename="include/config.h" />
 		<Unit filename="include/data_analyzer.h" />
 		<Unit filename="include/dataio.h" />
+		<Unit filename="include/save.h" />
+		<Unit filename="include/stream.h" />
 		<Unit filename="include/timer.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="src/data_analyzer.cpp" />
+		<Unit filename="src/save.cpp" />
+		<Unit filename="src/stream.cpp" />
 		<Unit filename="src/timer.cpp" />
 		<Extensions>
 			<code_completion />

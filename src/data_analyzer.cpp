@@ -2,6 +2,7 @@
 #include <chrono>
 #include <cstdlib>
 #include <cmath>
+
 #include <float.h>
 #include "data_analyzer.h"
 #include "timer.h"
@@ -11,7 +12,7 @@
 using namespace dataio;
 
 namespace analyze {
-    void create_patterns(Pattern *patternArr, Graph graph) {
+    void create_patterns(vector<Pattern> &patternArr, Graph graph) {
         std::cout << "Creating patterns..." << std::endl;
         timer::start();
 
@@ -27,26 +28,40 @@ namespace analyze {
             p.averageError = DBL_MAX;
 
             for(unsigned int x=0; x<p.length; x++) {
-                p.body[x] = graph.data[startPos+x];
-                p.resultBody[x] = graph.data[startPos+x+p.length];
+                p.body.push_back(graph.data[startPos+x]);
+                p.resultBody.push_back(graph.data[startPos+x+p.length]);
             }
             patternArr[i] = p;
         }
 
         timer::stop("Created patterns");
     }
-    void train(vector<Match>* matchArr, Pattern* patterns, Graph graph) {
+    void train(vector<MatchList>* matchArr, vector<Pattern> patterns, Graph graph) {
         std::cout << "Training model..." << std::endl;
         timer::start();
 
-        for(int i=0; i<PATTERN_NUMBER; i++) {
+        for(unsigned int i=0; i<PATTERN_NUMBER; i++) {
+            if(matchArr->size()<=i) {
+                MatchList m = *(new MatchList);
+                m.id = i;
+                matchArr->push_back(m);
+            }
             Pattern p = patterns[i];
-            patternMatch(matchArr, graph, p, true);
+            vector<Match> mList;
+            patternMatch(&mList, graph, p, true);
+
+            MatchList* m = &((*matchArr)[i]);
+            for(unsigned int j=0; j<mList.size(); j++) {
+                if(j>MATCH_BUFFER_SIZE) {
+                    break;
+                }
+                m->addMatch(mList[j]);
+            }
         }
 
         timer::stop("Trained model");
     }
-    bool predict(vector<Prediction>* predictions, Pattern *patterns, vector<Match> matches, Graph graph, uint64_t patternStart, uint64_t patternEnd, int layer, int initialGraphSize) {
+    bool predict(vector<Prediction>* predictions, vector<Pattern> &patterns, vector<MatchList> matches, Graph graph, uint64_t patternStart, uint64_t patternEnd, int layer, int initialGraphSize) {
         if(layer==1) {
             cout << "Predicting outcomes..." << endl;
         }
@@ -56,7 +71,7 @@ namespace analyze {
         for(uint64_t pid=patternStart; pid<=patternEnd; pid++) {
             Pattern p = patterns[pid];
             vector<Match> mList;
-            getMatchesByPid(&mList, &matches, pid);
+            mList = matches[pid].matches;
 
             vector<Match> data;
             patternMatch(&data, graph, p, false);
@@ -64,6 +79,7 @@ namespace analyze {
             double totalBellWeight = 0;
             for(uint64_t i=0; i<mList.size(); i++) {
                 Match m = mList[i];
+
                 //if(m==nullptr) continue;
                 double bell = bellCurve(TRAINING_THRESHOLD, 1, m.error);
                 totalBellWeight += bell;
@@ -137,12 +153,15 @@ namespace analyze {
                     }
                 }
             }
-            if(layer<PREDICTION_MAX_RECURSIVE_ATTEMPTS) {
-                for(int gt=layer-1; gt>0; gt--) {
-                    cout << ">";
-                }
-                cout << "Finished " << pid << endl;
+            if(layer==1) {
+                cout << "Pred " << pid << endl;
             }
+//            if(layer<PREDICTION_MAX_RECURSIVE_ATTEMPTS) {
+//                for(int gt=layer; gt>0; gt--) {
+//                    cout << ">";
+//                }
+//                cout << "Finished " << pid << endl;
+//            }
         }
         if(layer==1) {
             timer::stop("Predicted outcomes");
@@ -167,7 +186,7 @@ namespace analyze {
         }
     }
     void patternMatch(vector<Match>* matches, Graph graph, Pattern pattern, int start, int end, bool doResult) {
-        vector<double>* pBody = pattern.body;
+        vector<vector<double>> pBody = pattern.body;
 
         for(int i = start; i < end; i++) {
             double totalError = 0;

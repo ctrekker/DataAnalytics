@@ -116,8 +116,8 @@ namespace dataio {
     };
     struct Match {
     public:
-        uint64_t pid;
-        uint16_t length;
+        uint64_t pid = 0;
+        uint16_t length = 0;
         double error = DBL_MAX;
         vector<double> data = vector<double>(PATTERN_LENGTH);
 

@@ -13,6 +13,7 @@ namespace save {
     void prediction(vector<uint8_t>*, Prediction*);
 
     void patternList(vector<Pattern>*, ofstream*);
+    void matchListCollection(vector<MatchList>*, ofstream*);
 
     void buffToFile(vector<uint8_t>*, ofstream*);
 }

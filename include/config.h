@@ -20,6 +20,7 @@ const static double TRAINING_THRESHOLD = 0.01;
 const static double TRAINING_END_THRESHOLD = 0.001;
 
 const static short int MATCH_BUFFER_SIZE = 25;
+const static int MATCH_MAX_DATA_SIZE = 30;
 
 const static int PREDICTION_HANDLER = PredictionHandler::SEPARATE;
 const static bool PREDICTION_RECURSIVE = false;

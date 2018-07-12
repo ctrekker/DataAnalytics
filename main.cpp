@@ -56,7 +56,7 @@ int main()
 
     timer::start();
     ofstream matchFile("F:/matches.bin", ios::binary | ios::app);
-    //save::matchList(&matches)
+    save::matchListCollection(&matches, &matchFile);
     timer::stop("Wrote matches to disk");
     patternFile.close();
 

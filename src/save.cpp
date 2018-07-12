@@ -31,10 +31,25 @@ namespace save {
         } while(body!=&p->resultBody);
     }
     void matchList(vector<uint8_t>* out, MatchList* m) {
-
+        stream::writeLong(out, m->id);
+        stream::writeShort(out, m->currentIndex);
+        stream::writeInt(out, m->totalMatches);
+        for(unsigned int i=0; i<m->matches.size(); i++) {
+            Match match = m->matches[i];
+            save::match(out, &match);
+        }
     }
     void match(vector<uint8_t>* out, Match* m) {
-
+        stream::writeShort(out, m->length);
+        stream::writeDouble(out, m->error);
+        for(unsigned int i=0; i<MATCH_MAX_DATA_SIZE; i++) {
+            if(i<m->data.size()) {
+                stream::writeDouble(out, m->data[i]);
+            }
+            else {
+                stream::writeDouble(out, 0);
+            }
+        }
     }
     void prediction(vector<uint8_t>* out, Prediction* p) {
 
@@ -44,6 +59,14 @@ namespace save {
         vector<uint8_t> bos;
         for(unsigned int i=0; i<PATTERN_NUMBER; i++) {
             pattern(&bos, &(*patterns)[i]);
+            buffToFile(&bos, outFile);
+            bos.clear();
+        }
+    }
+    void matchListCollection(vector<MatchList>* mList, ofstream* outFile) {
+        vector<uint8_t> bos;
+        for(unsigned int i=0; i<mList->size(); i++) {
+            save::matchList(&bos, &(*mList)[i]);
             buffToFile(&bos, outFile);
             bos.clear();
         }

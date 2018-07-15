@@ -49,20 +49,27 @@ int main()
 //    }
 
     timer::start();
-    ofstream patternFile("F:/patterns.bin", ios::binary | ios::app);
+    ofstream patternFile("data/patterns.bin", ios::binary);
     save::patternList(&patterns, &patternFile);
     timer::stop("Wrote patterns to disk");
     patternFile.close();
 
     timer::start();
-    ofstream matchFile("F:/matches.bin", ios::binary | ios::app);
+    ofstream matchFile("data/matches.bin", ios::binary);
     save::matchListCollection(&matches, &matchFile);
     timer::stop("Wrote matches to disk");
     patternFile.close();
 
+    timer::start();
+    ofstream predictionFile("data/predictions.bin", ios::binary);
+    save::predictionList(&predictions, &predictionFile);
+    timer::stop("Wrote predictions to disk");
+    predictionFile.close();
+
+    cout << predictions.size() << "<-Total Predictions" << endl;
 
 
-    ofstream file("F:/out.csv");
+    ofstream file("data/out.csv");
     for(unsigned int i=0; i<cosine.data.size(); i++) {
         for(unsigned int j=0; j<cosine.data[i].size(); j++) {
             file << cosine.data[i][j];

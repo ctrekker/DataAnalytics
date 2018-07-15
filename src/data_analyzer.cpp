@@ -154,7 +154,7 @@ namespace analyze {
                 }
             }
             if(layer==1) {
-                cout << "Pred " << pid << endl;
+                //cout << "Pred " << pid << endl;
             }
 //            if(layer<PREDICTION_MAX_RECURSIVE_ATTEMPTS) {
 //                for(int gt=layer; gt>0; gt--) {

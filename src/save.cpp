@@ -1,4 +1,6 @@
 #include <fstream>
+#include <iostream>
+#include <climits>
 #include "dataio.h"
 #include "stream.h"
 #include "save.h"
@@ -52,21 +54,45 @@ namespace save {
         }
     }
     void prediction(vector<uint8_t>* out, Prediction* p) {
-
+        stream::writeLong(out, p->patternId);
+        stream::writeShort(out, p->matchIndex);
+        stream::writeInt(out, p->result.size());
+        stream::writeDouble(out, p->bellWeight);
+        stream::writeDouble(out, p->patternPercentage);
+        for(unsigned int i=0; i<p->result.size(); i++) {
+            stream::writeDouble(out, p->result[i]);
+        }
     }
 
     void patternList(vector<Pattern>* patterns, ofstream* outFile) {
         vector<uint8_t> bos;
         for(unsigned int i=0; i<PATTERN_NUMBER; i++) {
             pattern(&bos, &(*patterns)[i]);
-            buffToFile(&bos, outFile);
-            bos.clear();
+            if(i%64==0||i==PATTERN_NUMBER-1) {
+                buffToFile(&bos, outFile);
+                bos.clear();
+            }
         }
     }
     void matchListCollection(vector<MatchList>* mList, ofstream* outFile) {
         vector<uint8_t> bos;
+        int baseline=0;
         for(unsigned int i=0; i<mList->size(); i++) {
             save::matchList(&bos, &(*mList)[i]);
+            if(i==0) {
+                baseline=((SHRT_MAX*2)/mList->size());
+            }
+            if(i%baseline==0||i==mList->size()-1) {
+                buffToFile(&bos, outFile);
+                bos.clear();
+            }
+        }
+        cout << "BASELINE:" << baseline << endl;
+    }
+    void predictionList(vector<Prediction>* predictions, ofstream* outFile) {
+        vector<uint8_t> bos;
+        for(unsigned int i=0; i<predictions->size(); i++) {
+            save::prediction(&bos, &(*predictions)[i]);
             buffToFile(&bos, outFile);
             bos.clear();
         }

@@ -52,21 +52,18 @@ int main()
     ofstream patternFile("data/patterns.bin", ios::binary);
     save::patternList(&patterns, &patternFile);
     timer::stop("Wrote patterns to disk");
-    cout << endl;
     patternFile.close();
 
     timer::start();
     ofstream matchFile("data/matches.bin", ios::binary);
     save::matchListCollection(&matches, &matchFile);
     timer::stop("Wrote matches to disk");
-    cout << endl;
     patternFile.close();
 
     timer::start();
     ofstream predictionFile("data/predictions.bin", ios::binary);
     save::predictionList(&predictions, &predictionFile);
     timer::stop("Wrote predictions to disk");
-    cout << endl;
     predictionFile.close();
 
     cout << predictions.size() << "<-Total Predictions" << endl;

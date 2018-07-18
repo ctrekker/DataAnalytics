@@ -35,6 +35,7 @@ namespace analyze {
         }
 
         timer::stop("Created patterns");
+        cout << endl;
     }
     void train(vector<MatchList>* matchArr, vector<Pattern> patterns, Graph graph) {
         std::cout << "Training model..." << std::endl;
@@ -60,6 +61,7 @@ namespace analyze {
         }
 
         timer::stop("Trained model");
+        cout << endl;
     }
     bool predict(vector<Prediction>* predictions, vector<Pattern> &patterns, vector<MatchList> matches, Graph graph, uint64_t patternStart, uint64_t patternEnd, int layer, int initialGraphSize) {
         if(layer==1) {
@@ -165,6 +167,7 @@ namespace analyze {
         }
         if(layer==1) {
             timer::stop("Predicted outcomes");
+            cout << endl;
         }
         return added;
     }

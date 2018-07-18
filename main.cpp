@@ -63,6 +63,8 @@ int main()
     timer::stop("Wrote predictions to disk");
     predictionFile.close();
 
+    cout << endl;
+
     cout << predictions.size() << "<-Total Predictions" << endl;
 
 

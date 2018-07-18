@@ -90,7 +90,6 @@ namespace save {
                 bos.clear();
             }
         }
-        cout << "BASELINE:" << baseline << endl;
     }
     void predictionList(vector<Prediction>* predictions, ofstream* outFile) {
         vector<uint8_t> bos;

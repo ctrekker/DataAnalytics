@@ -6,6 +6,7 @@
 #include "timer.h"
 #include "stream.h"
 #include "save.h"
+#include "load.h"
 
 using namespace std;
 using namespace dataio;
@@ -43,10 +44,6 @@ int main()
     analyze::train(&matches, patterns, cosine);
     analyze::predict(&predictions, patterns, matches, cosine, 0, PATTERN_NUMBER-1, 1, cosine.data.size());
 
-//    for(unsigned int i=0; i<matches.size(); i++) {
-//        MatchList mList = matches[i];
-//        cout << mList.toString() << endl;
-//    }
 
     timer::start();
     ofstream patternFile("data/patterns.bin", ios::binary);

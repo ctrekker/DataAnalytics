@@ -44,6 +44,9 @@ namespace save {
     void match(vector<uint8_t>* out, Match* m) {
         stream::writeShort(out, m->length);
         stream::writeDouble(out, m->error);
+        stream::writeDouble(out, m->slopeIntercept);
+        stream::writeDouble(out, m->translation);
+        stream::writeDouble(out, m->patternZero);
         for(unsigned int i=0; i<MATCH_MAX_DATA_SIZE; i++) {
             if(i<m->data.size()) {
                 stream::writeDouble(out, m->data[i]);

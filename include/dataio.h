@@ -119,7 +119,7 @@ namespace dataio {
         uint64_t pid = 0;
         uint16_t length = 0;
         double error = DBL_MAX;
-        vector<double> data = vector<double>(PATTERN_LENGTH);
+        vector<double> data = vector<double>(MATCH_MAX_DATA_SIZE);
 
         double slopeIntercept;
         double translation;

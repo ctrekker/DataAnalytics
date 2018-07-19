@@ -64,6 +64,8 @@ namespace dataio {
     };
     struct Pattern {
     public:
+        /*** NOTE: this value must be changed if new fields are added ***/
+        const static int SIZE = 8+2+8+4+4+8+(8*PATTERN_LENGTH*DIMENSIONS)*2;
         uint64_t id;
         uint16_t dimensions;
         uint64_t created;
@@ -116,14 +118,16 @@ namespace dataio {
     };
     struct Match {
     public:
+        /*** NOTE: this value must be changed if new fields are added ***/
+        const static int SIZE = 2+8+(8*MATCH_MAX_DATA_SIZE)+8+8+8;
         uint64_t pid = 0;
         uint16_t length = 0;
         double error = DBL_MAX;
         vector<double> data = vector<double>(MATCH_MAX_DATA_SIZE);
 
-        double slopeIntercept;
-        double translation;
-        double patternZero;
+        double slopeIntercept = 0;
+        double translation = 0;
+        double patternZero = 0;
 
         vector<double> translateData(vector<double> body) {
             vector<double> out = *new vector<double>(body.size());
@@ -152,28 +156,35 @@ namespace dataio {
     };
     struct MatchList {
     public:
+        /*** NOTE: this value must be changed if new fields are added ***/
+        const static int SIZE = 8+2+4+(MATCH_BUFFER_SIZE*Match::SIZE);
         uint64_t id;
         uint16_t currentIndex = 0;
         uint32_t totalMatches = 0;
         vector<Match> matches;
 
-        void addMatch(Match m) {
-            while(matches.size()<MATCH_BUFFER_SIZE) {
-                matches.push_back(*(new Match));
+        void addMatch(Match m, bool over = false) {
+            if(!over) {
+                while(matches.size()<MATCH_BUFFER_SIZE) {
+                    matches.push_back(*(new Match));
+                }
+                matches[currentIndex]=m;
+                currentIndex++;
+                if(currentIndex>=MATCH_BUFFER_SIZE) {
+                    currentIndex=0;
+                }
+                totalMatches++;
             }
-            matches[currentIndex]=m;
-            currentIndex++;
-            if(currentIndex>=MATCH_BUFFER_SIZE) {
-                currentIndex=0;
+            else {
+                matches.push_back(m);
             }
-            totalMatches++;
         }
         string toString() {
             stringstream out;
             out << "-----MatchList[" << this << "]-----" << endl;
             out << "\tid: " << id << endl;
             out << "\tcurrentIndex: " << currentIndex << endl;
-            out << "\tttotalMatches: " << totalMatches << endl;
+            out << "\ttotalMatches: " << totalMatches << endl;
             out << "\tmatches: " << endl;
             for(unsigned int i=0; i<matches.size(); i++) {
                 out << matches[i].toString();

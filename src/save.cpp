@@ -59,7 +59,11 @@ namespace save {
         stream::writeLong(out, m->id);
         stream::writeShort(out, m->currentIndex);
         stream::writeInt(out, m->totalMatches);
-        for(unsigned int i=0; i<m->matches.size(); i++) {
+        for(unsigned int i=0; i<MATCH_BUFFER_SIZE; i++) {
+            if(i >= m->matches.size()) {
+                save::match(out, new Match);
+                continue;
+            }
             Match match = m->matches[i];
             save::match(out, &match);
         }

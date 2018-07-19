@@ -63,7 +63,7 @@ int main()
 //    timer::stop("Wrote predictions to disk");
 //    predictionFile.close();
     save::state("data", &patterns, &matches, &predictions);
-
+    
     cout << endl;
 
     cout << predictions.size() << "<-Total Predictions" << endl;
@@ -99,6 +99,6 @@ int main()
         cout << predictions[pn].toString() << endl;
     }
     file.close();
-
+    
     return 0;
 }

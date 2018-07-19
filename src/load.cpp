@@ -1,13 +1,36 @@
 #include <vector>
+#include <iostream>
+#include <fstream>
 #include "dataio.h"
 #include "stream.h"
+#include "timer.h"
+#include "config.h"
+#include "load.h"
 
 using namespace std;
 using namespace dataio;
 
 namespace load {
-    void pattern(Pattern* out, vector<uint8_t>* s) {
-        uint64_t cp = 0;
+    void state(string name, vector<Pattern>* patterns, vector<MatchList>* matches, vector<Prediction>* predictions) {
+        cout << "Loading state..." << endl;
+        timer::start();
+        
+        ifstream patternFile(SAVE_DIR+"/"+name+".pbin", ios::binary);
+        ifstream matchFile(SAVE_DIR+"/"+name+".mbin", ios::binary);
+        ifstream predictionFile(SAVE_DIR+"/"+name+".prbin", ios::binary);
+        
+        load::patternList(&patternFile, patterns);
+        load::matchListCollection(&matchFile, matches);
+        load::predictionList(&predictionFile, predictions);
+        
+        patternFile.close();
+        matchFile.close();
+        predictionFile.close();
+        
+        timer::stop("Loaded state");
+    }
+    
+    int pattern(Pattern* out, vector<uint8_t>* s, uint64_t cp) {
         out->id = stream::readLong(s, &cp);
         out->dimensions = stream::readShort(s, &cp);
         out->created = stream::readLong(s, &cp);
@@ -33,9 +56,9 @@ namespace load {
 
             it++;
         } while(body!=&out->resultBody);
+        return cp;
     }
-    void match(Match* out, vector<uint8_t>* s) {
-        uint64_t cp = 0;
+    int match(Match* out, vector<uint8_t>* s, uint64_t cp) {
         out->length = stream::readShort(s, &cp);
         out->error = stream::readDouble(s, &cp);
         out->slopeIntercept = stream::readDouble(s, &cp);
@@ -44,12 +67,20 @@ namespace load {
         for(unsigned int i=0; i<MATCH_MAX_DATA_SIZE; i++) {
             out->data[i] = stream::readDouble(s, &cp);
         }
+        return cp;
     }
-    void matchList(MatchList* out, vector<uint8_t>* stream) {
-
+    int matchList(MatchList* out, vector<uint8_t>* s, uint64_t cp) {
+        out->id = stream::readLong(s, &cp);
+        out->currentIndex = stream::readShort(s, &cp);
+        out->totalMatches = stream::readInt(s, &cp);
+        for(unsigned int i=0; i<MATCH_BUFFER_SIZE; i++) {
+            Match m;
+            cp = load::match(&m, s, cp);
+            out->addMatch(m, true);
+        }
+        return cp;
     }
-    void prediction(Prediction* out, vector<uint8_t>* s) {
-        uint64_t cp = 0;
+    int prediction(Prediction* out, vector<uint8_t>* s, uint64_t cp) {
         out->patternId = stream::readLong(s, &cp);
         out->matchIndex = stream::readShort(s, &cp);
         uint32_t resultSize = stream::readInt(s, &cp);
@@ -59,6 +90,39 @@ namespace load {
         out->result = vector<double>(resultSize);
         for(unsigned int i=0; i<resultSize; i++) {
             out->result[i] = stream::readDouble(s, &cp);
+        }
+        return cp;
+    }
+    
+    void patternList(ifstream* inFile, vector<Pattern>* patterns) {
+        while(!inFile->eof()) {
+            Pattern* p = new Pattern;
+            vector<uint8_t> bos(Pattern::SIZE);
+            load::fileToBuff(inFile, &bos);
+            load::pattern(p, &bos);
+            patterns->push_back(*p);
+        }
+        patterns->pop_back();
+    }
+    void matchListCollection(ifstream* inFile, vector<MatchList>* mList) {
+        while(!inFile->eof()) {
+            MatchList* ml = new MatchList;
+            vector<uint8_t> bos(MatchList::SIZE);
+            load::fileToBuff(inFile, &bos);
+            load::matchList(ml, &bos);
+            mList->push_back(*ml);
+        }
+        mList->pop_back();
+    }
+    void predictionList(ifstream* inFile, vector<Prediction>* predictions) {
+        
+    }
+    
+    void fileToBuff(ifstream* inFile, vector<uint8_t>* buff) {
+        char rawBuff[buff->size()];
+        inFile->read(rawBuff, buff->size());
+        for(unsigned int i=0; i<buff->size(); i++) {
+            (*buff)[i] = rawBuff[i];
         }
     }
 }

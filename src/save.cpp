@@ -4,11 +4,34 @@
 #include "dataio.h"
 #include "stream.h"
 #include "save.h"
+#include "config.h"
+#include "timer.h"
 
 using namespace std;
 using namespace dataio;
 
 namespace save {
+    void state(string name, vector<Pattern>* patterns, vector<MatchList>* matches, vector<Prediction>* predictions) {
+        cout << "Saving state..." << endl;
+        timer::start();
+        
+        ofstream patternFile(SAVE_DIR+"/"+name+".pbin", ios::binary);
+        ofstream matchFile(SAVE_DIR+"/"+name+".mbin", ios::binary);
+        ofstream predictionFile(SAVE_DIR+"/"+name+".prbin", ios::binary);
+        
+        save::patternList(patterns, &patternFile);
+        save::matchListCollection(matches, &matchFile);
+        save::predictionList(predictions, &predictionFile);
+        
+        patternFile.close();
+        matchFile.close();
+        predictionFile.close();
+        
+        
+        // Write metadata
+        timer::stop("Saved state");
+    }
+    
     void pattern(vector<uint8_t>* out, Pattern* p) {
         stream::writeLong(out, p->id);
         stream::writeShort(out, p->dimensions);

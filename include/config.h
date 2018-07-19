@@ -9,9 +9,9 @@ enum PredictionHandler {
     SEPARATE, MERGED
 };
 
-const static string SWAP_DIR = "F:/swap";
-const static string SAVE_DIR = "F:/save";
-const static string ARCH_DIR = "F:/arch";
+const static string SWAP_DIR = "swap";
+const static string SAVE_DIR = "save";
+const static string ARCH_DIR = "arch";
 
 const static int PATTERN_NUMBER = 1000;
 const static int PATTERN_LENGTH = 30;

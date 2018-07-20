@@ -3,7 +3,7 @@
 	<iostream>
 	<chrono>
 
-1532108551 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\main.cpp
+1532117282 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\main.cpp
 	<iostream>
 	<fstream>
 	<cmath>
@@ -25,11 +25,11 @@
 	"dataio.h"
 	"config.h"
 
-1532110110 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\config.h
+1532118508 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\config.h
 
 1530488812 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\timer.h
 
-1532109975 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\data_analyzer.cpp
+1532118369 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\data_analyzer.cpp
 	<iostream>
 	<chrono>
 	<cstdlib>
@@ -41,6 +41,7 @@
 	"dataio.h"
 	"config.h"
 	"save.h"
+	"load.h"
 
 1532110033 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\save.cpp
 	<fstream>

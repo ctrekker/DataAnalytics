@@ -14,22 +14,22 @@ namespace load {
     void state(string name, vector<Pattern>* patterns, vector<MatchList>* matches, vector<Prediction>* predictions) {
         cout << "Loading state..." << endl;
         timer::start();
-        
+
         ifstream patternFile(SAVE_DIR+"/"+name+".pbin", ios::binary);
         ifstream matchFile(SAVE_DIR+"/"+name+".mbin", ios::binary);
         ifstream predictionFile(SAVE_DIR+"/"+name+".prbin", ios::binary);
-        
+
         load::patternList(&patternFile, patterns);
         load::matchListCollection(&matchFile, matches);
         load::predictionList(&predictionFile, predictions);
-        
+
         patternFile.close();
         matchFile.close();
         predictionFile.close();
-        
+
         timer::stop("Loaded state");
     }
-    
+
     int pattern(Pattern* out, vector<uint8_t>* s, uint64_t cp) {
         out->id = stream::readLong(s, &cp);
         out->dimensions = stream::readShort(s, &cp);
@@ -93,7 +93,7 @@ namespace load {
         }
         return cp;
     }
-    
+
     void patternList(ifstream* inFile, vector<Pattern>* patterns) {
         while(!inFile->eof()) {
             Pattern* p = new Pattern;
@@ -115,9 +115,9 @@ namespace load {
         mList->pop_back();
     }
     void predictionList(ifstream* inFile, vector<Prediction>* predictions) {
-        
+
     }
-    
+
     void fileToBuff(ifstream* inFile, vector<uint8_t>* buff) {
         char rawBuff[buff->size()];
         inFile->read(rawBuff, buff->size());

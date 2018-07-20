@@ -41,7 +41,7 @@ int main()
     Graph cosine = *createCosineGraph(1000);
 
     analyze::create_patterns(patterns, sine);
-    //analyze::train(&matches, patterns, cosine);
+    analyze::train(&matches, patterns, cosine);
     //analyze::predict(&predictions, patterns, matches, cosine, 0, PATTERN_NUMBER-1, 1, cosine.data.size());
 
     //save::state("data", &patterns, &matches, &predictions);

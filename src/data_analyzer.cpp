@@ -3,13 +3,14 @@
 #include <cstdlib>
 #include <cmath>
 #include <fstream>
-
 #include <float.h>
+
 #include "data_analyzer.h"
 #include "timer.h"
 #include "dataio.h"
 #include "config.h"
 #include "save.h"
+#include "load.h"
 
 using namespace dataio;
 
@@ -38,7 +39,6 @@ namespace analyze {
             if((i+1)%PATTERN_SWAP_THRESHOLD == 0) {
                 ofstream outFile(SWAP_DIR+"/"+to_string(i/PATTERN_SWAP_THRESHOLD)+".pbin", ios::binary);
                 save::patternList(&patternArr, &outFile);
-                //patternArr.clear();
                 outFile.close();
             }
         }
@@ -51,21 +51,33 @@ namespace analyze {
         timer::start();
 
         for(unsigned int i=0; i<PATTERN_NUMBER; i++) {
-            if(matchArr->size()<=i) {
+            if(matchArr->size()<=(i%MATCH_SWAP_THRESHOLD)) {
                 MatchList m = *(new MatchList);
                 m.id = i;
                 matchArr->push_back(m);
             }
-            Pattern p = patterns[i];
+            Pattern p = patterns[i%PATTERN_SWAP_THRESHOLD];
             vector<Match> mList;
             patternMatch(&mList, graph, p, true);
 
-            MatchList* m = &((*matchArr)[i]);
+            MatchList* m = &((*matchArr)[i%MATCH_SWAP_THRESHOLD]);
             for(unsigned int j=0; j<mList.size(); j++) {
                 if(j>MATCH_BUFFER_SIZE) {
                     break;
                 }
                 m->addMatch(mList[j]);
+            }
+
+            if((i+1)%PATTERN_SWAP_THRESHOLD == 0) {
+                ifstream inFile(SWAP_DIR+"/"+to_string(i/PATTERN_SWAP_THRESHOLD)+".pbin", ios::binary);
+                load::patternList(&inFile, &patterns);
+                inFile.close();
+            }
+            if((i+1)%MATCH_SWAP_THRESHOLD == 0) {
+                ofstream outFile(SWAP_DIR+"/"+to_string(i/MATCH_SWAP_THRESHOLD)+".mbin", ios::binary);
+                save::matchListCollection(matchArr, &outFile);
+                //unsigned int mSize = matchArr->size();
+                outFile.close();
             }
         }
 
@@ -80,9 +92,9 @@ namespace analyze {
         bool added = false;
 
         for(uint64_t pid=patternStart; pid<=patternEnd; pid++) {
-            Pattern p = patterns[pid];
+            Pattern p = patterns[pid%PATTERN_SWAP_THRESHOLD];
             vector<Match> mList;
-            mList = matches[pid].matches;
+            mList = matches[pid%MATCH_SWAP_THRESHOLD].matches;
 
             vector<Match> data;
             patternMatch(&data, graph, p, false);
@@ -166,6 +178,17 @@ namespace analyze {
             }
             if(layer==1) {
                 //cout << "Pred " << pid << endl;
+            }
+
+            if((pid+1)%PATTERN_SWAP_THRESHOLD == 0) {
+                ifstream inFile(SWAP_DIR+"/"+to_string(pid/PATTERN_SWAP_THRESHOLD)+".pbin", ios::binary);
+                load::patternList(&inFile, &patterns);
+                inFile.close();
+            }
+            if((pid+1)%MATCH_SWAP_THRESHOLD == 0) {
+                ifstream inFile(SWAP_DIR+"/"+to_string(pid/MATCH_SWAP_THRESHOLD)+".mbin", ios::binary);
+                load::matchListCollection(&inFile, &matches);
+                inFile.close();
             }
         }
         if(layer==1) {

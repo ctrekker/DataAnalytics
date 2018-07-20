@@ -14,24 +14,24 @@ namespace save {
     void state(string name, vector<Pattern>* patterns, vector<MatchList>* matches, vector<Prediction>* predictions) {
         cout << "Saving state..." << endl;
         timer::start();
-        
+
         ofstream patternFile(SAVE_DIR+"/"+name+".pbin", ios::binary);
         ofstream matchFile(SAVE_DIR+"/"+name+".mbin", ios::binary);
         ofstream predictionFile(SAVE_DIR+"/"+name+".prbin", ios::binary);
-        
+
         save::patternList(patterns, &patternFile);
         save::matchListCollection(matches, &matchFile);
         save::predictionList(predictions, &predictionFile);
-        
+
         patternFile.close();
         matchFile.close();
         predictionFile.close();
-        
-        
+
+
         // Write metadata
         timer::stop("Saved state");
     }
-    
+
     void pattern(vector<uint8_t>* out, Pattern* p) {
         stream::writeLong(out, p->id);
         stream::writeShort(out, p->dimensions);
@@ -96,12 +96,12 @@ namespace save {
 
     void patternList(vector<Pattern>* patterns, ofstream* outFile) {
         vector<uint8_t> bos;
-        for(unsigned int i=0; i<PATTERN_NUMBER; i++) {
+        for(unsigned int i=0; i<patterns->size(); i++) {
             pattern(&bos, &(*patterns)[i]);
-            if(i%64==0||i==PATTERN_NUMBER-1) {
+            //if(i%64==0||i==PATTERN_NUMBER-1) {
                 buffToFile(&bos, outFile);
                 bos.clear();
-            }
+            //}
         }
     }
     void matchListCollection(vector<MatchList>* mList, ofstream* outFile) {

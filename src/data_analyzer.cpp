@@ -2,12 +2,14 @@
 #include <chrono>
 #include <cstdlib>
 #include <cmath>
+#include <fstream>
 
 #include <float.h>
 #include "data_analyzer.h"
 #include "timer.h"
 #include "dataio.h"
 #include "config.h"
+#include "save.h"
 
 using namespace dataio;
 
@@ -31,7 +33,14 @@ namespace analyze {
                 p.body.push_back(graph.data[startPos+x]);
                 p.resultBody.push_back(graph.data[startPos+x+p.length]);
             }
-            patternArr[i] = p;
+            patternArr[i%PATTERN_SWAP_THRESHOLD] = p;
+
+            if((i+1)%PATTERN_SWAP_THRESHOLD == 0) {
+                ofstream outFile(SWAP_DIR+"/"+to_string(i/PATTERN_SWAP_THRESHOLD)+".pbin", ios::binary);
+                save::patternList(&patternArr, &outFile);
+                //patternArr.clear();
+                outFile.close();
+            }
         }
 
         timer::stop("Created patterns");
@@ -158,12 +167,6 @@ namespace analyze {
             if(layer==1) {
                 //cout << "Pred " << pid << endl;
             }
-//            if(layer<PREDICTION_MAX_RECURSIVE_ATTEMPTS) {
-//                for(int gt=layer; gt>0; gt--) {
-//                    cout << ">";
-//                }
-//                cout << "Finished " << pid << endl;
-//            }
         }
         if(layer==1) {
             timer::stop("Predicted outcomes");

@@ -1,5 +1,8 @@
 /build/
 /dist/
+swap/
+save/
+arch/
 nbproject/configurations.xml
 nbproject/Makefile-Debug.mk
 nbproject/Makefile-impl.mk

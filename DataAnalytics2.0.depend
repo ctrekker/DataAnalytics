@@ -3,7 +3,7 @@
 	<iostream>
 	<chrono>
 
-1531932826 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\main.cpp
+1532108551 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\main.cpp
 	<iostream>
 	<fstream>
 	<cmath>
@@ -18,35 +18,39 @@
 	<vector>
 	"dataio.h"
 
-1531671290 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\dataio.h
+1532053356 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\dataio.h
 	<vector>
 	<sstream>
 	<float.h>
 	"dataio.h"
 	"config.h"
 
-1531541678 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\config.h
+1532110110 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\config.h
 
 1530488812 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\timer.h
 
-1531603691 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\data_analyzer.cpp
+1532109975 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\data_analyzer.cpp
 	<iostream>
 	<chrono>
 	<cstdlib>
 	<cmath>
+	<fstream>
 	<float.h>
 	"data_analyzer.h"
 	"timer.h"
 	"dataio.h"
 	"config.h"
+	"save.h"
 
-1531932644 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\save.cpp
+1532110033 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\save.cpp
 	<fstream>
 	<iostream>
 	<climits>
 	"dataio.h"
 	"stream.h"
 	"save.h"
+	"config.h"
+	"timer.h"
 
 1531676457 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\stream.cpp
 	<iostream>
@@ -56,14 +60,21 @@
 1531671204 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\stream.h
 	<vector>
 
-1531541475 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\save.h
+1532053356 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\save.h
 	<fstream>
 	"dataio.h"
 
-1531932996 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\load.cpp
+1532053356 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\load.cpp
 	<vector>
+	<iostream>
+	<fstream>
 	"dataio.h"
 	"stream.h"
+	"timer.h"
+	"config.h"
+	"load.h"
 
-1531669208 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\load.h
+1532053356 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\load.h
+	<fstream>
+	"dataio.h"
 

@@ -37,7 +37,7 @@ namespace analyze {
             patternArr[i%PATTERN_SWAP_THRESHOLD] = p;
 
             if((i+1)%PATTERN_SWAP_THRESHOLD == 0) {
-                ofstream outFile(SWAP_DIR+"/"+to_string(i/PATTERN_SWAP_THRESHOLD)+".pbin", ios::binary);
+                ofstream outFile(SAVE_DIR+"/"+to_string(i/PATTERN_SWAP_THRESHOLD)+".pbin", ios::binary);
                 save::patternList(&patternArr, &outFile);
                 outFile.close();
             }
@@ -69,12 +69,12 @@ namespace analyze {
             }
 
             if((i+1)%PATTERN_SWAP_THRESHOLD == 0) {
-                ifstream inFile(SWAP_DIR+"/"+to_string(i/PATTERN_SWAP_THRESHOLD)+".pbin", ios::binary);
+                ifstream inFile(SAVE_DIR+"/"+to_string(i/PATTERN_SWAP_THRESHOLD)+".pbin", ios::binary);
                 load::patternList(&inFile, &patterns);
                 inFile.close();
             }
             if((i+1)%MATCH_SWAP_THRESHOLD == 0) {
-                ofstream outFile(SWAP_DIR+"/"+to_string(i/MATCH_SWAP_THRESHOLD)+".mbin", ios::binary);
+                ofstream outFile(SAVE_DIR+"/"+to_string(i/MATCH_SWAP_THRESHOLD)+".mbin", ios::binary);
                 save::matchListCollection(matchArr, &outFile);
                 //unsigned int mSize = matchArr->size();
                 outFile.close();
@@ -181,12 +181,12 @@ namespace analyze {
             }
 
             if((pid+1)%PATTERN_SWAP_THRESHOLD == 0) {
-                ifstream inFile(SWAP_DIR+"/"+to_string(pid/PATTERN_SWAP_THRESHOLD)+".pbin", ios::binary);
+                ifstream inFile(SAVE_DIR+"/"+to_string(pid/PATTERN_SWAP_THRESHOLD)+".pbin", ios::binary);
                 load::patternList(&inFile, &patterns);
                 inFile.close();
             }
             if((pid+1)%MATCH_SWAP_THRESHOLD == 0) {
-                ifstream inFile(SWAP_DIR+"/"+to_string(pid/MATCH_SWAP_THRESHOLD)+".mbin", ios::binary);
+                ifstream inFile(SAVE_DIR+"/"+to_string(pid/MATCH_SWAP_THRESHOLD)+".mbin", ios::binary);
                 load::matchListCollection(&inFile, &matches);
                 inFile.close();
             }

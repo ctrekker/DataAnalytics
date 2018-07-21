@@ -1,11 +1,13 @@
 #include <fstream>
 #include <iostream>
 #include <climits>
+#include <stdio.h>
 #include "dataio.h"
 #include "stream.h"
 #include "save.h"
 #include "config.h"
 #include "timer.h"
+#include "load.h"
 
 using namespace std;
 using namespace dataio;
@@ -15,16 +17,32 @@ namespace save {
         cout << "Saving state..." << endl;
         timer::start();
 
-        ofstream patternFile(SAVE_DIR+"/"+name+".pbin", ios::binary);
-        ofstream matchFile(SAVE_DIR+"/"+name+".mbin", ios::binary);
-        ofstream predictionFile(SAVE_DIR+"/"+name+".prbin", ios::binary);
+        string rName = SAVE_DIR+"/";
+        if(remove((rName+".pbin").c_str())!=0||remove((rName+".mbin").c_str())!=0||remove((rName+".prbin").c_str())!=0) {
+            cout << "WARN: Unable to clean save directory!" << endl;
+        }
 
-        save::patternList(patterns, &patternFile);
-        save::matchListCollection(matches, &matchFile);
+
+        ofstream predictionFile(rName+name+".prbin", ios::binary);
+
+        for(int i=0; i<PATTERN_NUMBER/PATTERN_SWAP_THRESHOLD; i++) {
+            ofstream patternFile(rName+to_string(i)+".pbin", ios::binary);
+            ifstream inFile(SAVE_DIR+"/"+to_string(i)+".pbin", ios::binary);
+            load::patternList(&inFile, patterns);
+            inFile.close();
+            save::patternList(patterns, &patternFile);
+            patternFile.close();
+        }
+        for(int i=0; i<PATTERN_NUMBER/MATCH_SWAP_THRESHOLD; i++) {
+            ofstream matchFile(rName+to_string(i)+".mbin", ios::binary);
+            ifstream inFile(SAVE_DIR+"/"+to_string(i)+".mbin", ios::binary);
+            load::matchListCollection(&inFile, matches);
+            inFile.close();
+            save::matchListCollection(matches, &matchFile);
+            matchFile.close();
+        }
         save::predictionList(predictions, &predictionFile);
 
-        patternFile.close();
-        matchFile.close();
         predictionFile.close();
 
 

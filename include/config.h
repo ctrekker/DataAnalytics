@@ -9,7 +9,6 @@ enum PredictionHandler {
     SEPARATE, MERGED
 };
 
-const static string SWAP_DIR = "swap";
 const static string SAVE_DIR = "save";
 const static string ARCH_DIR = "arch";
 

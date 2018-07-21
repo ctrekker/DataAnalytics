@@ -14,6 +14,7 @@ using namespace dataio;
 vector<Pattern> patterns(PATTERN_SWAP_THRESHOLD);
 vector<MatchList> matches;
 vector<Prediction> predictions;
+int currentSaveFileID = 0;
 
 Graph *createSineGraph(unsigned int length) {
     Graph *out = new Graph;
@@ -42,9 +43,9 @@ int main()
 
     analyze::create_patterns(patterns, sine);
     analyze::train(&matches, patterns, cosine);
-    //analyze::predict(&predictions, patterns, matches, cosine, 0, PATTERN_NUMBER-1, 1, cosine.data.size());
+    analyze::predict(&predictions, patterns, matches, cosine, 0, PATTERN_NUMBER-1, 1, cosine.data.size());
 
-    //save::state("data", &patterns, &matches, &predictions);
+    save::state("data", &patterns, &matches, &predictions);
 
 
     cout << endl;

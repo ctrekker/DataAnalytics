@@ -95,24 +95,26 @@ namespace load {
     }
 
     void patternList(ifstream* inFile, vector<Pattern>* patterns) {
+        unsigned int i=0;
         while(!inFile->eof()) {
             Pattern* p = new Pattern;
             vector<uint8_t> bos(Pattern::SIZE);
             load::fileToBuff(inFile, &bos);
             load::pattern(p, &bos);
-            patterns->push_back(*p);
+            (*patterns)[i]=*p;
         }
-        patterns->pop_back();
+        //patterns->pop_back();
     }
     void matchListCollection(ifstream* inFile, vector<MatchList>* mList) {
+        unsigned int i=0;
         while(!inFile->eof()) {
             MatchList* ml = new MatchList;
             vector<uint8_t> bos(MatchList::SIZE);
             load::fileToBuff(inFile, &bos);
             load::matchList(ml, &bos);
-            mList->push_back(*ml);
+            (*mList)[i]=*ml;
         }
-        mList->pop_back();
+        //mList->pop_back();
     }
     void predictionList(ifstream* inFile, vector<Prediction>* predictions) {
 

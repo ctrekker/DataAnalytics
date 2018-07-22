@@ -12,15 +12,17 @@
 using namespace std;
 using namespace dataio;
 
+int currentSaveFileID;
+
 namespace save {
     void state(string name, vector<Pattern>* patterns, vector<MatchList>* matches, vector<Prediction>* predictions) {
         cout << "Saving state..." << endl;
         timer::start();
 
         string rName = SAVE_DIR+"/";
-        if(remove((rName+".pbin").c_str())!=0||remove((rName+".mbin").c_str())!=0||remove((rName+".prbin").c_str())!=0) {
-            cout << "WARN: Unable to clean save directory!" << endl;
-        }
+//        if(remove((rName+".pbin").c_str())!=0||remove((rName+".mbin").c_str())!=0||remove((rName+".prbin").c_str())!=0) {
+//            cout << "WARN: Unable to clean save directory!" << endl;
+//        }
 
 
         ofstream predictionFile(rName+name+".prbin", ios::binary);

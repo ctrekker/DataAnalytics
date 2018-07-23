@@ -61,6 +61,9 @@ namespace analyze {
                 if(state::matchFileExists(currentPatternFileId)) {
                     load::matchFile(matchArr, currentPatternFileId);
                 }
+                else {
+                    matchArr->clear();
+                }
                 // Load next patterns
                 load::patternFile(&patterns, currentPatternFileId);
             }

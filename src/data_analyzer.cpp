@@ -96,10 +96,20 @@ namespace analyze {
         timer::start();
         bool added = false;
 
+        int currentPatternFileId = state::getFileId(patternStart);
+        load::patternFile(&patterns, currentPatternFileId);
+        load::matchFile(&matches, currentPatternFileId);
         for(uint64_t pid=patternStart; pid<=patternEnd; pid++) {
-            Pattern p = patterns[pid];
+            if(state::getFileId(pid)!=currentPatternFileId) {
+                currentPatternFileId = state::getFileId(pid);
+                load::patternFile(&patterns, currentPatternFileId);
+                load::matchFile(&matches, currentPatternFileId);
+            }
+            
+            Pattern p = patterns[pid%OBJ_PER_FILE];
+            cout << "p=" << p.id << ",m=" << matches[pid%OBJ_PER_FILE].id << endl;
             vector<Match> mList;
-            mList = matches[pid].matches;
+            mList = matches[pid%OBJ_PER_FILE].matches;
 
             vector<Match> data;
             patternMatch(&data, graph, p, false);
@@ -124,9 +134,7 @@ namespace analyze {
                     bestMatch = m;
                 }
             }
-            //for(Match currentMatch : mList) {
-            //    if(currentMatch)
-            //}
+            
             if(bestMatch == nullptr) {
                 cout << pid << " nomatch" << endl;
                 continue;

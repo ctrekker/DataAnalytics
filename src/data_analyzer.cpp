@@ -107,7 +107,6 @@ namespace analyze {
             }
             
             Pattern p = patterns[pid%OBJ_PER_FILE];
-            cout << "p=" << p.id << ",m=" << matches[pid%OBJ_PER_FILE].id << endl;
             vector<Match> mList;
             mList = matches[pid%OBJ_PER_FILE].matches;
 

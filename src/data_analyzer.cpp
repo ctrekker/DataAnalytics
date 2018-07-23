@@ -50,10 +50,8 @@ namespace analyze {
         load::patternFile(&patterns, currentPatternFileId);
         if(state::initTotalPatterns!=0) {
             load::matchFile(matchArr, currentPatternFileId);
-            cout << "Size: " << matchArr->size() << endl;
         }
         for(uint64_t i=0; i<state::totalPatterns; i++) {
-            cout << "ID" << i << endl;
             if(state::getFileId(i)!=currentPatternFileId) {
                 // Save new matches
                 save::createdMatches(matchArr, currentPatternFileId, true);
@@ -70,14 +68,12 @@ namespace analyze {
                 MatchList m = *(new MatchList);
                 m.id = i;
                 matchArr->push_back(m);
-                cout << "Added" << endl;
             }
             Pattern p = patterns[i%OBJ_PER_FILE];
             vector<Match> mList;
             patternMatch(&mList, graph, p, true);
 
             MatchList* m = &((*matchArr)[i%OBJ_PER_FILE]);
-            cout << m->id << endl;
             for(unsigned int j=0; j<mList.size(); j++) {
                 if(j>MATCH_BUFFER_SIZE) {
                     break;

@@ -108,30 +108,31 @@ namespace load {
     }
     
     void patternList(ifstream* inFile, vector<Pattern>* patterns) {
-        int i=0;
         while(!inFile->eof()) {
-            cout << i << endl;
-            Pattern* p = new Pattern;
-            vector<uint8_t> bos(Pattern::SIZE);
-            load::fileToBuff(inFile, &bos);
-            load::pattern(p, &bos);
-            patterns->push_back(*p);
-            i++;
+            try {
+                Pattern* p = new Pattern;
+                vector<uint8_t> bos(Pattern::SIZE);
+                load::fileToBuff(inFile, &bos);
+                if(inFile->eof()) break;
+                load::pattern(p, &bos);
+                patterns->push_back(*p);
+            }
+            catch(ios_base::failure& e) {
+                cout << "PATTERN LIST LOAD EXCEPTION" << endl;
+            }
         }
-        patterns->pop_back();
     }
     void matchListCollection(ifstream* inFile, vector<MatchList>* mList) {
         int i=0;
         while(!inFile->eof()) {
-            cout << i << endl;
             MatchList* ml = new MatchList;
             vector<uint8_t> bos(MatchList::SIZE);
             load::fileToBuff(inFile, &bos);
+            if(inFile->eof()) break;
             load::matchList(ml, &bos);
             mList->push_back(*ml);
             i++;
         }
-        mList->pop_back();
     }
     void predictionList(ifstream* inFile, vector<Prediction>* predictions) {
         

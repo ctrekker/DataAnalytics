@@ -7,6 +7,9 @@
 using namespace dataio;
 
 namespace save {
+    void createdPatterns(vector<Pattern>*);
+    void createdMatches(vector<MatchList>*, int, bool = false);
+    
     void state(string, vector<Pattern>*, vector<MatchList>*, vector<Prediction>*);
     
     void pattern(vector<uint8_t>*, Pattern*);

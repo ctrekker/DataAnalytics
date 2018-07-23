@@ -1,12 +1,14 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
+
 #include "data_analyzer.h"
 #include "dataio.h"
 #include "timer.h"
 #include "stream.h"
 #include "save.h"
 #include "load.h"
+#include "state.h"
 
 using namespace std;
 using namespace dataio;
@@ -37,34 +39,20 @@ Graph *createCosineGraph(unsigned int length) {
 }
 int main()
 {
+    state::init();
+    
     Graph sine = *createSineGraph(1000);
     Graph cosine = *createCosineGraph(1000);
 
     analyze::create_patterns(patterns, sine);
     analyze::train(&matches, patterns, cosine);
-    analyze::predict(&predictions, patterns, matches, cosine, 0, PATTERN_NUMBER-1, 1, cosine.data.size());
+    analyze::predict(&predictions, patterns, matches, cosine, 0, state::totalPatterns-1, 1, cosine.data.size());
 
-
-//    timer::start();
-//    ofstream patternFile("data/patterns.bin", ios::binary);
-//    save::patternList(&patterns, &patternFile);
-//    timer::stop("Wrote patterns to disk");
-//    patternFile.close();
-//
-//    timer::start();
-//    ofstream matchFile("data/matches.bin", ios::binary);
-//    save::matchListCollection(&matches, &matchFile);
-//    timer::stop("Wrote matches to disk");
-//    patternFile.close();
-//
-//    timer::start();
-//    ofstream predictionFile("data/predictions.bin", ios::binary);
-//    save::predictionList(&predictions, &predictionFile);
-//    timer::stop("Wrote predictions to disk");
-//    predictionFile.close();
+    state::preserve();
     save::state("data", &patterns, &matches, &predictions);
     
     cout << endl;
+    cout << "---DEBUG---" << endl;
 
     cout << predictions.size() << "<-Total Predictions" << endl;
 

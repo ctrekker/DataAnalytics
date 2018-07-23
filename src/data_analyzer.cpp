@@ -8,6 +8,9 @@
 #include "timer.h"
 #include "dataio.h"
 #include "config.h"
+#include "state.h"
+#include "save.h"
+#include "load.h"
 
 using namespace dataio;
 
@@ -20,7 +23,7 @@ namespace analyze {
             int startPos = rand() % (graph.data.size() - PATTERN_LENGTH*2);
 
             Pattern p;
-            p.id = i;
+            p.id = state::getPatternId(i);
             p.dimensions = graph.dimensions;
             p.created = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
             p.length = PATTERN_LENGTH;
@@ -33,6 +36,8 @@ namespace analyze {
             }
             patternArr[i] = p;
         }
+        state::totalPatterns += PATTERN_NUMBER;
+        save::createdPatterns(&patternArr);
 
         timer::stop("Created patterns");
         cout << endl;
@@ -41,17 +46,37 @@ namespace analyze {
         std::cout << "Training model..." << std::endl;
         timer::start();
 
-        for(unsigned int i=0; i<PATTERN_NUMBER; i++) {
-            if(matchArr->size()<=i) {
+        int currentPatternFileId = 0;
+        load::patternFile(&patterns, currentPatternFileId);
+        if(state::initTotalPatterns!=0) {
+            load::matchFile(matchArr, currentPatternFileId);
+        }
+        for(uint64_t i=0; i<state::totalPatterns; i++) {
+            if(state::getFileId(i)!=currentPatternFileId) {
+                // Save new matches
+                save::createdMatches(matchArr, currentPatternFileId, true);
+                // Assign new file id
+                currentPatternFileId=state::getFileId(i);
+                // Load old matches
+                if(state::matchFileExists(currentPatternFileId)) {
+                    load::matchFile(matchArr, currentPatternFileId);
+                }
+                else {
+                    matchArr->clear();
+                }
+                // Load next patterns
+                load::patternFile(&patterns, currentPatternFileId);
+            }
+            if(matchArr->size()<=i%OBJ_PER_FILE) {
                 MatchList m = *(new MatchList);
                 m.id = i;
                 matchArr->push_back(m);
             }
-            Pattern p = patterns[i];
+            Pattern p = patterns[i%OBJ_PER_FILE];
             vector<Match> mList;
             patternMatch(&mList, graph, p, true);
 
-            MatchList* m = &((*matchArr)[i]);
+            MatchList* m = &((*matchArr)[i%OBJ_PER_FILE]);
             for(unsigned int j=0; j<mList.size(); j++) {
                 if(j>MATCH_BUFFER_SIZE) {
                     break;
@@ -59,6 +84,7 @@ namespace analyze {
                 m->addMatch(mList[j]);
             }
         }
+        save::createdMatches(matchArr, currentPatternFileId, true);
 
         timer::stop("Trained model");
         cout << endl;
@@ -70,10 +96,20 @@ namespace analyze {
         timer::start();
         bool added = false;
 
+        int currentPatternFileId = state::getFileId(patternStart);
+        load::patternFile(&patterns, currentPatternFileId);
+        load::matchFile(&matches, currentPatternFileId);
         for(uint64_t pid=patternStart; pid<=patternEnd; pid++) {
-            Pattern p = patterns[pid];
+            if(state::getFileId(pid)!=currentPatternFileId) {
+                currentPatternFileId = state::getFileId(pid);
+                load::patternFile(&patterns, currentPatternFileId);
+                load::matchFile(&matches, currentPatternFileId);
+            }
+            
+            Pattern p = patterns[pid%OBJ_PER_FILE];
+            cout << "p=" << p.id << ",m=" << matches[pid%OBJ_PER_FILE].id << endl;
             vector<Match> mList;
-            mList = matches[pid].matches;
+            mList = matches[pid%OBJ_PER_FILE].matches;
 
             vector<Match> data;
             patternMatch(&data, graph, p, false);
@@ -98,9 +134,7 @@ namespace analyze {
                     bestMatch = m;
                 }
             }
-            //for(Match currentMatch : mList) {
-            //    if(currentMatch)
-            //}
+            
             if(bestMatch == nullptr) {
                 cout << pid << " nomatch" << endl;
                 continue;

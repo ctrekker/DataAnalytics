@@ -8,6 +8,9 @@ using namespace std;
 using namespace dataio;
 
 namespace load {
+    void patternFile(vector<Pattern>*, uint64_t);
+    void matchFile(vector<MatchList>*, uint64_t);
+    
     void state(string, vector<Pattern>*, vector<MatchList>*, vector<Prediction>*);
     
     int pattern(Pattern*, vector<uint8_t>*, uint64_t = 0);

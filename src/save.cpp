@@ -6,11 +6,33 @@
 #include "save.h"
 #include "config.h"
 #include "timer.h"
+#include "state.h"
 
 using namespace std;
 using namespace dataio;
 
 namespace save {
+    void createdPatterns(vector<Pattern>* patterns) {
+        ofstream outFile(state::getFilePath(state::totalPatterns-1), ios::binary | ios::app);
+        
+        save::patternList(patterns, &outFile);
+        
+        outFile.close();
+    }
+    void createdMatches(vector<MatchList>* matches, int fileId, bool overwrite) {
+        ofstream outFile;
+        if(overwrite) {
+            outFile = ofstream(SAVE_DIR+"/"+to_string(fileId)+".mbin", ios::binary);
+        }
+        else {
+            outFile = ofstream(SAVE_DIR+"/"+to_string(fileId)+".mbin", ios::binary | ios::app);
+        }    
+        
+        save::matchListCollection(matches, &outFile);
+        
+        outFile.close();
+    }
+    
     void state(string name, vector<Pattern>* patterns, vector<MatchList>* matches, vector<Prediction>* predictions) {
         cout << "Saving state..." << endl;
         timer::start();

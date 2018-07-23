@@ -1,12 +1,14 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
+
 #include "data_analyzer.h"
 #include "dataio.h"
 #include "timer.h"
 #include "stream.h"
 #include "save.h"
 #include "load.h"
+#include "state.h"
 
 using namespace std;
 using namespace dataio;
@@ -37,6 +39,8 @@ Graph *createCosineGraph(unsigned int length) {
 }
 int main()
 {
+    state::init();
+    
     Graph sine = *createSineGraph(1000);
     Graph cosine = *createCosineGraph(1000);
 
@@ -62,9 +66,11 @@ int main()
 //    save::predictionList(&predictions, &predictionFile);
 //    timer::stop("Wrote predictions to disk");
 //    predictionFile.close();
+    state::preserve();
     save::state("data", &patterns, &matches, &predictions);
     
     cout << endl;
+    cout << "---DEBUG---" << endl;
 
     cout << predictions.size() << "<-Total Predictions" << endl;
 

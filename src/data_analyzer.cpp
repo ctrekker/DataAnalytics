@@ -8,6 +8,9 @@
 #include "timer.h"
 #include "dataio.h"
 #include "config.h"
+#include "state.h"
+#include "save.h"
+#include "load.h"
 
 using namespace dataio;
 
@@ -20,7 +23,7 @@ namespace analyze {
             int startPos = rand() % (graph.data.size() - PATTERN_LENGTH*2);
 
             Pattern p;
-            p.id = i;
+            p.id = state::getPatternId(i);
             p.dimensions = graph.dimensions;
             p.created = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
             p.length = PATTERN_LENGTH;
@@ -33,6 +36,8 @@ namespace analyze {
             }
             patternArr[i] = p;
         }
+        state::totalPatterns += PATTERN_NUMBER;
+        save::createdPatterns(&patternArr);
 
         timer::stop("Created patterns");
         cout << endl;
@@ -41,17 +46,38 @@ namespace analyze {
         std::cout << "Training model..." << std::endl;
         timer::start();
 
-        for(unsigned int i=0; i<PATTERN_NUMBER; i++) {
-            if(matchArr->size()<=i) {
+        int currentPatternFileId = 0;
+        load::patternFile(&patterns, currentPatternFileId);
+        if(state::initTotalPatterns!=0) {
+            load::matchFile(matchArr, currentPatternFileId);
+            cout << "Size: " << matchArr->size() << endl;
+        }
+        for(uint64_t i=0; i<state::totalPatterns; i++) {
+            cout << "ID" << i << endl;
+            if(state::getFileId(i)!=currentPatternFileId) {
+                // Save new matches
+                save::createdMatches(matchArr, currentPatternFileId, true);
+                // Assign new file id
+                currentPatternFileId=state::getFileId(i);
+                // Load old matches
+                if(state::matchFileExists(currentPatternFileId)) {
+                    load::matchFile(matchArr, currentPatternFileId);
+                }
+                // Load next patterns
+                load::patternFile(&patterns, currentPatternFileId);
+            }
+            if(matchArr->size()<=i%OBJ_PER_FILE) {
                 MatchList m = *(new MatchList);
                 m.id = i;
                 matchArr->push_back(m);
+                cout << "Added" << endl;
             }
-            Pattern p = patterns[i];
+            Pattern p = patterns[i%OBJ_PER_FILE];
             vector<Match> mList;
             patternMatch(&mList, graph, p, true);
 
-            MatchList* m = &((*matchArr)[i]);
+            MatchList* m = &((*matchArr)[i%OBJ_PER_FILE]);
+            cout << m->id << endl;
             for(unsigned int j=0; j<mList.size(); j++) {
                 if(j>MATCH_BUFFER_SIZE) {
                     break;
@@ -59,6 +85,7 @@ namespace analyze {
                 m->addMatch(mList[j]);
             }
         }
+        save::createdMatches(matchArr, currentPatternFileId, true);
 
         timer::stop("Trained model");
         cout << endl;

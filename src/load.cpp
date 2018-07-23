@@ -11,6 +11,19 @@ using namespace std;
 using namespace dataio;
 
 namespace load {
+    void patternFile(vector<Pattern>* patterns, uint64_t fid) {
+        patterns->clear();
+        ifstream fileIn(SAVE_DIR+"/"+to_string(fid)+".pbin");
+        load::patternList(&fileIn, patterns);
+        fileIn.close();
+    }
+    void matchFile(vector<MatchList>* matches, uint64_t fid) {
+        matches->clear();
+        ifstream fileIn(SAVE_DIR+"/"+to_string(fid)+".mbin");
+        load::matchListCollection(&fileIn, matches);
+        fileIn.close();
+    }
+    
     void state(string name, vector<Pattern>* patterns, vector<MatchList>* matches, vector<Prediction>* predictions) {
         cout << "Loading state..." << endl;
         timer::start();
@@ -95,22 +108,28 @@ namespace load {
     }
     
     void patternList(ifstream* inFile, vector<Pattern>* patterns) {
+        int i=0;
         while(!inFile->eof()) {
+            cout << i << endl;
             Pattern* p = new Pattern;
             vector<uint8_t> bos(Pattern::SIZE);
             load::fileToBuff(inFile, &bos);
             load::pattern(p, &bos);
             patterns->push_back(*p);
+            i++;
         }
         patterns->pop_back();
     }
     void matchListCollection(ifstream* inFile, vector<MatchList>* mList) {
+        int i=0;
         while(!inFile->eof()) {
+            cout << i << endl;
             MatchList* ml = new MatchList;
             vector<uint8_t> bos(MatchList::SIZE);
             load::fileToBuff(inFile, &bos);
             load::matchList(ml, &bos);
             mList->push_back(*ml);
+            i++;
         }
         mList->pop_back();
     }

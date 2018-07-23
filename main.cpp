@@ -48,24 +48,6 @@ int main()
     analyze::train(&matches, patterns, cosine);
     analyze::predict(&predictions, patterns, matches, cosine, 0, PATTERN_NUMBER-1, 1, cosine.data.size());
 
-
-//    timer::start();
-//    ofstream patternFile("data/patterns.bin", ios::binary);
-//    save::patternList(&patterns, &patternFile);
-//    timer::stop("Wrote patterns to disk");
-//    patternFile.close();
-//
-//    timer::start();
-//    ofstream matchFile("data/matches.bin", ios::binary);
-//    save::matchListCollection(&matches, &matchFile);
-//    timer::stop("Wrote matches to disk");
-//    patternFile.close();
-//
-//    timer::start();
-//    ofstream predictionFile("data/predictions.bin", ios::binary);
-//    save::predictionList(&predictions, &predictionFile);
-//    timer::stop("Wrote predictions to disk");
-//    predictionFile.close();
     state::preserve();
     save::state("data", &patterns, &matches, &predictions);
     

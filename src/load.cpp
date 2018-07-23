@@ -94,14 +94,21 @@ namespace load {
         return cp;
     }
 
-    void patternList(ifstream* inFile, vector<Pattern>* patterns) {
+    void patternList(ifstream* inFile, vector<Pattern>* patterns, uint64_t start) {
         unsigned int i=0;
-        while(!inFile->eof()) {
+        inFile->seekg(start*Pattern::SIZE, ios_base::beg);
+        while(i<PATTERN_NUMBER) {
             Pattern* p = new Pattern;
             vector<uint8_t> bos(Pattern::SIZE);
             load::fileToBuff(inFile, &bos);
+            //if(i>500) {
+//            for(unsigned int j=0; j<bos.size(); j++) {
+//                cout << (unsigned)bos[j] << ",";
+//            }
+            //}
             load::pattern(p, &bos);
             (*patterns)[i]=*p;
+            i++;
         }
         //patterns->pop_back();
     }
@@ -113,6 +120,7 @@ namespace load {
             load::fileToBuff(inFile, &bos);
             load::matchList(ml, &bos);
             (*mList)[i]=*ml;
+            i++;
         }
         //mList->pop_back();
     }

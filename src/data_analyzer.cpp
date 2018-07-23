@@ -11,6 +11,7 @@
 #include "config.h"
 #include "save.h"
 #include "load.h"
+#include "state.h"
 
 using namespace dataio;
 
@@ -19,7 +20,7 @@ namespace analyze {
         std::cout << "Creating patterns..." << std::endl;
         timer::start();
 
-        for(int i=0; i<PATTERN_NUMBER; i++) {
+        for(int i=state::totalPatternNumber; i<state::totalPatternNumber + PATTERN_NUMBER; i++) {
             int startPos = rand() % (graph.data.size() - PATTERN_LENGTH*2);
 
             Pattern p;
@@ -36,8 +37,9 @@ namespace analyze {
             }
             patternArr[i%PATTERN_SWAP_THRESHOLD] = p;
 
-            if((i+1)%PATTERN_SWAP_THRESHOLD == 0) {
-                ofstream outFile(SAVE_DIR+"/"+to_string(i/PATTERN_SWAP_THRESHOLD)+".pbin", ios::binary);
+            if((i+1)%PATTERN_SWAP_THRESHOLD == 0 || i+1 == state::totalPatternNumber + PATTERN_NUMBER) {
+                cout << i << endl;
+                ofstream outFile(SAVE_DIR+"/"+to_string(i/PATTERN_SWAP_THRESHOLD)+".pbin", ios::binary | ios::app);
                 save::patternList(&patternArr, &outFile);
                 outFile.close();
             }
@@ -47,10 +49,15 @@ namespace analyze {
         cout << endl;
     }
     void train(vector<MatchList>* matchArr, vector<Pattern> patterns, Graph graph) {
+        ifstream inFile(SAVE_DIR+"/"+to_string(0)+".pbin", ios::binary);
+        load::patternList(&inFile, &patterns);
+        cout << patterns.size() << endl;
+
         std::cout << "Training model..." << std::endl;
         timer::start();
 
-        for(unsigned int i=0; i<PATTERN_NUMBER; i++) {
+        for(unsigned int i=0; i<state::totalPatternNumber + PATTERN_NUMBER; i++) {
+            cout << i << endl;
             if(matchArr->size()<=(i%MATCH_SWAP_THRESHOLD)) {
                 MatchList m = *(new MatchList);
                 m.id = i;
@@ -81,6 +88,7 @@ namespace analyze {
             }
         }
 
+        state::preserve();
         timer::stop("Trained model");
         cout << endl;
     }

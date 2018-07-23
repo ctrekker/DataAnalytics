@@ -8,11 +8,10 @@
 #include "config.h"
 #include "timer.h"
 #include "load.h"
+#include "state.h"
 
 using namespace std;
 using namespace dataio;
-
-int currentSaveFileID;
 
 namespace save {
     void state(string name, vector<Pattern>* patterns, vector<MatchList>* matches, vector<Prediction>* predictions) {
@@ -27,7 +26,7 @@ namespace save {
 
         ofstream predictionFile(rName+name+".prbin", ios::binary);
 
-        for(int i=0; i<PATTERN_NUMBER/PATTERN_SWAP_THRESHOLD; i++) {
+        for(int i=state::currentSaveFile; i<state::currentSaveFile + PATTERN_NUMBER/PATTERN_SWAP_THRESHOLD; i++) {
             ofstream patternFile(rName+to_string(i)+".pbin", ios::binary);
             ifstream inFile(SAVE_DIR+"/"+to_string(i)+".pbin", ios::binary);
             load::patternList(&inFile, patterns);
@@ -35,7 +34,7 @@ namespace save {
             save::patternList(patterns, &patternFile);
             patternFile.close();
         }
-        for(int i=0; i<PATTERN_NUMBER/MATCH_SWAP_THRESHOLD; i++) {
+        for(int i=state::currentSaveFile; i<state::currentSaveFile + PATTERN_NUMBER/MATCH_SWAP_THRESHOLD; i++) {
             ofstream matchFile(rName+to_string(i)+".mbin", ios::binary);
             ifstream inFile(SAVE_DIR+"/"+to_string(i)+".mbin", ios::binary);
             load::matchListCollection(&inFile, matches);

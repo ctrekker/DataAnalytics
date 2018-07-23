@@ -7,6 +7,7 @@
 #include "stream.h"
 #include "save.h"
 #include "load.h"
+#include "state.h"
 
 using namespace std;
 using namespace dataio;
@@ -14,7 +15,6 @@ using namespace dataio;
 vector<Pattern> patterns(PATTERN_SWAP_THRESHOLD);
 vector<MatchList> matches;
 vector<Prediction> predictions;
-int currentSaveFileID = 0;
 
 Graph *createSineGraph(unsigned int length) {
     Graph *out = new Graph;
@@ -38,6 +38,8 @@ Graph *createCosineGraph(unsigned int length) {
 }
 int main()
 {
+    state::init();
+
     Graph sine = *createSineGraph(1000);
     Graph cosine = *createCosineGraph(1000);
 
@@ -82,6 +84,8 @@ int main()
         cout << predictions[pn].toString() << endl;
     }
     file.close();
+
+    state::preserve();
 
     return 0;
 }

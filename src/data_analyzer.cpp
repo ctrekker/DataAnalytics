@@ -187,6 +187,10 @@ namespace analyze {
                         }
                     }
                 }
+                
+                if(predictions->size()>=PREDICTION_MAX_NUMBER) {
+                    return added;
+                }
             }
             if(layer==1) {
                 //cout << "Pred " << pid << endl;

@@ -49,7 +49,6 @@ int main()
     analyze::predict(&predictions, patterns, matches, cosine, 0, state::totalPatterns-1, 1, cosine.data.size());
 
     state::preserve();
-    save::state("data", &patterns, &matches, &predictions);
     
     cout << endl;
     cout << "---DEBUG---" << endl;

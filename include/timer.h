@@ -4,6 +4,7 @@
 namespace timer {
     void start();
     void stop(std::string);
+    uint64_t getTimeMillis();
 }
 
 #endif // TIMER_H_INCLUDED

@@ -35,4 +35,7 @@ namespace timer {
         }
         cout << str << " in " << time << label << endl;
     }
+    uint64_t getTimeMillis() {
+        return std::chrono::duration_cast<std::chrono::milliseconds>(chrono::high_resolution_clock::now().time_since_epoch()).count();
+    }
 }

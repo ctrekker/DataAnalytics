@@ -40,7 +40,7 @@ Graph *createCosineGraph(unsigned int length) {
 int main()
 {
     state::init();
-    
+
     Graph sine = *createSineGraph(1000);
     Graph cosine = *createCosineGraph(1000);
 
@@ -48,11 +48,9 @@ int main()
     analyze::train(&matches, patterns, cosine);
     analyze::predict(&predictions, patterns, matches, cosine, 0, state::totalPatterns-1, 1, cosine.data.size());
 
-    state::preserve();
-    save::state("data", &patterns, &matches, &predictions);
-    
-    cout << endl;
     cout << "---DEBUG---" << endl;
+    state::preserve();
+    cout << endl;
 
     cout << predictions.size() << "<-Total Predictions" << endl;
 
@@ -87,6 +85,6 @@ int main()
         cout << predictions[pn].toString() << endl;
     }
     file.close();
-    
+
     return 0;
 }

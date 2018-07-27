@@ -2,8 +2,9 @@
 #include <chrono>
 #include <cstdlib>
 #include <cmath>
-
 #include <float.h>
+
+#include "ProgressBar.hpp"
 #include "data_analyzer.h"
 #include "timer.h"
 #include "dataio.h"
@@ -18,6 +19,9 @@ namespace analyze {
     void create_patterns(vector<Pattern> &patternArr, Graph graph) {
         std::cout << "Creating patterns..." << std::endl;
         timer::start();
+
+        ProgressBar pb(PATTERN_NUMBER, 50);
+        uint64_t lastLoadUpdate = timer::getTimeMillis();
 
         for(int i=0; i<PATTERN_NUMBER; i++) {
             int startPos = rand() % (graph.data.size() - PATTERN_LENGTH*2);
@@ -35,10 +39,17 @@ namespace analyze {
                 p.resultBody.push_back(graph.data[startPos+x+p.length]);
             }
             patternArr[i] = p;
+
+            if(timer::getTimeMillis()-lastLoadUpdate>150) {
+                pb.setTicks(i);
+                pb.display();
+                lastLoadUpdate = timer::getTimeMillis();
+            }
         }
         state::totalPatterns += PATTERN_NUMBER;
         save::createdPatterns(&patternArr);
 
+        pb.done();
         timer::stop("Created patterns");
         cout << endl;
     }
@@ -46,11 +57,14 @@ namespace analyze {
         std::cout << "Training model..." << std::endl;
         timer::start();
 
+        ProgressBar pb(state::totalPatterns, 50);
+
         int currentPatternFileId = 0;
         load::patternFile(&patterns, currentPatternFileId);
         if(state::initTotalPatterns!=0) {
             load::matchFile(matchArr, currentPatternFileId);
         }
+        uint64_t lastLoadUpdate = timer::getTimeMillis();
         for(uint64_t i=0; i<state::totalPatterns; i++) {
             if(state::getFileId(i)!=currentPatternFileId) {
                 // Save new matches
@@ -83,17 +97,26 @@ namespace analyze {
                 }
                 m->addMatch(mList[j]);
             }
+            if(timer::getTimeMillis()-lastLoadUpdate>150) {
+                pb.setTicks(i);
+                pb.display();
+                lastLoadUpdate = timer::getTimeMillis();
+            }
         }
         save::createdMatches(matchArr, currentPatternFileId, true);
 
+        pb.done();
         timer::stop("Trained model");
         cout << endl;
     }
     bool predict(vector<Prediction>* predictions, vector<Pattern> &patterns, vector<MatchList> matches, Graph graph, uint64_t patternStart, uint64_t patternEnd, int layer, int initialGraphSize) {
         if(layer==1) {
             cout << "Predicting outcomes..." << endl;
+            timer::start();
         }
-        timer::start();
+        ProgressBar pb(patternEnd-patternStart, 50);
+        uint64_t lastLoadUpdate = timer::getTimeMillis();
+
         bool added = false;
 
         int currentPatternFileId = state::getFileId(patternStart);
@@ -105,7 +128,7 @@ namespace analyze {
                 load::patternFile(&patterns, currentPatternFileId);
                 load::matchFile(&matches, currentPatternFileId);
             }
-            
+
             Pattern p = patterns[pid%OBJ_PER_FILE];
             vector<Match> mList;
             mList = matches[pid%OBJ_PER_FILE].matches;
@@ -133,7 +156,7 @@ namespace analyze {
                     bestMatch = m;
                 }
             }
-            
+
             if(bestMatch == nullptr) {
                 cout << pid << " nomatch" << endl;
                 continue;
@@ -187,13 +210,17 @@ namespace analyze {
                         }
                     }
                 }
-                
+
                 if(predictions->size()>=PREDICTION_MAX_NUMBER) {
                     return added;
                 }
             }
             if(layer==1) {
-                //cout << "Pred " << pid << endl;
+                if(timer::getTimeMillis()-lastLoadUpdate>150) {
+                    pb.setTicks(pid-patternStart);
+                    pb.display();
+                    lastLoadUpdate = timer::getTimeMillis();
+                }
             }
 //            if(layer<PREDICTION_MAX_RECURSIVE_ATTEMPTS) {
 //                for(int gt=layer; gt>0; gt--) {
@@ -203,6 +230,7 @@ namespace analyze {
 //            }
         }
         if(layer==1) {
+            pb.done();
             timer::stop("Predicted outcomes");
             cout << endl;
         }

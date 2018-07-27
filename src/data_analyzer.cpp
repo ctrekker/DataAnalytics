@@ -19,7 +19,7 @@ namespace analyze {
     void create_patterns(vector<Pattern> &patternArr, Graph graph) {
         std::cout << "Creating patterns..." << std::endl;
         timer::start();
-        
+
         ProgressBar pb(PATTERN_NUMBER, 50);
         uint64_t lastLoadUpdate = timer::getTimeMillis();
 
@@ -38,8 +38,8 @@ namespace analyze {
                 p.body.push_back(graph.data[startPos+x]);
                 p.resultBody.push_back(graph.data[startPos+x+p.length]);
             }
-            patternArr[i] = p;    
-            
+            patternArr[i] = p;
+
             if(timer::getTimeMillis()-lastLoadUpdate>150) {
                 pb.setTicks(i);
                 pb.display();
@@ -56,7 +56,7 @@ namespace analyze {
     void train(vector<MatchList>* matchArr, vector<Pattern> patterns, Graph graph) {
         std::cout << "Training model..." << std::endl;
         timer::start();
-        
+
         ProgressBar pb(state::totalPatterns, 50);
 
         int currentPatternFileId = 0;
@@ -116,7 +116,7 @@ namespace analyze {
         }
         ProgressBar pb(patternEnd-patternStart, 50);
         uint64_t lastLoadUpdate = timer::getTimeMillis();
-        
+
         bool added = false;
 
         int currentPatternFileId = state::getFileId(patternStart);
@@ -128,7 +128,7 @@ namespace analyze {
                 load::patternFile(&patterns, currentPatternFileId);
                 load::matchFile(&matches, currentPatternFileId);
             }
-            
+
             Pattern p = patterns[pid%OBJ_PER_FILE];
             vector<Match> mList;
             mList = matches[pid%OBJ_PER_FILE].matches;
@@ -156,7 +156,7 @@ namespace analyze {
                     bestMatch = m;
                 }
             }
-            
+
             if(bestMatch == nullptr) {
                 cout << pid << " nomatch" << endl;
                 continue;
@@ -210,7 +210,7 @@ namespace analyze {
                         }
                     }
                 }
-                
+
                 if(predictions->size()>=PREDICTION_MAX_NUMBER) {
                     return added;
                 }

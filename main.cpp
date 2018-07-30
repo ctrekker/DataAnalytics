@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
+#include <stdlib.h>
 
 #include "data_analyzer.h"
 #include "dataio.h"
@@ -150,7 +151,7 @@ void RunCommand(args::Subparser &parser) {
     file.close();
 }
 int main(int argc, const char **argv)
-{
+{ 
     args::ArgumentParser p("DataAnalytics 2.0");
     args::Group commands(p, "commands");
     args::Command import(commands, "import", "import a file to the input repository", &ImportCommand);

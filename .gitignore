@@ -38,3 +38,15 @@ obj/Release/src/load.o
 obj/Release/src/save.o
 obj/Release/src/timer.o
 .gitignore.swp
+.idea/DataAnalytics2.0.iml
+.idea/dataSources.local.xml
+.idea/dataSources.xml
+.idea/dataSources/a20dc8b5-c979-41b7-846e-d9ae8f9b67ad.xml
+.idea/deployment.xml
+.idea/jsLibraryMappings.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
+.idea/workspace.xml
+.idea/dataSources.xml
+.idea/dataSources.xml

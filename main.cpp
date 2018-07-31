@@ -102,6 +102,12 @@ void ImportCommand(args::Subparser &parser) {
     }
 }
 void RunCommand(args::Subparser &parser) {
+    args::ValueFlag<string> sourceFlag(parser, "SOURCE", "source of the resource to run from. Defaults to test case", {'s', "source"});
+    args::Flag patternFlag(parser, "PATTERN", "create patterns or not", {'p'});
+    args::Flag trainFlag(parser, "TRAIN", "train model or not", {'t'});
+    args::Flag predictFlag(parser, "PREDICT", "make predictions for source", {'r'});
+    args::Flag verboseFlag(parser, "VERBOSE", "turn on verbose output", {'v', "verbose"});
+    args::Flag debugFlag(parser, "DEBUG", "turn on debug mode", {'d', "debug"});
     parser.Parse();
 
     state::init();

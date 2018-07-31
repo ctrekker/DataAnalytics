@@ -59,7 +59,7 @@ void ImportCommand(args::Subparser &parser) {
     args::ValueFlag<string> nameFlag(parser, "NAME", "name of imported data source", {'n', "name"});
     args::Flag viewFlag(parser, "VIEW", "view a list of all imported resources", {'v', "view"});
     parser.Parse();
-    
+
     if(!pathFlag&&!viewFlag) {
         cout << "ERROR: a path is required";
     }
@@ -68,7 +68,7 @@ void ImportCommand(args::Subparser &parser) {
         if(locationFlag) {
             location = args::get(locationFlag);
         }
-        
+
         cout << "View is not yet supported" << endl;
     }
     else {
@@ -77,7 +77,7 @@ void ImportCommand(args::Subparser &parser) {
         string type = "csv";
         string location = INPUT_REPO_LOCATION;
         string name = pathSplit[pathSplit.size()-1];
-        
+
         if(typeFlag) {
             type = args::get(typeFlag);
         }
@@ -87,23 +87,25 @@ void ImportCommand(args::Subparser &parser) {
         if(nameFlag) {
             name = args::get(nameFlag);
         }
-        
-        ofstream repoOut(location+"/"+name);
-        ifstream repoIn(path);
-        cout << "Importing " << path << " to " << location+"/"+name << endl;
-        string line;
-        while(getline(repoIn, line)) {
-            repoOut << line << endl;
+
+        if(type=="csv") {
+            ofstream repoOut(location+"/"+name);
+            ifstream repoIn(path);
+            cout << "Importing " << path << " to " << location+"/"+name << endl;
+            string line;
+            while(getline(repoIn, line)) {
+                repoOut << line << endl;
+            }
+            repoOut.close();
+            repoIn.close();
         }
-        repoOut.close();
-        repoIn.close();
     }
 }
 void RunCommand(args::Subparser &parser) {
     parser.Parse();
-    
+
     state::init();
-    
+
     Graph sine = *createSineGraph(1000);
     Graph cosine = *createCosineGraph(1000);
 
@@ -112,7 +114,7 @@ void RunCommand(args::Subparser &parser) {
     analyze::predict(&predictions, patterns, matches, cosine, 0, state::totalPatterns-1, 1, cosine.data.size());
 
     state::preserve();
-    
+
     cout << endl;
     cout << "---DEBUG---" << endl;
 
@@ -151,12 +153,12 @@ void RunCommand(args::Subparser &parser) {
     file.close();
 }
 int main(int argc, const char **argv)
-{ 
+{
     args::ArgumentParser p("DataAnalytics 2.0");
     args::Group commands(p, "commands");
     args::Command import(commands, "import", "import a file to the input repository", &ImportCommand);
     args::Command run(commands, "run", "execute an entire program cycle", &RunCommand);
-    
+
     try {
         p.ParseCLI(argc, argv);
     }
@@ -167,6 +169,6 @@ int main(int argc, const char **argv)
         std::cerr << e.what() << std::endl << p;
         return 1;
     }
-    
+
     return 0;
 }

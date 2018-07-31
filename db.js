@@ -22,13 +22,13 @@ conn.connect(function(err) {
         for(var n=0; n<fields.length; n++) {
             fieldNames.push(fields[n].name);
         }
-        console.log(fieldNames.join("\t"));
+        console.log(fieldNames.join(","));
         for(var i=0; i<result.length; i++) {
             var row = [];
             for(var j=0; j<fields.length; j++) {
                 row.push(result[i][fields[j].name]);
             }
-            console.log(row.join("\t"));
+            console.log(row.join(","));
         }
         process.exit();
     });

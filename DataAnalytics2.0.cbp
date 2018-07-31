@@ -34,15 +34,23 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="include/ProgressBar.hpp" />
+		<Unit filename="include/archive.h" />
+		<Unit filename="include/args.hxx" />
 		<Unit filename="include/config.h" />
 		<Unit filename="include/data_analyzer.h" />
 		<Unit filename="include/dataio.h" />
+		<Unit filename="include/load.h" />
 		<Unit filename="include/save.h" />
+		<Unit filename="include/state.h" />
 		<Unit filename="include/stream.h" />
 		<Unit filename="include/timer.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="src/archive.cpp" />
 		<Unit filename="src/data_analyzer.cpp" />
+		<Unit filename="src/load.cpp" />
 		<Unit filename="src/save.cpp" />
+		<Unit filename="src/state.cpp" />
 		<Unit filename="src/stream.cpp" />
 		<Unit filename="src/timer.cpp" />
 		<Extensions>

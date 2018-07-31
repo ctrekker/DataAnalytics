@@ -12,6 +12,8 @@ const static string ARCH_DIR = "arch";
 
 const static uint64_t OBJ_PER_FILE = 2000;
 
+const static string INPUT_REPO_LOCATION = "in";
+
 const static int PATTERN_NUMBER = 1000;
 const static int PATTERN_LENGTH = 30;
 

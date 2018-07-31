@@ -3,10 +3,11 @@
 	<iostream>
 	<chrono>
 
-1532652981 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\main.cpp
+1533001414 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\main.cpp
 	<iostream>
 	<fstream>
 	<cmath>
+	<stdlib.h>
 	"data_analyzer.h"
 	"dataio.h"
 	"timer.h"
@@ -14,6 +15,7 @@
 	"save.h"
 	"load.h"
 	"state.h"
+	"args.hxx"
 
 1531421774 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\data_analyzer.h
 	<vector>
@@ -26,11 +28,11 @@
 	"dataio.h"
 	"config.h"
 
-1532652981 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\config.h
+1533000683 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\config.h
 
 1532652981 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\timer.h
 
-1532653765 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\data_analyzer.cpp
+1533000684 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\data_analyzer.cpp
 	<iostream>
 	<chrono>
 	<cstdlib>
@@ -68,7 +70,7 @@
 	<fstream>
 	"dataio.h"
 
-1532653765 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\load.cpp
+1533000684 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\load.cpp
 	<vector>
 	<iostream>
 	<fstream>
@@ -85,6 +87,23 @@
 1532407175 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\state.h
 	<iostream>
 
+1532652981 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\args.hxx
+	<algorithm>
+	<iterator>
+	<exception>
+	<functional>
+	<sstream>
+	<string>
+	<tuple>
+	<vector>
+	<unordered_map>
+	<unordered_set>
+	<type_traits>
+
+1532652981 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\progressbar.hpp
+	<chrono>
+	<iostream>
+
 1532652981 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\archive.cpp
 
 1532407176 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\state.cpp
@@ -93,8 +112,4 @@
 	<string>
 	"config.h"
 	"state.h"
-
-1532652981 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\progressbar.hpp
-	<chrono>
-	<iostream>
 

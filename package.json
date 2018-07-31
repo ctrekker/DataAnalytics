@@ -1,0 +1,22 @@
+{
+  "name": "da2",
+  "version": "2.0.2",
+  "description": "The nodejs DataAnalytics2.0 extension for higher-level language support which can't be offered with ease from c++",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/ctrekker/DataAnalytics.git"
+  },
+  "author": "Connor Burns",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/ctrekker/DataAnalytics/issues"
+  },
+  "homepage": "https://gitlab.com/ctrekker/DataAnalytics#README",
+  "dependencies": {
+    "mysql": "^2.16.0"
+  }
+}

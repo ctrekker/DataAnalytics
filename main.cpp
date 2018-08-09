@@ -10,6 +10,7 @@
 #include "save.h"
 #include "load.h"
 #include "state.h"
+#include "config.h"
 #include "args.hxx"
 
 using namespace std;
@@ -115,9 +116,24 @@ void RunCommand(args::Subparser &parser) {
     Graph sine = *createSineGraph(1000);
     Graph cosine = *createCosineGraph(1000);
 
-    analyze::create_patterns(patterns, sine);
-    analyze::train(&matches, patterns, cosine);
-    analyze::predict(&predictions, patterns, matches, cosine, 0, state::totalPatterns-1, 1, cosine.data.size());
+    if(patternFlag) {
+        analyze::create_patterns(patterns, sine);
+    }
+    else {
+        cout << "Skipping patterns" << endl;
+    }
+    if(trainFlag) {
+        analyze::train(&matches, patterns, cosine);
+    }
+    else {
+        cout << "Skipping training" << endl;
+    }
+    if(predictFlag) {
+        analyze::predict(&predictions, patterns, matches, cosine, 0, state::totalPatterns-1, 1, cosine.data.size());
+    }
+    else {
+        cout << "Skipping predictions" << endl;
+    }
 
     state::preserve();
 

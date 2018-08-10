@@ -13,36 +13,36 @@ using namespace dataio;
 namespace load {
     void patternFile(vector<Pattern>* patterns, uint64_t fid) {
         patterns->clear();
-        ifstream fileIn(SAVE_DIR+"/"+to_string(fid)+".pbin");
+        ifstream fileIn(SAVE_DIR+"/"+to_string(fid)+".pbin", ios::binary);
         load::patternList(&fileIn, patterns);
         fileIn.close();
     }
     void matchFile(vector<MatchList>* matches, uint64_t fid) {
         matches->clear();
-        ifstream fileIn(SAVE_DIR+"/"+to_string(fid)+".mbin");
+        ifstream fileIn(SAVE_DIR+"/"+to_string(fid)+".mbin", ios::binary);
         load::matchListCollection(&fileIn, matches);
         fileIn.close();
     }
-    
+
     void state(string name, vector<Pattern>* patterns, vector<MatchList>* matches, vector<Prediction>* predictions) {
         cout << "Loading state..." << endl;
         timer::start();
-        
+
         ifstream patternFile(SAVE_DIR+"/"+name+".pbin", ios::binary);
         ifstream matchFile(SAVE_DIR+"/"+name+".mbin", ios::binary);
         ifstream predictionFile(SAVE_DIR+"/"+name+".prbin", ios::binary);
-        
+
         load::patternList(&patternFile, patterns);
         load::matchListCollection(&matchFile, matches);
         load::predictionList(&predictionFile, predictions);
-        
+
         patternFile.close();
         matchFile.close();
         predictionFile.close();
-        
+
         timer::stop("Loaded state");
     }
-    
+
     int pattern(Pattern* out, vector<uint8_t>* s, uint64_t cp) {
         out->id = stream::readLong(s, &cp);
         out->dimensions = stream::readShort(s, &cp);
@@ -106,7 +106,7 @@ namespace load {
         }
         return cp;
     }
-    
+
     void patternList(ifstream* inFile, vector<Pattern>* patterns) {
         while(!inFile->eof()) {
             try {
@@ -135,9 +135,9 @@ namespace load {
         }
     }
     void predictionList(ifstream* inFile, vector<Prediction>* predictions) {
-        
+
     }
-    
+
     void fileToBuff(ifstream* inFile, vector<uint8_t>* buff) {
         char rawBuff[buff->size()];
         inFile->read(rawBuff, buff->size());

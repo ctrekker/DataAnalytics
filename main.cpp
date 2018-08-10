@@ -10,6 +10,7 @@
 #include "save.h"
 #include "load.h"
 #include "state.h"
+#include "config.h"
 #include "args.hxx"
 
 using namespace std;
@@ -102,16 +103,54 @@ void ImportCommand(args::Subparser &parser) {
     }
 }
 void RunCommand(args::Subparser &parser) {
+    args::ValueFlag<string> sourceFlag(parser, "SOURCE", "source of the resource to run from. Defaults to test case", {'s', "source"});
+    args::Flag patternFlag(parser, "PATTERN", "create patterns or not", {'p'});
+    args::Flag trainFlag(parser, "TRAIN", "train model or not", {'t'});
+    args::Flag predictFlag(parser, "PREDICT", "make predictions for source", {'r'});
+    args::Flag verboseFlag(parser, "VERBOSE", "turn on verbose output", {'v', "verbose"});
+    args::Flag debugFlag(parser, "DEBUG", "turn on debug mode", {'d', "debug"});
     parser.Parse();
 
     state::init();
 
-    Graph sine = *createSineGraph(1000);
-    Graph cosine = *createCosineGraph(1000);
+    // Check for custom graph or a test source
+    Graph graph;
+    if(sourceFlag) {
+        ifstream repoIn(INPUT_REPO_LOCATION+"/"+args::get(sourceFlag));
+        string line;
+        vector<vector<double>> graphData;
+        while(getline(repoIn, line)) {
+            vector<string> csvSplit = split(line, ',');
+            if(csvSplit.size()!=2) {
+                cout << "WARNING: Malformed input file" << endl;
+            }
+            graphData.push_back({atof(csvSplit[0].c_str()), atof(csvSplit[1].c_str())});
+        }
+        graph.init(2, 0, graphData);
+    }
+    else {
+        cout << "WARNING: Using generated test case: SINE" << endl;
+        graph = *createSineGraph(1000);
+    }
 
-    analyze::create_patterns(patterns, sine);
-    analyze::train(&matches, patterns, cosine);
-    analyze::predict(&predictions, patterns, matches, cosine, 0, state::totalPatterns-1, 1, cosine.data.size());
+    if(patternFlag) {
+        analyze::create_patterns(patterns, graph);
+    }
+    else {
+        cout << "Skipping patterns" << endl;
+    }
+    if(trainFlag) {
+        analyze::train(&matches, patterns, graph);
+    }
+    else {
+        cout << "Skipping training" << endl;
+    }
+    if(predictFlag) {
+        analyze::predict(&predictions, patterns, matches, graph, 0, state::totalPatterns-1, 1, graph.data.size());
+    }
+    else {
+        cout << "Skipping predictions" << endl;
+    }
 
     state::preserve();
 
@@ -122,10 +161,10 @@ void RunCommand(args::Subparser &parser) {
 
 
     ofstream file("data/out.csv");
-    for(unsigned int i=0; i<cosine.data.size(); i++) {
-        for(unsigned int j=0; j<cosine.data[i].size(); j++) {
-            file << cosine.data[i][j];
-            if(j!=cosine.data[i].size()-1) {
+    for(unsigned int i=0; i<graph.data.size(); i++) {
+        for(unsigned int j=0; j<graph.data[i].size(); j++) {
+            file << graph.data[i][j];
+            if(j!=graph.data[i].size()-1) {
                 file << ",";
             }
         }
@@ -145,7 +184,7 @@ void RunCommand(args::Subparser &parser) {
 
     if(pgn>0) {
         for(unsigned int i=0; i<predictions[pn].result.size(); i++) {
-            file << (cosine.data.size()+i) << ",";
+            file << (graph.data.size()+i) << ",";
             file << predictions[pn].result[i] << endl;
         }
         cout << predictions[pn].toString() << endl;

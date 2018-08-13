@@ -3,7 +3,7 @@
 	<iostream>
 	<chrono>
 
-1533923095 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\main.cpp
+1534123959 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\main.cpp
 	<iostream>
 	<fstream>
 	<cmath>
@@ -85,7 +85,7 @@
 	<fstream>
 	"dataio.h"
 
-1532407175 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\state.h
+1534123420 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\state.h
 	<iostream>
 
 1532652981 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\args.hxx
@@ -107,7 +107,7 @@
 
 1532652981 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\archive.cpp
 
-1532407176 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\state.cpp
+1534123478 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\state.cpp
 	<iostream>
 	<fstream>
 	<string>

@@ -191,12 +191,20 @@ void RunCommand(args::Subparser &parser) {
     }
     file.close();
 }
+void InfoCommand(args::Subparser &parser) {
+    args::Flag debugFlag(parser, "DEBUG", "shows debug output rather than clean value-pair output", {'d', "debug"});
+    parser.Parse();
+
+    state::init(false);
+    state::print(!debugFlag);
+}
 int main(int argc, const char **argv)
 {
     args::ArgumentParser p("DataAnalytics 2.0");
     args::Group commands(p, "commands");
     args::Command import(commands, "import", "import a file to the input repository", &ImportCommand);
     args::Command run(commands, "run", "execute an entire program cycle", &RunCommand);
+    args::Command info(commands, "info", "view information about current run state", &InfoCommand);
 
     try {
         p.ParseCLI(argc, argv);

@@ -19,7 +19,7 @@ namespace analyze {
     void create_patterns(vector<Pattern> &patternArr, Graph graph) {
         std::cout << "Creating patterns..." << std::endl;
         timer::start();
-        
+
         ProgressBar pb(PATTERN_NUMBER, 50);
         uint64_t lastLoadUpdate = timer::getTimeMillis();
 
@@ -38,8 +38,8 @@ namespace analyze {
                 p.body.push_back(graph.data[startPos+x]);
                 p.resultBody.push_back(graph.data[startPos+x+p.length]);
             }
-            patternArr[i] = p;    
-            
+            patternArr[i] = p;
+
             if(timer::getTimeMillis()-lastLoadUpdate>150) {
                 pb.setTicks(i);
                 pb.display();
@@ -56,7 +56,7 @@ namespace analyze {
     void train(vector<MatchList>* matchArr, vector<Pattern> patterns, Graph graph) {
         std::cout << "Training model..." << std::endl;
         timer::start();
-        
+
         ProgressBar pb(state::totalPatterns, 50);
 
         int currentPatternFileId = 0;
@@ -116,7 +116,7 @@ namespace analyze {
         }
         ProgressBar pb(patternEnd-patternStart, 50);
         uint64_t lastLoadUpdate = timer::getTimeMillis();
-        
+
         bool added = false;
 
         int currentPatternFileId = state::getFileId(patternStart);
@@ -128,7 +128,7 @@ namespace analyze {
                 load::patternFile(&patterns, currentPatternFileId);
                 load::matchFile(&matches, currentPatternFileId);
             }
-            
+
             Pattern p = patterns[pid%OBJ_PER_FILE];
             vector<Match> mList;
             mList = matches[pid%OBJ_PER_FILE].matches;
@@ -156,7 +156,7 @@ namespace analyze {
                     bestMatch = m;
                 }
             }
-            
+
             if(bestMatch == nullptr) {
                 cout << pid << " nomatch" << endl;
                 continue;
@@ -168,6 +168,8 @@ namespace analyze {
             for(uint64_t i=0; i<data.size(); i++) {
                 Match matchData=data[i];
                 vector<double> rawPredictedData = sequenceTranslate(graph.data[graph.data.size()-1][1], matchData.translateData(sequenceTransform(p.getResultBodyDimension(1), bestMatch->data)));
+                // Remove the first entry, as it is the same point as the last known point on the input dataset
+                rawPredictedData.erase(rawPredictedData.begin());
                 vector<double> predictedData = combineSequence(graph.clip(initialGraphSize, graph.data.size()-initialGraphSize).getPlotArray(1),
                                                        rawPredictedData);
 
@@ -194,9 +196,11 @@ namespace analyze {
                                 }
                                 else {
                                     if(y==0) {
+                                        // Apply a linear regressive algorithm to determine predicted time value
                                         addedData[x][y] = lastTime+diff*((x+1)-graph.data.size());
                                     }
                                     else {
+                                        // Apply the actual predicted values to the addedData vector
                                         addedData[x][y] = rawPrediction.result[x-graph.data.size()];
                                     }
                                 }
@@ -210,8 +214,11 @@ namespace analyze {
                         }
                     }
                 }
-                
+
                 if(predictions->size()>=PREDICTION_MAX_NUMBER) {
+                    if(layer==1) {
+                        pb.done();
+                    }
                     return added;
                 }
             }

@@ -192,6 +192,23 @@ void RunCommand(args::Subparser &parser) {
     }
     file.close();
 }
+void ExportCommand(args::Subparser &parser) {
+    args::ValueFlag<string> outputFlag(parser, "OUTPUT", "a file path to output selected data to", {'o', "output"});
+    args::ValueFlag<string> nameFlag(parser, "NAME", "name of the designated run to output from", {'n', "name"});
+    parser.Parse();
+    
+    string outputPath = "out.csv";
+    if(outputFlag) {
+        outputPath = args::get(outputFlag);
+    }
+    string name = "latest.csv";
+    if(nameFlag) {
+        name = args::get(nameFlag);
+    }
+    
+    cout << outputPath << endl;
+    cout << name << endl;
+}
 void InfoCommand(args::Subparser &parser) {
     args::Flag debugFlag(parser, "DEBUG", "shows debug output rather than clean value-pair output", {'d', "debug"});
     parser.Parse();
@@ -205,6 +222,7 @@ int main(int argc, const char **argv)
     args::Group commands(p, "commands");
     args::Command import(commands, "import", "import a file to the input repository", &ImportCommand);
     args::Command run(commands, "run", "execute an entire program cycle", &RunCommand);
+    args::Command exportCmd(commands, "export", "export the last or a specified run's output to a usable format and external location", &ExportCommand);
     args::Command info(commands, "info", "view information about current run state", &InfoCommand);
 
     try {

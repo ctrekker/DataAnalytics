@@ -13,6 +13,7 @@ const static string ARCH_DIR = "arch";
 const static uint64_t OBJ_PER_FILE = 2000;
 
 const static string INPUT_REPO_LOCATION = "in";
+static string EXECUTION_NAME = "latest";
 
 const static int PATTERN_NUMBER = 1000;
 // Note that the actual prediction output is 1 value less than the pattern length

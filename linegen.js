@@ -7,7 +7,7 @@
 const fs = require('fs');
 
 const waveLength = 1000;
-const slope = 1/2;
+const slope = 1;
 const outFile = "out.csv";
 
 let out = "";

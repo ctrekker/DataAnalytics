@@ -29,11 +29,11 @@
 	"dataio.h"
 	"config.h"
 
-1533843096 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\config.h
+1534221863 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\config.h
 
 1532652981 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\timer.h
 
-1533000684 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\data_analyzer.cpp
+1534222018 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\data_analyzer.cpp
 	<iostream>
 	<chrono>
 	<cstdlib>
@@ -101,7 +101,7 @@
 	<unordered_set>
 	<type_traits>
 
-1532652981 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\progressbar.hpp
+1534221846 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\progressbar.hpp
 	<chrono>
 	<iostream>
 

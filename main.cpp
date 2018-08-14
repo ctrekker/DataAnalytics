@@ -182,6 +182,7 @@ void RunCommand(args::Subparser &parser) {
 
     cout << "PN:" << pn << ";PGN:" << pgn << endl;
 
+    cout << predictions[pn].result.size();
     if(pgn>0) {
         for(unsigned int i=0; i<predictions[pn].result.size(); i++) {
             file << (graph.data.size()+i) << ",";

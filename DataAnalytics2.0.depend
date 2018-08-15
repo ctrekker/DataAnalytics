@@ -3,10 +3,13 @@
 	<iostream>
 	<chrono>
 
-1532652981 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\main.cpp
+1534375303 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\main.cpp
 	<iostream>
 	<fstream>
+	<sstream>
+	<string>
 	<cmath>
+	<stdlib.h>
 	"data_analyzer.h"
 	"dataio.h"
 	"timer.h"
@@ -14,6 +17,8 @@
 	"save.h"
 	"load.h"
 	"state.h"
+	"config.h"
+	"args.hxx"
 
 1531421774 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\data_analyzer.h
 	<vector>
@@ -26,11 +31,11 @@
 	"dataio.h"
 	"config.h"
 
-1532652981 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\config.h
+1534357461 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\config.h
 
 1532652981 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\timer.h
 
-1532653765 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\data_analyzer.cpp
+1534222018 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\data_analyzer.cpp
 	<iostream>
 	<chrono>
 	<cstdlib>
@@ -45,7 +50,7 @@
 	"save.h"
 	"load.h"
 
-1532407176 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\save.cpp
+1534310690 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\save.cpp
 	<fstream>
 	<iostream>
 	<climits>
@@ -64,11 +69,11 @@
 1531671204 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\stream.h
 	<vector>
 
-1532407175 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\save.h
+1534310539 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\save.h
 	<fstream>
 	"dataio.h"
 
-1532653765 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\load.cpp
+1533003753 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\load.cpp
 	<vector>
 	<iostream>
 	<fstream>
@@ -82,19 +87,32 @@
 	<fstream>
 	"dataio.h"
 
-1532407175 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\state.h
+1534123420 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\state.h
+	<iostream>
+
+1532652981 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\args.hxx
+	<algorithm>
+	<iterator>
+	<exception>
+	<functional>
+	<sstream>
+	<string>
+	<tuple>
+	<vector>
+	<unordered_map>
+	<unordered_set>
+	<type_traits>
+
+1534221846 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\progressbar.hpp
+	<chrono>
 	<iostream>
 
 1532652981 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\archive.cpp
 
-1532407176 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\state.cpp
+1534123478 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\state.cpp
 	<iostream>
 	<fstream>
 	<string>
 	"config.h"
 	"state.h"
-
-1532652981 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\progressbar.hpp
-	<chrono>
-	<iostream>
 

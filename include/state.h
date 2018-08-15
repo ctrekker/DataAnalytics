@@ -9,11 +9,11 @@ namespace state {
     extern string metaPath;
     extern uint64_t totalPatterns;
     extern uint64_t initTotalPatterns;
-    
-    void init();
+
+    void init(bool printState=true);
     void preserve();
-    void print();
-    
+    void print(bool pretty=false);
+
     uint64_t getPatternId(uint64_t);
     int getFileId(uint64_t);
     string getFilePath(uint64_t);

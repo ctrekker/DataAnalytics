@@ -168,6 +168,8 @@ namespace analyze {
             for(uint64_t i=0; i<data.size(); i++) {
                 Match matchData=data[i];
                 vector<double> rawPredictedData = sequenceTranslate(graph.data[graph.data.size()-1][1], matchData.translateData(sequenceTransform(p.getResultBodyDimension(1), bestMatch->data)));
+                // Remove the first entry, as it is the same point as the last known point on the input dataset
+                rawPredictedData.erase(rawPredictedData.begin());
                 vector<double> predictedData = combineSequence(graph.clip(initialGraphSize, graph.data.size()-initialGraphSize).getPlotArray(1),
                                                        rawPredictedData);
 
@@ -194,9 +196,11 @@ namespace analyze {
                                 }
                                 else {
                                     if(y==0) {
+                                        // Apply a linear regressive algorithm to determine predicted time value
                                         addedData[x][y] = lastTime+diff*((x+1)-graph.data.size());
                                     }
                                     else {
+                                        // Apply the actual predicted values to the addedData vector
                                         addedData[x][y] = rawPrediction.result[x-graph.data.size()];
                                     }
                                 }
@@ -212,6 +216,9 @@ namespace analyze {
                 }
 
                 if(predictions->size()>=PREDICTION_MAX_NUMBER) {
+                    if(layer==1) {
+                        pb.done();
+                    }
                     return added;
                 }
             }

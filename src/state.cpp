@@ -11,12 +11,12 @@ namespace state {
     string metaPath = SAVE_DIR + "/meta.txt";
     uint64_t totalPatterns = 0;
     uint64_t initTotalPatterns = 0;
-    
+
     inline bool file_exists(string name) {
         ifstream file(name.c_str());
         return file.good();
     }
-    void init() {
+    void init(bool printState) {
         if(!file_exists(metaPath)) {
             ofstream metaCreate(metaPath);
             metaCreate << 0 << " ";
@@ -31,26 +31,33 @@ namespace state {
 
         totalPatterns = stoi(totalPatternsStr);
         initTotalPatterns = totalPatterns;
-        
-        print();
+
+        if(printState) {
+            print();
+        }
 
         metaIn.close();
     }
     void preserve() {
         ofstream metaOut(metaPath);
-        
+
         print();
-        
+
         metaOut << totalPatterns << " ";
-        
+
         metaOut.close();
     }
-    void print() {
-        cout << "State:" << endl;
-        cout << "\ttotalPatterns = " << totalPatterns << endl;
-        cout << endl;
+    void print(bool pretty) {
+        if(pretty) {
+            cout << "Total Saved Patterns: " << totalPatterns << endl;
+        }
+        else {
+            cout << "State:" << endl;
+            cout << "\ttotalPatterns = " << totalPatterns << endl;
+            cout << endl;
+        }
     }
-    
+
     uint64_t getPatternId(uint64_t off) {
         return totalPatterns + off;
     }

@@ -1,6 +1,9 @@
 #include <iostream>
 #include <fstream>
+#include <sstream>
+#include <string>
 #include <cmath>
+#include <stdlib.h>
 
 #include "data_analyzer.h"
 #include "dataio.h"
@@ -9,6 +12,8 @@
 #include "save.h"
 #include "load.h"
 #include "state.h"
+#include "config.h"
+#include "args.hxx"
 
 using namespace std;
 using namespace dataio;
@@ -17,6 +22,19 @@ vector<Pattern> patterns(PATTERN_NUMBER);
 vector<MatchList> matches;
 vector<Prediction> predictions;
 
+inline bool file_exists(string name) {
+    ifstream file(name.c_str());
+    return file.good();
+}
+vector<string> split(const string &s, char delim) {
+    stringstream ss(s);
+    string item;
+    vector<string> tokens;
+    while (getline(ss, item, delim)) {
+        tokens.push_back(item);
+    }
+    return tokens;
+}
 Graph *createSineGraph(unsigned int length) {
     Graph *out = new Graph;
     vector<vector<double>> graphData;
@@ -37,34 +55,122 @@ Graph *createCosineGraph(unsigned int length) {
 
     return out;
 }
-int main()
-{
+void ImportCommand(args::Subparser &parser) {
+    args::ValueFlag<string> pathFlag(parser, "PATH", "file path or database path to desired import resource", {'p', "path"});
+    args::ValueFlag<string> typeFlag(parser, "TYPE", "type of data source to import from", {'t', "type"});
+    args::ValueFlag<string> locationFlag(parser, "LOCATION", "location of the repository", {'l'});
+    args::ValueFlag<string> nameFlag(parser, "NAME", "name of imported data source", {'n', "name"});
+    args::Flag viewFlag(parser, "VIEW", "view a list of all imported resources", {'v', "view"});
+    parser.Parse();
+
+    if(!pathFlag&&!viewFlag) {
+        cout << "ERROR: a path is required";
+    }
+    else if(viewFlag) {
+        string location = INPUT_REPO_LOCATION;
+        if(locationFlag) {
+            location = args::get(locationFlag);
+        }
+
+        cout << "View is not yet supported" << endl;
+    }
+    else {
+        string path = args::get(pathFlag);
+        vector<string> pathSplit = split(path, '/');
+        string type = "csv";
+        string location = INPUT_REPO_LOCATION;
+        string name = pathSplit[pathSplit.size()-1];
+
+        if(typeFlag) {
+            type = args::get(typeFlag);
+        }
+        if(locationFlag) {
+            location = args::get(locationFlag);
+        }
+        if(nameFlag) {
+            name = args::get(nameFlag);
+        }
+
+        if(type=="csv") {
+            ofstream repoOut(location+"/"+name);
+            ifstream repoIn(path);
+            cout << "Importing " << path << " to " << location+"/"+name << endl;
+            string line;
+            while(getline(repoIn, line)) {
+                repoOut << line << endl;
+            }
+            repoOut.close();
+            repoIn.close();
+        }
+    }
+}
+void RunCommand(args::Subparser &parser) {
+    args::ValueFlag<string> sourceFlag(parser, "SOURCE", "source of the resource to run from. Defaults to test case", {'s', "source"});
+    args::ValueFlag<string> nameFlag(parser, "NAME", "name of the current execution. Defaults to \"latest\"", {'n', "name"});
+    args::Flag patternFlag(parser, "PATTERN", "create patterns or not", {'p'});
+    args::Flag trainFlag(parser, "TRAIN", "train model or not", {'t'});
+    args::Flag predictFlag(parser, "PREDICT", "make predictions for source", {'r'});
+    args::Flag verboseFlag(parser, "VERBOSE", "turn on verbose output - UNIMPLEMENTED", {'v', "verbose"});
+    args::Flag debugFlag(parser, "DEBUG", "turn on debug mode - UNIMPLEMENTED", {'d', "debug"});
+    parser.Parse();
+
     state::init();
 
-    Graph sine = *createSineGraph(1000);
-    Graph cosine = *createCosineGraph(1000);
+    // Default is defined in config.h
+    if(nameFlag) {
+        EXECUTION_NAME = args::get(nameFlag);
+    }
 
-    analyze::create_patterns(patterns, sine);
-    analyze::train(&matches, patterns, cosine);
-    analyze::predict(&predictions, patterns, matches, cosine, 0, state::totalPatterns-1, 1, cosine.data.size());
+    // Check for custom graph or a test source
+    Graph graph;
+    if(sourceFlag) {
+        ifstream repoIn(INPUT_REPO_LOCATION+"/"+args::get(sourceFlag));
+        string line;
+        vector<vector<double>> graphData;
+        while(getline(repoIn, line)) {
+            vector<string> csvSplit = split(line, ',');
+            if(csvSplit.size()!=2) {
+                cout << "WARNING: Malformed input file" << endl;
+            }
+            graphData.push_back({atof(csvSplit[0].c_str()), atof(csvSplit[1].c_str())});
+        }
+        graph.init(2, 0, graphData);
+    }
+    else {
+        cout << "WARNING: Using generated test case: SINE" << endl;
+        graph = *createSineGraph(1000);
+    }
 
-    cout << "---DEBUG---" << endl;
+    if(patternFlag) {
+        analyze::create_patterns(patterns, graph);
+    }
+    else {
+        cout << "Skipping patterns" << endl;
+    }
+    if(trainFlag) {
+        analyze::train(&matches, patterns, graph);
+    }
+    else {
+        cout << "Skipping training" << endl;
+    }
+    if(predictFlag) {
+        analyze::predict(&predictions, patterns, matches, graph, 0, state::totalPatterns-1, 1, graph.data.size());
+    }
+    else {
+        cout << "Skipping predictions" << endl;
+    }
+
     state::preserve();
+
     cout << endl;
+    cout << "---DEBUG---" << endl;
 
     cout << predictions.size() << "<-Total Predictions" << endl;
 
 
-    ofstream file("data/out.csv");
-    for(unsigned int i=0; i<cosine.data.size(); i++) {
-        for(unsigned int j=0; j<cosine.data[i].size(); j++) {
-            file << cosine.data[i][j];
-            if(j!=cosine.data[i].size()-1) {
-                file << ",";
-            }
-        }
-        file << endl;
-    }
+    ofstream file(OUT_DIR+"/"+EXECUTION_NAME+".csv");
+    save::csvPredictionList(&graph, &predictions, file);
+    file.close();
 
     unsigned int pn=0;
     unsigned int pgn=0;
@@ -77,14 +183,74 @@ int main()
 
     cout << "PN:" << pn << ";PGN:" << pgn << endl;
 
+    cout << predictions[pn].result.size();
     if(pgn>0) {
         for(unsigned int i=0; i<predictions[pn].result.size(); i++) {
-            file << (cosine.data.size()+i) << ",";
+            file << (graph.data.size()+i) << ",";
             file << predictions[pn].result[i] << endl;
         }
         cout << predictions[pn].toString() << endl;
     }
-    file.close();
+}
+void ExportCommand(args::Subparser &parser) {
+    args::ValueFlag<string> outputFlag(parser, "OUTPUT", "a file path to output selected data to", {'o', "output"});
+    args::ValueFlag<string> nameFlag(parser, "NAME", "name of the designated run to output from", {'n', "name"});
+    parser.Parse();
+
+    string outputPath = "out.csv";
+    if(outputFlag) {
+        outputPath = args::get(outputFlag);
+    }
+    string name = "latest";
+    if(nameFlag) {
+        name = args::get(nameFlag);
+    }
+    string runPath = OUT_DIR+"/"+name+".csv";
+
+
+    cout << "Exporting " << name << " to " << outputPath << endl;
+    timer::start();
+    // The actual output the user expects
+    ofstream outputFile(outputPath);
+    // The output from the algorithm run
+    ifstream runFile(runPath);
+
+    string line;
+    while(getline(runFile, line)) {
+        outputFile << line << endl;
+    }
+
+    outputFile.close();
+    runFile.close();
+
+    timer::stop("Finished export");
+}
+void InfoCommand(args::Subparser &parser) {
+    args::Flag debugFlag(parser, "DEBUG", "shows debug output rather than clean value-pair output", {'d', "debug"});
+    parser.Parse();
+
+    state::init(false);
+    state::print(!debugFlag);
+}
+int main(int argc, const char **argv)
+{
+    args::ArgumentParser p("DataAnalytics 2.0");
+    args::Group commands(p, "commands");
+    args::Command import(commands, "import", "import a file to the input repository", &ImportCommand);
+    args::Command run(commands, "run", "execute an entire program cycle", &RunCommand);
+    args::Command exportCmd(commands, "export", "export the last or a specified run's output to a usable format and external location", &ExportCommand);
+    args::Command info(commands, "info", "view information about current run state", &InfoCommand);
+
+    try {
+        p.ParseCLI(argc, argv);
+    }
+    catch(args::Help) {
+        std::cout << p;
+    }
+    catch(args::Error& e) {
+        std::cerr << e.what() << std::endl << p;
+        return 1;
+    }
 
     return 0;
 }

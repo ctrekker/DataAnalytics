@@ -14,9 +14,9 @@ using namespace dataio;
 namespace save {
     void createdPatterns(vector<Pattern>* patterns) {
         ofstream outFile(state::getFilePath(state::totalPatterns-1), ios::binary | ios::app);
-        
+
         save::patternList(patterns, &outFile);
-        
+
         outFile.close();
     }
     void createdMatches(vector<MatchList>* matches, int fileId, bool overwrite) {
@@ -26,34 +26,34 @@ namespace save {
         }
         else {
             outFile = ofstream(SAVE_DIR+"/"+to_string(fileId)+".mbin", ios::binary | ios::app);
-        }    
-        
+        }
+
         save::matchListCollection(matches, &outFile);
-        
+
         outFile.close();
     }
-    
+
     void state(string name, vector<Pattern>* patterns, vector<MatchList>* matches, vector<Prediction>* predictions) {
         cout << "Saving state..." << endl;
         timer::start();
-        
+
         ofstream patternFile(SAVE_DIR+"/"+name+".pbin", ios::binary);
         ofstream matchFile(SAVE_DIR+"/"+name+".mbin", ios::binary);
         ofstream predictionFile(SAVE_DIR+"/"+name+".prbin", ios::binary);
-        
+
         save::patternList(patterns, &patternFile);
         save::matchListCollection(matches, &matchFile);
         save::predictionList(predictions, &predictionFile);
-        
+
         patternFile.close();
         matchFile.close();
         predictionFile.close();
-        
-        
+
+
         // Write metadata
         timer::stop("Saved state");
     }
-    
+
     void pattern(vector<uint8_t>* out, Pattern* p) {
         stream::writeLong(out, p->id);
         stream::writeShort(out, p->dimensions);
@@ -146,6 +146,25 @@ namespace save {
             save::prediction(&bos, &(*predictions)[i]);
             buffToFile(&bos, outFile);
             bos.clear();
+        }
+    }
+    void csvPredictionList(Graph* graph, vector<Prediction>* predictions, ofstream &outFile) {
+        for(unsigned int i=0; i<graph->data.size(); i++) {
+            for(unsigned int j=0; j<graph->data[i].size(); j++) {
+                outFile << graph->data[i][j];
+                if(j!=graph->data[i].size()-1) {
+                    outFile << ",";
+                }
+            }
+            outFile << endl;
+        }
+        outFile << "<-NL->" << endl;
+        for(unsigned int pn = 0; pn < predictions->size(); pn++) {
+            for(unsigned int i=0; i<(*predictions)[pn].result.size(); i++) {
+                outFile << i << ",";
+                outFile << (*predictions)[pn].result[i] << endl;
+            }
+            outFile << "<-NL->" << endl;
         }
     }
 

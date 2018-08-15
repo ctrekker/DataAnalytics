@@ -113,12 +113,12 @@ void RunCommand(args::Subparser &parser) {
     parser.Parse();
 
     state::init();
-    
+
     // Default is defined in config.h
     if(nameFlag) {
         EXECUTION_NAME = args::get(nameFlag);
     }
-    
+
     // Check for custom graph or a test source
     Graph graph;
     if(sourceFlag) {
@@ -166,16 +166,9 @@ void RunCommand(args::Subparser &parser) {
     cout << predictions.size() << "<-Total Predictions" << endl;
 
 
-    ofstream file("data/out.csv");
-    for(unsigned int i=0; i<graph.data.size(); i++) {
-        for(unsigned int j=0; j<graph.data[i].size(); j++) {
-            file << graph.data[i][j];
-            if(j!=graph.data[i].size()-1) {
-                file << ",";
-            }
-        }
-        file << endl;
-    }
+    ofstream file("data/"+EXECUTION_NAME+".csv");
+    save::csvPredictionList(&graph, &predictions, file);
+    file.close();
 
     unsigned int pn=0;
     unsigned int pgn=0;
@@ -196,13 +189,12 @@ void RunCommand(args::Subparser &parser) {
         }
         cout << predictions[pn].toString() << endl;
     }
-    file.close();
 }
 void ExportCommand(args::Subparser &parser) {
     args::ValueFlag<string> outputFlag(parser, "OUTPUT", "a file path to output selected data to", {'o', "output"});
     args::ValueFlag<string> nameFlag(parser, "NAME", "name of the designated run to output from", {'n', "name"});
     parser.Parse();
-    
+
     string outputPath = "out.csv";
     if(outputFlag) {
         outputPath = args::get(outputFlag);
@@ -211,7 +203,7 @@ void ExportCommand(args::Subparser &parser) {
     if(nameFlag) {
         name = args::get(nameFlag);
     }
-    
+
     cout << outputPath << endl;
     cout << name << endl;
 }

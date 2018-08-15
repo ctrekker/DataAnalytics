@@ -1,5 +1,7 @@
 #include <iostream>
 #include <fstream>
+#include <sstream>
+#include <string>
 #include <cmath>
 #include <stdlib.h>
 
@@ -166,7 +168,7 @@ void RunCommand(args::Subparser &parser) {
     cout << predictions.size() << "<-Total Predictions" << endl;
 
 
-    ofstream file("data/"+EXECUTION_NAME+".csv");
+    ofstream file(OUT_DIR+"/"+EXECUTION_NAME+".csv");
     save::csvPredictionList(&graph, &predictions, file);
     file.close();
 
@@ -199,13 +201,29 @@ void ExportCommand(args::Subparser &parser) {
     if(outputFlag) {
         outputPath = args::get(outputFlag);
     }
-    string name = "latest.csv";
+    string name = "latest";
     if(nameFlag) {
         name = args::get(nameFlag);
     }
+    string runPath = OUT_DIR+"/"+name+".csv";
 
-    cout << outputPath << endl;
-    cout << name << endl;
+
+    cout << "Exporting " << name << " to " << outputPath << endl;
+    timer::start();
+    // The actual output the user expects
+    ofstream outputFile(outputPath);
+    // The output from the algorithm run
+    ifstream runFile(runPath);
+
+    string line;
+    while(getline(runFile, line)) {
+        outputFile << line << endl;
+    }
+
+    outputFile.close();
+    runFile.close();
+
+    timer::stop("Finished export");
 }
 void InfoCommand(args::Subparser &parser) {
     args::Flag debugFlag(parser, "DEBUG", "shows debug output rather than clean value-pair output", {'d', "debug"});

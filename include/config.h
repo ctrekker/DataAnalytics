@@ -9,6 +9,7 @@ enum PredictionHandler {
 
 const static string SAVE_DIR = "save";
 const static string ARCH_DIR = "arch";
+const static string OUT_DIR = "data";
 
 const static uint64_t OBJ_PER_FILE = 2000;
 

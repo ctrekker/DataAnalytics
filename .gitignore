@@ -50,3 +50,4 @@ obj/Release/src/timer.o
 .idea/workspace.xml
 .idea/dataSources.xml
 .idea/dataSources.xml
+*.csv

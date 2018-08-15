@@ -1,5 +1,7 @@
 #include <iostream>
 #include <fstream>
+#include <sstream>
+#include <string>
 #include <cmath>
 #include <stdlib.h>
 
@@ -104,14 +106,20 @@ void ImportCommand(args::Subparser &parser) {
 }
 void RunCommand(args::Subparser &parser) {
     args::ValueFlag<string> sourceFlag(parser, "SOURCE", "source of the resource to run from. Defaults to test case", {'s', "source"});
+    args::ValueFlag<string> nameFlag(parser, "NAME", "name of the current execution. Defaults to \"latest\"", {'n', "name"});
     args::Flag patternFlag(parser, "PATTERN", "create patterns or not", {'p'});
     args::Flag trainFlag(parser, "TRAIN", "train model or not", {'t'});
     args::Flag predictFlag(parser, "PREDICT", "make predictions for source", {'r'});
-    args::Flag verboseFlag(parser, "VERBOSE", "turn on verbose output", {'v', "verbose"});
-    args::Flag debugFlag(parser, "DEBUG", "turn on debug mode", {'d', "debug"});
+    args::Flag verboseFlag(parser, "VERBOSE", "turn on verbose output - UNIMPLEMENTED", {'v', "verbose"});
+    args::Flag debugFlag(parser, "DEBUG", "turn on debug mode - UNIMPLEMENTED", {'d', "debug"});
     parser.Parse();
 
     state::init();
+
+    // Default is defined in config.h
+    if(nameFlag) {
+        EXECUTION_NAME = args::get(nameFlag);
+    }
 
     // Check for custom graph or a test source
     Graph graph;
@@ -160,16 +168,9 @@ void RunCommand(args::Subparser &parser) {
     cout << predictions.size() << "<-Total Predictions" << endl;
 
 
-    ofstream file("data/out.csv");
-    for(unsigned int i=0; i<graph.data.size(); i++) {
-        for(unsigned int j=0; j<graph.data[i].size(); j++) {
-            file << graph.data[i][j];
-            if(j!=graph.data[i].size()-1) {
-                file << ",";
-            }
-        }
-        file << endl;
-    }
+    ofstream file(OUT_DIR+"/"+EXECUTION_NAME+".csv");
+    save::csvPredictionList(&graph, &predictions, file);
+    file.close();
 
     unsigned int pn=0;
     unsigned int pgn=0;
@@ -190,7 +191,39 @@ void RunCommand(args::Subparser &parser) {
         }
         cout << predictions[pn].toString() << endl;
     }
-    file.close();
+}
+void ExportCommand(args::Subparser &parser) {
+    args::ValueFlag<string> outputFlag(parser, "OUTPUT", "a file path to output selected data to", {'o', "output"});
+    args::ValueFlag<string> nameFlag(parser, "NAME", "name of the designated run to output from", {'n', "name"});
+    parser.Parse();
+
+    string outputPath = "out.csv";
+    if(outputFlag) {
+        outputPath = args::get(outputFlag);
+    }
+    string name = "latest";
+    if(nameFlag) {
+        name = args::get(nameFlag);
+    }
+    string runPath = OUT_DIR+"/"+name+".csv";
+
+
+    cout << "Exporting " << name << " to " << outputPath << endl;
+    timer::start();
+    // The actual output the user expects
+    ofstream outputFile(outputPath);
+    // The output from the algorithm run
+    ifstream runFile(runPath);
+
+    string line;
+    while(getline(runFile, line)) {
+        outputFile << line << endl;
+    }
+
+    outputFile.close();
+    runFile.close();
+
+    timer::stop("Finished export");
 }
 void InfoCommand(args::Subparser &parser) {
     args::Flag debugFlag(parser, "DEBUG", "shows debug output rather than clean value-pair output", {'d', "debug"});
@@ -205,6 +238,7 @@ int main(int argc, const char **argv)
     args::Group commands(p, "commands");
     args::Command import(commands, "import", "import a file to the input repository", &ImportCommand);
     args::Command run(commands, "run", "execute an entire program cycle", &RunCommand);
+    args::Command exportCmd(commands, "export", "export the last or a specified run's output to a usable format and external location", &ExportCommand);
     args::Command info(commands, "info", "view information about current run state", &InfoCommand);
 
     try {

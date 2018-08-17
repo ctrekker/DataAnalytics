@@ -1,16 +1,20 @@
 #ifdef _WIN32
    // Windows (32-bit and 64-bit)
    #define OS "WIN"
+   #define SEPERATOR "\\"
    #define INIT_SCRIPT "\\dir.bat"
 #elif __APPLE__
     // Apple OS
     #define INIT_SCRIPT "/dir.sh"
+    #define SEPERATOR "/"
 #elif __linux
     // linux
     #define INIT_SCRIPT "/dir.sh"
+    #define SEPERATOR "/"
 #elif __unix // all unices not caught above
     // Unix
     #define INIT_SCRIPT "/dir.sh"
+    #define SEPERATOR "/"
 #elif __posix
     // POSIX
     #define INIT_SCRIPT "DNE"
@@ -57,6 +61,21 @@ vector<string> split(const string &s, char delim) {
         tokens.push_back(item);
     }
     return tokens;
+}
+void runScript(string name) {
+    string scriptPath;
+    if(strcmp(name.c_str(), "DNE") == 0) {
+        cout << "Unsupported OS: POSIX";
+        exit(EXIT_FAILURE);
+    }
+    else {
+        if(strcmp(OS, "WIN") != 0) {
+            scriptPath += "./";
+        }
+        scriptPath += "sh" + string(SEPERATOR) + string(name);
+    }
+
+    system(scriptPath.c_str());
 }
 Graph *createSineGraph(unsigned int length) {
     Graph *out = new Graph;
@@ -248,6 +267,20 @@ void ExportCommand(args::Subparser &parser) {
 
     timer::stop("Finished export");
 }
+void CleanCommand(args::Subparser &parser) {
+    args::Flag hardFlag(parser, "HARD", "resets everything as opposed to just caches", {'h', "hard"});
+    parser.Parse();
+
+    cout << "Executing cleaning script" << endl;
+
+    timer::start();
+    runScript("clean");
+    if(hardFlag) {
+        runScript("cleanhard");
+    }
+    cout << endl << endl;
+    timer::stop("Finished cleaning");
+}
 void InfoCommand(args::Subparser &parser) {
     args::Flag debugFlag(parser, "DEBUG", "shows debug output rather than clean value-pair output", {'d', "debug"});
     parser.Parse();
@@ -260,21 +293,12 @@ void InitCommand(args::Subparser &parser) {
 
     string scriptPath;
     // Avoid a warning with strcmp
-    if(strcmp(INIT_SCRIPT, "DNE") == 0) {
-        cout << "Unsupported OS: POSIX";
-        exit(EXIT_FAILURE);
-    }
-    else {
-        if(strcmp(OS, "WIN") != 0) {
-            scriptPath += "./";
-        }
-        scriptPath += "init" + string(INIT_SCRIPT);
-    }
+
 
     cout << "Executing OS-specific executable: " << scriptPath << endl;
 
     timer::start();
-    system(scriptPath.c_str());
+    runScript("dir");
     cout << endl << endl;
     timer::stop("Finished init");
 }
@@ -285,6 +309,7 @@ int main(int argc, const char **argv)
     args::Command import(commands, "import", "import a file to the input repository", &ImportCommand);
     args::Command run(commands, "run", "execute an entire program cycle", &RunCommand);
     args::Command exportCmd(commands, "export", "export the last or a specified run's output to a usable format and external location", &ExportCommand);
+    args::Command cleanCmd(commands, "clean", "cleans out generated folders and resets configurations", &CleanCommand);
     args::Command info(commands, "info", "view information about current run state", &InfoCommand);
     args::Command init(commands, "init", "initialize the directory structure with the required paths", &InitCommand);
 

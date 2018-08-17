@@ -3,11 +3,12 @@
 	<iostream>
 	<chrono>
 
-1534394877 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\main.cpp
+1534542105 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\main.cpp
 	<iostream>
 	<fstream>
 	<sstream>
 	<string>
+	<cstring>
 	<cmath>
 	<stdlib.h>
 	"data_analyzer.h"

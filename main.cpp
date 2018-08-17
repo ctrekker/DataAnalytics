@@ -1,7 +1,30 @@
+#ifdef _WIN32
+   // Windows (32-bit and 64-bit)
+   #define OS "WIN"
+   #define INIT_SCRIPT "\\dir.bat"
+#elif __APPLE__
+    // Apple OS
+    #define INIT_SCRIPT "/dir.sh"
+#elif __linux
+    // linux
+    #define INIT_SCRIPT "/dir.sh"
+#elif __unix // all unices not caught above
+    // Unix
+    #define INIT_SCRIPT "/dir.sh"
+#elif __posix
+    // POSIX
+    #define INIT_SCRIPT "DNE"
+#endif
+
+#ifndef OS
+    #define OS "OTHER"
+#endif // OS
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <cstring>
 #include <cmath>
 #include <stdlib.h>
 
@@ -232,6 +255,29 @@ void InfoCommand(args::Subparser &parser) {
     state::init(false);
     state::print(!debugFlag);
 }
+void InitCommand(args::Subparser &parser) {
+    parser.Parse();
+
+    string scriptPath;
+    // Avoid a warning with strcmp
+    if(strcmp(INIT_SCRIPT, "DNE") == 0) {
+        cout << "Unsupported OS: POSIX";
+        exit(EXIT_FAILURE);
+    }
+    else {
+        if(strcmp(OS, "WIN") != 0) {
+            scriptPath += "./";
+        }
+        scriptPath += "init" + string(INIT_SCRIPT);
+    }
+
+    cout << "Executing OS-specific executable: " << scriptPath << endl;
+
+    timer::start();
+    system(scriptPath.c_str());
+    cout << endl << endl;
+    timer::stop("Finished init");
+}
 int main(int argc, const char **argv)
 {
     args::ArgumentParser p("DataAnalytics 2.0");
@@ -240,6 +286,7 @@ int main(int argc, const char **argv)
     args::Command run(commands, "run", "execute an entire program cycle", &RunCommand);
     args::Command exportCmd(commands, "export", "export the last or a specified run's output to a usable format and external location", &ExportCommand);
     args::Command info(commands, "info", "view information about current run state", &InfoCommand);
+    args::Command init(commands, "init", "initialize the directory structure with the required paths", &InitCommand);
 
     try {
         p.ParseCLI(argc, argv);

@@ -178,40 +178,37 @@ namespace analyze {
 
                 prediction.init(pid, matchIndex, predictedData, bellWeight, bellWeight/totalBellWeight);
                 rawPrediction.init(pid, matchIndex, rawPredictedData, bellWeight, bellWeight/totalBellWeight);
-                if(PREDICTION_HANDLER == PredictionHandler::MERGED) {
-                    predictions->push_back(prediction);
-                }
-                else if(PREDICTION_HANDLER == PredictionHandler::SEPARATE) {
-                    if(!PREDICTION_RECURSIVE||layer>=PREDICTION_MAX_RECURSIVE_ATTEMPTS) {
+                if(PREDICTION_HANDLER == PredictionHandler::MERGED||((PREDICTION_HANDLER == PredictionHandler::SEPARATE)&&(!PREDICTION_RECURSIVE||layer>=PREDICTION_MAX_RECURSIVE_ATTEMPTS))) {
+                    if(!prediction.containedIn(predictions)) {
                         predictions->push_back(prediction);
                     }
-                    else {
-                        vector<vector<double>> addedData(graph.data.size()+rawPrediction.result.size(), vector<double>(graph.dimensions));
-                        double diff = graph.getPlotArray(graph.timeIndex)[graph.data.size()-1]-graph.getPlotArray(graph.timeIndex)[graph.data.size()-2];
-                        double lastTime = graph.getPlotArray(graph.timeIndex)[graph.data.size()-1];
-                        for(unsigned int x=0; x<addedData.size(); x++) {
-                            for(unsigned int y=0; y<addedData[0].size(); y++) {
-                                if(x<graph.data.size()) {
-                                    addedData[x][y] = graph.data[x][y];
+                }
+                else {
+                    vector<vector<double>> addedData(graph.data.size()+rawPrediction.result.size(), vector<double>(graph.dimensions));
+                    double diff = graph.getPlotArray(graph.timeIndex)[graph.data.size()-1]-graph.getPlotArray(graph.timeIndex)[graph.data.size()-2];
+                    double lastTime = graph.getPlotArray(graph.timeIndex)[graph.data.size()-1];
+                    for(unsigned int x=0; x<addedData.size(); x++) {
+                        for(unsigned int y=0; y<addedData[0].size(); y++) {
+                            if(x<graph.data.size()) {
+                                addedData[x][y] = graph.data[x][y];
+                            }
+                            else {
+                                if(y==0) {
+                                    // Apply a linear regressive algorithm to determine predicted time value
+                                    addedData[x][y] = lastTime+diff*((x+1)-graph.data.size());
                                 }
                                 else {
-                                    if(y==0) {
-                                        // Apply a linear regressive algorithm to determine predicted time value
-                                        addedData[x][y] = lastTime+diff*((x+1)-graph.data.size());
-                                    }
-                                    else {
-                                        // Apply the actual predicted values to the addedData vector
-                                        addedData[x][y] = rawPrediction.result[x-graph.data.size()];
-                                    }
+                                    // Apply the actual predicted values to the addedData vector
+                                    addedData[x][y] = rawPrediction.result[x-graph.data.size()];
                                 }
                             }
                         }
+                    }
 
-                        Graph addedGraph;
-                        addedGraph.init(graph.dimensions, graph.timeIndex, addedData);
-                        if(!predict(predictions, patterns, matches, addedGraph, patternStart, patternEnd, layer+1, initialGraphSize)) {
-                            predictions->push_back(prediction);
-                        }
+                    Graph addedGraph;
+                    addedGraph.init(graph.dimensions, graph.timeIndex, addedData);
+                    if(!predict(predictions, patterns, matches, addedGraph, patternStart, patternEnd, layer+1, initialGraphSize)) {
+                        predictions->push_back(prediction);
                     }
                 }
 

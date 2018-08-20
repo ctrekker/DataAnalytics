@@ -52,3 +52,4 @@ obj/Release/src/timer.o
 .idea/dataSources.xml
 *.csv
 DataAnalytics2.0.cbp.temp
+da2.exe

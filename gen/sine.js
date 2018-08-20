@@ -11,7 +11,7 @@ const outFile = "out.csv";
 
 let out = "";
 for(let i=0; i<waveLength; i++) {
-    out+=(i)+","+Math.cos((Math.PI/180)*i)+"\r\n";
+    out+=(i)+","+Math.sin((Math.PI/180)*i)+"\r\n";
 }
 
 fs.writeFile(outFile, out, function(err) {

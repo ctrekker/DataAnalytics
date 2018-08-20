@@ -28,7 +28,7 @@ const static int MATCH_MAX_DATA_SIZE = PATTERN_LENGTH;
 
 const static int PREDICTION_HANDLER = PredictionHandler::SEPARATE;
 const static int PREDICTION_MAX_NUMBER = 1000;
-const static bool PREDICTION_RECURSIVE = true;
+const static bool PREDICTION_RECURSIVE = false;
 const static int PREDICTION_MAX_RECURSIVE_ATTEMPTS = 3;
 const static double PREDICTION_ACCEPTANCE_THRESHOLD = 1.0;
 

@@ -208,6 +208,22 @@ namespace dataio {
             this->bellWeight = bellWeight;
             this->patternPercentage = patternPercentage;
         }
+        bool containedIn(vector<Prediction>* predictions) {
+            for(unsigned int i=0; i<predictions->size(); i++) {
+                Prediction current = (*predictions)[i];
+                if(this->equals(current)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        bool equals(Prediction &other) {
+            if(this->result.size()!=other.result.size()) return false;
+            for(unsigned int i=0; i<this->result.size(); i++) {
+                if(this->result[i] != other.result[i]) return false;
+            }
+            return true;
+        }
         string toString() {
             stringstream out;
             out << "Prediction[" << this << "]" << endl;

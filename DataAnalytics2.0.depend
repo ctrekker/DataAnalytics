@@ -25,18 +25,18 @@
 	<vector>
 	"dataio.h"
 
-1532053356 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\dataio.h
+1534735755 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\dataio.h
 	<vector>
 	<sstream>
 	<float.h>
 	"dataio.h"
 	"config.h"
 
-1534436446 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\config.h
+1534736309 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\config.h
 
 1532652981 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\timer.h
 
-1534222018 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\data_analyzer.cpp
+1534735496 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\data_analyzer.cpp
 	<iostream>
 	<chrono>
 	<cstdlib>

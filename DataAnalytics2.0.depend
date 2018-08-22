@@ -51,7 +51,7 @@
 	"save.h"
 	"load.h"
 
-1534866951 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\save.cpp
+1534878785 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\save.cpp
 	<fstream>
 	<iostream>
 	<climits>
@@ -116,4 +116,17 @@
 	<string>
 	"config.h"
 	"state.h"
+
+1534900008 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\test\log_test.cpp
+	<iostream>
+	"log.h"
+
+1534899707 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\log.cpp
+	"log.h"
+	<fstream>
+	<iostream>
+
+1534899907 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\log.h
+	<fstream>
+	<iostream>
 

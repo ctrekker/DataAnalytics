@@ -1,9 +1,11 @@
 # depslib dependency file v1.0
-1532652981 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\timer.cpp
+1534972818 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\timer.cpp
 	<iostream>
 	<chrono>
+	<sstream>
+	"log.h"
 
-1534542105 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\main.cpp
+1534971969 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\main.cpp
 	<iostream>
 	<fstream>
 	<sstream>
@@ -18,6 +20,7 @@
 	"save.h"
 	"load.h"
 	"state.h"
+	"log.h"
 	"config.h"
 	"args.hxx"
 
@@ -32,11 +35,11 @@
 	"dataio.h"
 	"config.h"
 
-1534867428 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\config.h
+1534975034 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\config.h
 
 1532652981 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\timer.h
 
-1534735496 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\data_analyzer.cpp
+1534973412 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\data_analyzer.cpp
 	<iostream>
 	<chrono>
 	<cstdlib>
@@ -50,6 +53,7 @@
 	"state.h"
 	"save.h"
 	"load.h"
+	"log.h"
 
 1534878785 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\save.cpp
 	<fstream>
@@ -74,7 +78,7 @@
 	<fstream>
 	"dataio.h"
 
-1533003753 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\load.cpp
+1534974947 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\load.cpp
 	<vector>
 	<iostream>
 	<fstream>
@@ -83,6 +87,7 @@
 	"timer.h"
 	"config.h"
 	"load.h"
+	"log.h"
 
 1532407175 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\load.h
 	<fstream>
@@ -104,18 +109,20 @@
 	<unordered_set>
 	<type_traits>
 
-1534221846 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\progressbar.hpp
+1534973352 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\progressbar.hpp
 	<chrono>
 	<iostream>
+	<sstream>
 
 1532652981 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\archive.cpp
 
-1534123478 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\state.cpp
+1534974848 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\state.cpp
 	<iostream>
 	<fstream>
 	<string>
 	"config.h"
 	"state.h"
+	"log.h"
 
 1534900855 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\test\log_test.cpp
 	<iostream>

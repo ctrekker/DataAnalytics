@@ -12,12 +12,15 @@
 #include "state.h"
 #include "save.h"
 #include "load.h"
+#include "log.h"
 
 using namespace dataio;
 
+extern Log LOG;
+
 namespace analyze {
     void create_patterns(vector<Pattern> &patternArr, Graph graph) {
-        std::cout << "Creating patterns..." << std::endl;
+        LOG.info("Creating patterns...");
         timer::start();
 
         ProgressBar pb(PATTERN_NUMBER, 50);
@@ -51,10 +54,9 @@ namespace analyze {
 
         pb.done();
         timer::stop("Created patterns");
-        cout << endl;
     }
     void train(vector<MatchList>* matchArr, vector<Pattern> patterns, Graph graph) {
-        std::cout << "Training model..." << std::endl;
+       LOG.info("Training model...");
         timer::start();
 
         ProgressBar pb(state::totalPatterns, 50);
@@ -107,11 +109,10 @@ namespace analyze {
 
         pb.done();
         timer::stop("Trained model");
-        cout << endl;
     }
     bool predict(vector<Prediction>* predictions, vector<Pattern> &patterns, vector<MatchList> matches, Graph graph, uint64_t patternStart, uint64_t patternEnd, int layer, int initialGraphSize) {
         if(layer==1) {
-            cout << "Predicting outcomes..." << endl;
+            LOG.info("Predicting outcomes...");
             timer::start();
         }
         ProgressBar pb(patternEnd-patternStart, 50);
@@ -158,7 +159,7 @@ namespace analyze {
             }
 
             if(bestMatch == nullptr) {
-                cout << pid << " nomatch" << endl;
+                LOG.warning(to_string(pid) + " nomatch");
                 continue;
             }
             double bellWeight = bellCurve(TRAINING_THRESHOLD, 1, bestMatch->error);
@@ -236,7 +237,6 @@ namespace analyze {
         if(layer==1) {
             pb.done();
             timer::stop("Predicted outcomes");
-            cout << endl;
         }
         return added;
     }

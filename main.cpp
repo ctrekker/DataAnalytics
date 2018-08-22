@@ -34,6 +34,7 @@
 #include "save.h"
 #include "load.h"
 #include "state.h"
+#include "log.h"
 #include "config.h"
 #include "args.hxx"
 
@@ -43,6 +44,8 @@ using namespace dataio;
 vector<Pattern> patterns(PATTERN_NUMBER);
 vector<MatchList> matches;
 vector<Prediction> predictions;
+
+Log LOG(true);
 
 inline bool file_exists(string name) {
     ifstream file(name.c_str());
@@ -60,7 +63,7 @@ vector<string> split(const string &s, char delim) {
 void runScript(string name) {
     string scriptPath;
     if(strcmp(name.c_str(), "DNE") == 0) {
-        cout << "Unsupported OS: POSIX";
+        LOG.error("Unsupported OS: POSIX");
         exit(EXIT_FAILURE);
     }
     else {
@@ -73,6 +76,7 @@ void runScript(string name) {
     }
 
     int code = system(scriptPath.c_str());
+    LOG.info("Returned code: " + to_string(code));
 }
 Graph *createSineGraph(unsigned int length) {
     Graph *out = new Graph;
@@ -103,7 +107,7 @@ void ImportCommand(args::Subparser &parser) {
     parser.Parse();
 
     if(!pathFlag&&!viewFlag) {
-        cout << "ERROR: a path is required";
+        LOG.error("ERROR: a path is required");
     }
     else if(viewFlag) {
         string location = INPUT_REPO_LOCATION;
@@ -111,7 +115,7 @@ void ImportCommand(args::Subparser &parser) {
             location = args::get(locationFlag);
         }
 
-        cout << "View is not yet supported" << endl;
+        LOG.warning("View is not yet supported");
     }
     else {
         string path = args::get(pathFlag);
@@ -133,7 +137,7 @@ void ImportCommand(args::Subparser &parser) {
         if(type=="csv") {
             ofstream repoOut(location+"/"+name);
             ifstream repoIn(path);
-            cout << "Importing " << path << " to " << location+"/"+name << endl;
+            LOG.info("Importing "+path+" to "+location+"/"+name);
             string line;
             while(getline(repoIn, line)) {
                 repoOut << line << endl;
@@ -169,14 +173,14 @@ void RunCommand(args::Subparser &parser) {
         while(getline(repoIn, line)) {
             vector<string> csvSplit = split(line, ',');
             if(csvSplit.size()!=2) {
-                cout << "WARNING: Malformed input file" << endl;
+                LOG.warning("Malformed input file");
             }
             graphData.push_back({atof(csvSplit[0].c_str()), atof(csvSplit[1].c_str())});
         }
         graph.init(2, 0, graphData);
     }
     else {
-        cout << "WARNING: Using generated test case: SINE" << endl;
+        LOG.warning("Using generated test case: SINE");
         graph = *createSineGraph(1000);
     }
 
@@ -184,27 +188,24 @@ void RunCommand(args::Subparser &parser) {
         analyze::create_patterns(patterns, graph);
     }
     else {
-        cout << "Skipping patterns" << endl;
+        LOG.info("Skipping patterns");
     }
     if(trainFlag) {
         analyze::train(&matches, patterns, graph);
     }
     else {
-        cout << "Skipping training" << endl;
+        LOG.info("Skipping training");
     }
     if(predictFlag) {
         analyze::predict(&predictions, patterns, matches, graph, 0, state::totalPatterns-1, 1, graph.data.size());
     }
     else {
-        cout << "Skipping predictions" << endl;
+        LOG.info("Skipping predictions");
     }
 
     state::preserve();
 
-    cout << endl;
-    cout << "---DEBUG---" << endl;
-
-    cout << predictions.size() << "<-Total Predictions" << endl;
+    LOG.debug(predictions.size()+"<-Total Predictions");
 
 
     ofstream file(OUT_DIR+"/"+EXECUTION_NAME+".csv");
@@ -220,15 +221,15 @@ void RunCommand(args::Subparser &parser) {
         }
     }
 
-    cout << "PN:" << pn << ";PGN:" << pgn << endl;
+    LOG.debug("PN:" + to_string(pn) + ";PGN:" + to_string(pgn));
 
-    cout << predictions[pn].result.size();
+    LOG.debug(to_string(predictions[pn].result.size()));
     if(pgn>0) {
         for(unsigned int i=0; i<predictions[pn].result.size(); i++) {
             file << (graph.data.size()+i) << ",";
             file << predictions[pn].result[i] << endl;
         }
-        cout << predictions[pn].toString() << endl;
+        LOG.debug(predictions[pn].toString());
     }
 }
 void ExportCommand(args::Subparser &parser) {
@@ -247,7 +248,7 @@ void ExportCommand(args::Subparser &parser) {
     string runPath = OUT_DIR+"/"+name+".csv";
 
 
-    cout << "Exporting " << name << " to " << outputPath << endl;
+    LOG.info("Exporting " + name + " to " + outputPath);
     timer::start();
     // The actual output the user expects
     ofstream outputFile(outputPath);
@@ -268,7 +269,7 @@ void CleanCommand(args::Subparser &parser) {
     args::Flag hardFlag(parser, "HARD", "resets everything as opposed to just caches", {'h', "hard"});
     parser.Parse();
 
-    cout << "Executing cleaning script" << endl;
+    LOG.info("Executing cleaning script");
 
     timer::start();
     runScript("clean");
@@ -292,7 +293,7 @@ void InitCommand(args::Subparser &parser) {
     // Avoid a warning with strcmp
 
 
-    cout << "Executing OS-specific executable: " << scriptPath << endl;
+    LOG.info("Executing OS-specific executable: " + scriptPath);
 
     timer::start();
     runScript("dir");
@@ -314,10 +315,10 @@ int main(int argc, const char **argv)
         p.ParseCLI(argc, argv);
     }
     catch(args::Help) {
-        std::cout << p;
+        cout << p;
     }
     catch(args::Error& e) {
-        std::cerr << e.what() << std::endl << p;
+        LOG.error(e.what());
         return 1;
     }
 

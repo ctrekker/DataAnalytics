@@ -72,7 +72,7 @@ void runScript(string name) {
         scriptPath += "sh" + string(SEPERATOR) + string(name) + suffix;
     }
 
-    system(scriptPath.c_str());
+    int code = system(scriptPath.c_str());
 }
 Graph *createSineGraph(unsigned int length) {
     Graph *out = new Graph;

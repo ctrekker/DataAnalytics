@@ -64,10 +64,10 @@ void runScript(string name) {
         exit(EXIT_FAILURE);
     }
     else {
-        string suffix = ".sh";
+        string suffix = ".bat";
         if(strcmp(OS, "WIN") != 0) {
             scriptPath += "./";
-            suffix = ".bat";
+            suffix = ".sh";
         }
         scriptPath += "sh" + string(SEPERATOR) + string(name) + suffix;
     }

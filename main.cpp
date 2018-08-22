@@ -2,22 +2,17 @@
    // Windows (32-bit and 64-bit)
    #define OS "WIN"
    #define SEPERATOR "\\"
-   #define INIT_SCRIPT "\\dir.bat"
 #elif __APPLE__
     // Apple OS
-    #define INIT_SCRIPT "/dir.sh"
     #define SEPERATOR "/"
 #elif __linux
     // linux
-    #define INIT_SCRIPT "/dir.sh"
     #define SEPERATOR "/"
 #elif __unix // all unices not caught above
     // Unix
-    #define INIT_SCRIPT "/dir.sh"
     #define SEPERATOR "/"
 #elif __posix
     // POSIX
-    #define INIT_SCRIPT "DNE"
 #endif
 
 #ifndef OS
@@ -69,10 +64,12 @@ void runScript(string name) {
         exit(EXIT_FAILURE);
     }
     else {
+        string suffix = ".sh";
         if(strcmp(OS, "WIN") != 0) {
             scriptPath += "./";
+            suffix = ".bat";
         }
-        scriptPath += "sh" + string(SEPERATOR) + string(name);
+        scriptPath += "sh" + string(SEPERATOR) + string(name) + suffix;
     }
 
     system(scriptPath.c_str());

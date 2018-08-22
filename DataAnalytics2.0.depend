@@ -117,16 +117,17 @@
 	"config.h"
 	"state.h"
 
-1534900008 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\test\log_test.cpp
+1534900855 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\test\log_test.cpp
 	<iostream>
 	"log.h"
 
-1534899707 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\log.cpp
+1534901331 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\log.cpp
 	"log.h"
 	<fstream>
 	<iostream>
+	<sstream>
 
-1534899907 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\log.h
+1534900481 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\log.h
 	<fstream>
 	<iostream>
 

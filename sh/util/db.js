@@ -3,7 +3,7 @@ var fs = require('fs');
 
 var args = process.argv.slice(2);
 var query = args.slice(4).join(" ");
-if(args[0]==="help") {
+if(args[0]==="help"||args.length===0) {
     console.log("host, user, password, database, query");
     process.exit();
 }

@@ -22,7 +22,7 @@
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="clean --hard" />
+				<Option parameters="run -r -s cosine" />
 				<Compiler>
 					<Add option="-O2" />
 					<Add directory="C:/Users/ctrek/Documents/Programming/C++/DataAnalytics2.0/include" />
@@ -31,11 +31,23 @@
 					<Add option="-s" />
 				</Linker>
 			</Target>
+			<Target title="Test">
+				<Option output="bin/Test/DataAnalytics2.0" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Test/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add directory="C:/Users/ctrek/Documents/Programming/C++/DataAnalytics2.0/include" />
+				</Compiler>
+			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Linker>
+			<Add directory="C:/Users/ctrek/Documents/Programming/C++/DataAnalytics2.0/include" />
+		</Linker>
 		<Unit filename="include/ProgressBar.hpp" />
 		<Unit filename="include/archive.h" />
 		<Unit filename="include/args.hxx" />
@@ -43,18 +55,26 @@
 		<Unit filename="include/data_analyzer.h" />
 		<Unit filename="include/dataio.h" />
 		<Unit filename="include/load.h" />
+		<Unit filename="include/log.h" />
 		<Unit filename="include/save.h" />
 		<Unit filename="include/state.h" />
 		<Unit filename="include/stream.h" />
 		<Unit filename="include/timer.h" />
-		<Unit filename="main.cpp" />
+		<Unit filename="main.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="src/archive.cpp" />
 		<Unit filename="src/data_analyzer.cpp" />
 		<Unit filename="src/load.cpp" />
+		<Unit filename="src/log.cpp" />
 		<Unit filename="src/save.cpp" />
 		<Unit filename="src/state.cpp" />
 		<Unit filename="src/stream.cpp" />
 		<Unit filename="src/timer.cpp" />
+		<Unit filename="test/log_test.cpp">
+			<Option target="Test" />
+		</Unit>
 		<Extensions>
 			<code_completion />
 			<envvars />

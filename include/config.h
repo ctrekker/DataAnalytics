@@ -16,12 +16,12 @@ const static uint64_t OBJ_PER_FILE = 100000;
 const static string INPUT_REPO_LOCATION = "in";
 static string EXECUTION_NAME = "latest";
 
-const static int PATTERN_NUMBER = 5;
+const static int PATTERN_NUMBER = 500;
 // Note that the actual prediction output is 1 value less than the pattern length
 const static int PATTERN_LENGTH = 11;
 
-const static double TRAINING_THRESHOLD = 0.1;
-const static double TRAINING_END_THRESHOLD = 0.01;
+const static double TRAINING_THRESHOLD = 1;
+const static double TRAINING_END_THRESHOLD = 0.1;
 
 const static short int MATCH_BUFFER_SIZE = 40;
 const static int MATCH_MAX_DATA_SIZE = PATTERN_LENGTH;

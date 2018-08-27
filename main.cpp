@@ -205,31 +205,30 @@ void RunCommand(args::Subparser &parser) {
 
     state::preserve();
 
-    LOG.debug(predictions.size()+"<-Total Predictions");
+    if(predictFlag) {
+        LOG.debug(to_string(predictions.size())+"<-Total Predictions");
 
 
-    ofstream file(OUT_DIR+"/"+EXECUTION_NAME+".csv");
-    save::csvPredictionList(&graph, &predictions, file);
-    file.close();
+        ofstream file(OUT_DIR+"/"+EXECUTION_NAME+".csv");
+        save::csvPredictionList(&graph, &predictions, file);
+        file.close();
 
-    unsigned int pn=0;
-    unsigned int pgn=0;
-    for(unsigned int i=0; i<predictions.size(); i++) {
-        if(predictions[i].result.size()>pgn) {
-            pn=i;
-            pgn=predictions[i].result.size();
+        cout << "Test" << endl;
+
+        unsigned int pn=0;
+        unsigned int pgn=0;
+        for(unsigned int i=0; i<predictions.size(); i++) {
+            if(predictions[i].result.size()>pgn) {
+                pn=i;
+                pgn=predictions[i].result.size();
+            }
         }
-    }
 
-    LOG.debug("PN:" + to_string(pn) + ";PGN:" + to_string(pgn));
-
-    LOG.debug(to_string(predictions[pn].result.size()));
-    if(pgn>0) {
-        for(unsigned int i=0; i<predictions[pn].result.size(); i++) {
-            file << (graph.data.size()+i) << ",";
-            file << predictions[pn].result[i] << endl;
+        LOG.debug("PN:" + to_string(pn) + ";PGN:" + to_string(pgn));
+        LOG.debug(to_string(predictions[pn].result.size()));
+        if(pgn>0) {
+            LOG.debug(predictions[pn].toString());
         }
-        LOG.debug(predictions[pn].toString());
     }
 }
 void ExportCommand(args::Subparser &parser) {

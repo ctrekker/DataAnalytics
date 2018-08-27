@@ -5,7 +5,7 @@
 	<sstream>
 	"log.h"
 
-1534971969 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\main.cpp
+1535316169 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\main.cpp
 	<iostream>
 	<fstream>
 	<sstream>
@@ -35,7 +35,7 @@
 	"dataio.h"
 	"config.h"
 
-1534975034 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\config.h
+1535316044 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\config.h
 
 1532652981 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\timer.h
 
@@ -55,7 +55,7 @@
 	"load.h"
 	"log.h"
 
-1534878785 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\save.cpp
+1535316889 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\save.cpp
 	<fstream>
 	<iostream>
 	<climits>
@@ -65,6 +65,7 @@
 	"config.h"
 	"timer.h"
 	"state.h"
+	"log.h"
 
 1531676457 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\stream.cpp
 	<iostream>
@@ -128,7 +129,7 @@
 	<iostream>
 	"log.h"
 
-1534901331 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\log.cpp
+1535315923 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\log.cpp
 	"log.h"
 	<fstream>
 	<iostream>

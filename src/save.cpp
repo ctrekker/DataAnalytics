@@ -7,9 +7,12 @@
 #include "config.h"
 #include "timer.h"
 #include "state.h"
+#include "log.h"
 
 using namespace std;
 using namespace dataio;
+
+extern Log LOG;
 
 namespace save {
     void createdPatterns(vector<Pattern>* patterns) {
@@ -150,6 +153,7 @@ namespace save {
     }
     void csvPredictionList(Graph* graph, vector<Prediction>* predictions, ofstream &outFile) {
         vector<double> plotArr = graph->getPlotArray(graph->timeIndex);
+        vector<double> plotArrData = graph->getPlotArray(1);
         for(int i=-1; i<int(plotArr.size()); i++) {
             if(i==-1) {
                 outFile << ",";
@@ -163,7 +167,7 @@ namespace save {
             else {
                 outFile << plotArr[i] << ",";
                 for(unsigned int j=0; j<predictions->size(); j++) {
-                    outFile << graph->getPlotArray(1)[i];
+                    outFile << plotArrData[i];
                     if(j!=predictions->size()-1) {
                         outFile << ",";
                     }
@@ -179,6 +183,7 @@ namespace save {
         else {
             maxPredLength = (PATTERN_LENGTH - 1) * PREDICTION_MAX_RECURSIVE_ATTEMPTS;
         }
+        LOG.debug(to_string(maxPredLength));
         for(unsigned int i=0; i<maxPredLength; i++) {
             outFile << plotArr.size()+i << ",";
             for(unsigned int j=0; j<predictions->size(); j++) {

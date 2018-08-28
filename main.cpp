@@ -183,6 +183,10 @@ void RunCommand(args::Subparser &parser) {
         LOG.warning("Using generated test case: SINE");
         graph = *createSineGraph(1000);
     }
+    if(graph.data.size()<PATTERN_LENGTH*2) {
+        LOG.error("Input size is too small");
+        exit(0);
+    }
 
     if(patternFlag) {
         analyze::create_patterns(patterns, graph);

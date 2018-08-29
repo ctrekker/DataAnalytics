@@ -3,7 +3,7 @@
 # Set up a temporary directory
 mkdir tmp
 
-# Download newline seperated list of stock collections
+# Download newline separated list of stock collections
 node sh/util/mdb mdb.json mdbcollections > tmp/collections.txt
 
 DATE=`date +%Y-%m-%d`

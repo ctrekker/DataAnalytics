@@ -6,8 +6,9 @@ mkdir tmp
 # Download newline separated list of stock collections
 node sh/util/mdb mdb.json mdbcollections > tmp/collections.txt
 
-DATE=`date +%Y-%m-%d`
-#DATE="2018-08-24"
+DATE=`cat execution_date.txt`
+echo "Execution Date: $DATE"
+rm execution_date.txt
 
 # Loop through each line of the file
 while read collection; do

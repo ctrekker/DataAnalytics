@@ -10,11 +10,21 @@ DATE=`cat execution_date.txt`
 echo "Execution Date: $DATE"
 rm execution_date.txt
 
+# Create a temporary mongo batch file
+touch tmp/symbol_download.msh
 # Loop through each line of the file
+while read collection; do
+    # Add the download command to the script
+    echo "mdbfind $collection timestamp,ASC {date \`date\`: \`$DATE\` } > tmp/$collection.csv" > tmp/symbol_download.msh
+done <tmp/collections.txt
+
+# Execute the batch script which downloads all files
+node sh/util/mdb mdb.json mdbbatch "tmp/symbol_download.msh"
+
 while read collection; do
   echo "$collection"
   # Download the csv data for the current collection
-  node sh/util/mdb mdb.json mdbfind "$collection timestamp,ASC { \`date\`: \`$DATE\` }" > tmp/$collection.csv
+  # node sh/util/mdb mdb.json mdbfind "$collection timestamp,ASC { \`date\`: \`$DATE\` }" > tmp/$collection.csv
   # Format for import
   node sh/util/csvformat tmp/$collection.csv close > tmp/$collection-import.csv
   # Import the csv import to the local repo

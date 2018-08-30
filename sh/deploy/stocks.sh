@@ -24,8 +24,6 @@ node sh/util/mdb mdb.json mdbbatch "tmp/symbol_download.msh"
 
 while read collection; do
   echo "$collection"
-  # Download the csv data for the current collection
-  # node sh/util/mdb mdb.json mdbfind "$collection timestamp,ASC { \`date\`: \`$DATE\` }" > tmp/$collection.csv
   # Format for import
   node sh/util/csvformat tmp/$collection.csv close > tmp/$collection-import.csv
   # Import the csv import to the local repo

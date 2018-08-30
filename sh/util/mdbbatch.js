@@ -11,7 +11,16 @@ module.exports = function(db, args, callback) {
 
         function runCommand(commandIndex) {
             var currentCommand = commands[commandIndex].split(' ');
-
+            if(currentCommand[0] === '') {
+                if(commandIndex<commands.length-1) {
+                    runCommand(commandIndex+1);
+                }
+                else {
+                    setTimeout(function() { callback() }, 1000);
+                    return;
+                }
+            }
+            
             console.log('> '+currentCommand.join(' '));
 
             var preLog = console.log;

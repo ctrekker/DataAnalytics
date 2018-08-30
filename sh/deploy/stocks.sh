@@ -1,3 +1,4 @@
+
 #!/bin/bash
 
 # Set up a temporary directory
@@ -15,7 +16,7 @@ touch tmp/symbol_download.msh
 # Loop through each line of the file
 while read collection; do
     # Add the download command to the script
-    echo "mdbfind $collection timestamp,ASC {date \`date\`: \`$DATE\` } > tmp/$collection.csv" > tmp/symbol_download.msh
+    printf "mdbfind $collection timestamp,ASC {\`date\`:\`$DATE\`} > tmp/$collection.csv\r\n" >> tmp/symbol_download.msh
 done <tmp/collections.txt
 
 # Execute the batch script which downloads all files

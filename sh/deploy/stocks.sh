@@ -1,15 +1,16 @@
-
 #!/bin/bash
 
 # Set up a temporary directory
 mkdir tmp
+# Make sure the prediction archive repository path exists
+mkdir /mnt/blue/DataAnalytics
+mkdir /mnt/blue/DataAnalytics/predictions
 
 # Download newline separated list of stock collections
 node sh/util/mdb mdb.json mdbcollections > tmp/collections.txt
 
 DATE=`cat execution_date.txt`
 echo "Execution Date: $DATE"
-rm execution_date.txt
 
 # Create a temporary mongo batch file
 touch tmp/symbol_download.msh
@@ -37,10 +38,13 @@ done <tmp/collections.txt
 
 # Clean out the input repository
 rm in/*
-# Export data out in zip format (TEMPORARY)
-zip -r data_$DATE.zip data
+# Export data to the prediction archive
+tar -cvf /mnt/blue/DataAnalytics/predictions/data_$DATE.tar.bz2 --use-compress-prog=pbzip2 data
 rm data/*
 # Clean tmp directory
 rm -r tmp
+
+# Remove execution date now that execution has completed
+rm execution_date.txt
 
 echo "Completed execution for $DATE"

@@ -45,6 +45,8 @@ done <tmp/collections.txt
 rm in/*
 # Export data to the prediction archive
 tar -cvf /mnt/blue/DataAnalytics/predictions/data_$DATE.tar.bz2 --use-compress-prog=pbzip2 data
+# Upload the tar to a remote ftp backup server
+node sh/util/ftpupload ftp.json "/mnt/blue/DataAnalytics/predictions/data_$DATE.tar.bz2" "DataAnalytics/predictions/data_$DATE.tar.bz2"
 rm data/*
 # Clean tmp directory
 rm -r tmp

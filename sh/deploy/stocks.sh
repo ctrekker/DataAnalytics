@@ -35,6 +35,11 @@ while read collection; do
   rm tmp/$collection.csv
   rm tmp/$collection-import.csv
 done <tmp/collections.txt
+# Predict outcomes
+while read collection; do
+  echo "$collection"
+  ./da2 run -r -s $collection -n $collection
+done <tmp/collections.txt
 
 # Clean out the input repository
 rm in/*

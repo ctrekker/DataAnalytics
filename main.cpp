@@ -217,8 +217,6 @@ void RunCommand(args::Subparser &parser) {
         save::csvPredictionList(&graph, &predictions, file);
         file.close();
 
-        cout << "Test" << endl;
-
         unsigned int pn=0;
         unsigned int pgn=0;
         for(unsigned int i=0; i<predictions.size(); i++) {

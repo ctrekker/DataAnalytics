@@ -15,7 +15,7 @@ public:
 
     void setLevel(LogLevel level);
 
-    void print(LogLevel level, string msg);
+    void print(LogLevel level, string msg, bool newline=true);
     void error(string msg);
     void warning(string msg);
     void info(string msg);

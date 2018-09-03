@@ -1,11 +1,11 @@
 # depslib dependency file v1.0
-1534972818 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\timer.cpp
+1535853568 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\timer.cpp
 	<iostream>
 	<chrono>
 	<sstream>
 	"log.h"
 
-1535414432 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\main.cpp
+1535940236 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\main.cpp
 	<iostream>
 	<fstream>
 	<sstream>
@@ -35,11 +35,11 @@
 	"dataio.h"
 	"config.h"
 
-1535316044 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\config.h
+1535853568 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\config.h
 
 1532652981 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\timer.h
 
-1535407933 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\data_analyzer.cpp
+1535853568 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\data_analyzer.cpp
 	<iostream>
 	<chrono>
 	<cstdlib>
@@ -55,7 +55,7 @@
 	"load.h"
 	"log.h"
 
-1535317024 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\save.cpp
+1535853568 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\save.cpp
 	<fstream>
 	<iostream>
 	<climits>
@@ -79,7 +79,7 @@
 	<fstream>
 	"dataio.h"
 
-1534974947 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\load.cpp
+1535853568 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\load.cpp
 	<vector>
 	<iostream>
 	<fstream>
@@ -110,14 +110,15 @@
 	<unordered_set>
 	<type_traits>
 
-1534973352 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\progressbar.hpp
+1535940999 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\progressbar.hpp
 	<chrono>
 	<iostream>
 	<sstream>
+	"log.h"
 
 1532652981 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\archive.cpp
 
-1534974848 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\state.cpp
+1535853568 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\state.cpp
 	<iostream>
 	<fstream>
 	<string>
@@ -129,13 +130,17 @@
 	<iostream>
 	"log.h"
 
-1535315923 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\log.cpp
+1535940925 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\log.cpp
 	"log.h"
 	<fstream>
 	<iostream>
 	<sstream>
+	<sstream>
+	<string>
+	<stdio.h>
+	<time.h>
 
-1534900481 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\log.h
+1535940892 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\log.h
 	<fstream>
 	<iostream>
 

@@ -51,6 +51,7 @@ public:
         stream.flush();
 
         LOG.print(LogLevel::INFO, stream.str(), false);
+        std::cout.flush();
     }
 
     void done()

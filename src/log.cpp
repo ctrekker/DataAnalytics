@@ -30,7 +30,7 @@ Log::Log(bool outConsole, string outFileName) {
     }
 }
 
-void Log::print(LogLevel level, string msg) {
+void Log::print(LogLevel level, string msg, bool newline) {
     stringstream out;
 
     string levelTag;
@@ -53,7 +53,10 @@ void Log::print(LogLevel level, string msg) {
         levelSpaces += " ";
     }
 
-    out << "[" << currentDateTime() << "][" << levelTag << levelSpaces << "]: " << msg << endl;
+    out << "[" << currentDateTime() << "][" << levelTag << levelSpaces << "]: " << msg;
+    if(newline) {
+        out << endl;
+    }
 
 
     // Handle all outputs

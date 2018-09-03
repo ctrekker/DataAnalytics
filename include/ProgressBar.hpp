@@ -5,6 +5,10 @@
 #include <iostream>
 #include <sstream>
 
+#include "log.h"
+
+extern Log LOG;
+
 class ProgressBar {
 private:
     unsigned int ticks = 0;
@@ -46,7 +50,8 @@ public:
                   << float(time_elapsed) / 1000.0 << "s\r";
         stream.flush();
 
-        std::cout << stream.str();
+        LOG.print(LogLevel::INFO, stream.str(), false);
+        std::cout.flush();
     }
 
     void done()

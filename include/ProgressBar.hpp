@@ -58,11 +58,8 @@ public:
     {
         ticks = total_ticks;
         display();
-        std::string barClear = "";
-        while(barClear.length() < this->bar_width*2) {
-            barClear += "  ";
-        }
-        std::cout << barClear << "\r";
+        std::cout << endl;
+        std::cout.flush();
     }
 };
 

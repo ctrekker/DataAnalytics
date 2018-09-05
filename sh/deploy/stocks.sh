@@ -5,6 +5,7 @@ mkdir tmp
 # Make sure the prediction archive repository path exists
 mkdir /mnt/blue/DataAnalytics
 mkdir /mnt/blue/DataAnalytics/predictions
+mkdir /mnt/blue/DataAnalytics/save
 
 # Download newline separated list of stock collections
 node sh/util/mdb mdb.json mdbcollections > tmp/collections.txt
@@ -45,8 +46,12 @@ done <tmp/collections.txt
 rm in/*
 # Export data to the prediction archive
 tar -cvf /mnt/blue/DataAnalytics/predictions/data_$DATE.tar.bz2 --use-compress-prog=pbzip2 data
-# Upload the tar to a remote ftp backup server
+# Export save data to the save archive
+tar -cvf /mnt/blue/DataAnalytics/save/save_$DATE.tar.bz2 --use-compress-prog=pbzip2 save
+# Upload the tar backups to a remote ftp backup server
 node sh/util/ftpupload ftp.json "/mnt/blue/DataAnalytics/predictions/data_$DATE.tar.bz2" "DataAnalytics/predictions/data_$DATE.tar.bz2"
+node sh/util/ftpupload ftp.json "/mnt/blue/DataAnalytics/save/save_$DATE.tar.bz2" "DataAnalytics/save/save_$DATE.tar.bz2"
+
 rm data/*
 # Clean tmp directory
 rm -r tmp

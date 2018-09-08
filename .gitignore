@@ -61,3 +61,4 @@ collections.txt
 .idea/DataAnalytics.iml
 sh/deploy/stocks.sh___jb_tmp___
 ftp.json
+save_nan.tar

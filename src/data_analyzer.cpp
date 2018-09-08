@@ -270,7 +270,7 @@ namespace analyze {
             // Slope-intercept (distance formula kinda)
             double si = (g1 - g0) / (p1 - p0);
             double endError = DBL_MAX;
-            if(isnan(si)) si = 1;
+            if(p1 - p0 == 0) continue;
 
             vector<double> gResultMod(PATTERN_LENGTH);
 
@@ -329,11 +329,14 @@ namespace analyze {
         double s2_1 = set2[1];
         double translation = s1_0 - s2_0;
         double si = (s1_1 - s1_0) / (s2_1 - s2_0);
+        if(s2_1 - s2_0 == 0) si = (s1_1 - s1_0);
+
         for(int i=0; i<length; i++) {
             double pv = set2[i];
             double s2_mod = (si * (pv - s2_0) + s2_0 + translation);
             translatedSet[i] = s2_mod;
         }
+
         return translatedSet;
     }
     vector<double> sequenceTranslate(double base, vector<double> ls) {

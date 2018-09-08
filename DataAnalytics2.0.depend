@@ -5,7 +5,7 @@
 	<sstream>
 	"log.h"
 
-1535940236 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\main.cpp
+1535994533 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\main.cpp
 	<iostream>
 	<fstream>
 	<sstream>
@@ -28,18 +28,18 @@
 	<vector>
 	"dataio.h"
 
-1534735755 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\dataio.h
+1536271467 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\dataio.h
 	<vector>
 	<sstream>
 	<float.h>
 	"dataio.h"
 	"config.h"
 
-1535853568 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\config.h
+1536379647 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\config.h
 
 1532652981 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\timer.h
 
-1535853568 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\data_analyzer.cpp
+1536379552 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\data_analyzer.cpp
 	<iostream>
 	<chrono>
 	<cstdlib>
@@ -110,7 +110,7 @@
 	<unordered_set>
 	<type_traits>
 
-1535941738 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\progressbar.hpp
+1536116159 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\progressbar.hpp
 	<chrono>
 	<iostream>
 	<sstream>
@@ -130,7 +130,7 @@
 	<iostream>
 	"log.h"
 
-1535940925 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\log.cpp
+1535994540 source:c:\users\ctrek\documents\programming\c++\dataanalytics2.0\src\log.cpp
 	"log.h"
 	<fstream>
 	<iostream>
@@ -140,7 +140,7 @@
 	<stdio.h>
 	<time.h>
 
-1535940892 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\log.h
+1535994540 c:\users\ctrek\documents\programming\c++\dataanalytics2.0\include\log.h
 	<fstream>
 	<iostream>
 

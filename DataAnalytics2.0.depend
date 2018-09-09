@@ -144,9 +144,9 @@
 	<fstream>
 	<iostream>
 
-1535515794 source:c:\users\ctrek\documents\dataanalytics\src\archive.cpp
+1536456385 source:c:\users\ctrek\documents\dataanalytics\src\archive.cpp
 
-1535515794 source:c:\users\ctrek\documents\dataanalytics\src\stream.cpp
+1536456385 source:c:\users\ctrek\documents\dataanalytics\src\stream.cpp
 	<iostream>
 	<vector>
 	<cstring>
@@ -170,7 +170,7 @@
 	"config.h"
 	"args.hxx"
 
-1535515794 source:c:\users\ctrek\documents\dataanalytics\src\data_analyzer.cpp
+1536456385 source:c:\users\ctrek\documents\dataanalytics\src\data_analyzer.cpp
 	<iostream>
 	<chrono>
 	<cstdlib>
@@ -186,7 +186,7 @@
 	"load.h"
 	"log.h"
 
-1535515794 source:c:\users\ctrek\documents\dataanalytics\src\load.cpp
+1536456385 source:c:\users\ctrek\documents\dataanalytics\src\load.cpp
 	<vector>
 	<iostream>
 	<fstream>
@@ -197,13 +197,17 @@
 	"load.h"
 	"log.h"
 
-1535515794 source:c:\users\ctrek\documents\dataanalytics\src\log.cpp
+1536456385 source:c:\users\ctrek\documents\dataanalytics\src\log.cpp
 	"log.h"
 	<fstream>
 	<iostream>
 	<sstream>
+	<sstream>
+	<string>
+	<stdio.h>
+	<time.h>
 
-1535515794 source:c:\users\ctrek\documents\dataanalytics\src\save.cpp
+1536456385 source:c:\users\ctrek\documents\dataanalytics\src\save.cpp
 	<fstream>
 	<iostream>
 	<climits>
@@ -215,7 +219,7 @@
 	"state.h"
 	"log.h"
 
-1535515794 source:c:\users\ctrek\documents\dataanalytics\src\state.cpp
+1536456385 source:c:\users\ctrek\documents\dataanalytics\src\state.cpp
 	<iostream>
 	<fstream>
 	<string>
@@ -223,7 +227,7 @@
 	"state.h"
 	"log.h"
 
-1535515794 source:c:\users\ctrek\documents\dataanalytics\src\timer.cpp
+1536456385 source:c:\users\ctrek\documents\dataanalytics\src\timer.cpp
 	<iostream>
 	<chrono>
 	<sstream>

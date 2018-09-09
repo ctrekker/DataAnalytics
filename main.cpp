@@ -19,6 +19,8 @@
     #define OS "OTHER"
 #endif // OS
 
+#undef __STRICT_ANSI__
+
 #include <iostream>
 #include <fstream>
 #include <sstream>

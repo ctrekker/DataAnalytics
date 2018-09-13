@@ -214,24 +214,28 @@ void RunCommand(args::Subparser &parser) {
     if(predictFlag) {
         LOG.debug(to_string(predictions.size())+"<-Total Predictions");
 
+        if(predictions.size()>0) {
+            ofstream file(OUT_DIR+"/"+EXECUTION_NAME+".csv");
+            save::csvPredictionList(&graph, &predictions, file);
+            file.close();
 
-        ofstream file(OUT_DIR+"/"+EXECUTION_NAME+".csv");
-        save::csvPredictionList(&graph, &predictions, file);
-        file.close();
+            unsigned int pn=0;
+            unsigned int pgn=0;
+            for(unsigned int i=0; i<predictions.size(); i++) {
+                if(predictions[i].result.size()>pgn) {
+                    pn=i;
+                    pgn=predictions[i].result.size();
+                }
+            }
 
-        unsigned int pn=0;
-        unsigned int pgn=0;
-        for(unsigned int i=0; i<predictions.size(); i++) {
-            if(predictions[i].result.size()>pgn) {
-                pn=i;
-                pgn=predictions[i].result.size();
+            LOG.debug("PN:" + to_string(pn) + ";PGN:" + to_string(pgn));
+            LOG.debug(to_string(predictions[pn].result.size()));
+            if(pgn>0) {
+                LOG.debug(predictions[pn].toString());
             }
         }
-
-        LOG.debug("PN:" + to_string(pn) + ";PGN:" + to_string(pgn));
-        LOG.debug(to_string(predictions[pn].result.size()));
-        if(pgn>0) {
-            LOG.debug(predictions[pn].toString());
+        else {
+            LOG.debug("No predictions");
         }
     }
 }

@@ -151,7 +151,7 @@
 	<vector>
 	<cstring>
 
-1535515794 source:c:\users\ctrek\documents\dataanalytics\main.cpp
+1536855921 source:c:\users\ctrek\documents\dataanalytics\main.cpp
 	<iostream>
 	<fstream>
 	<sstream>
@@ -232,4 +232,56 @@
 	<chrono>
 	<sstream>
 	"log.h"
+
+1536456385 c:\users\ctrek\documents\dataanalytics\include\progressbar.hpp
+	<chrono>
+	<iostream>
+	<sstream>
+	"log.h"
+
+1536456385 c:\users\ctrek\documents\dataanalytics\include\log.h
+	<fstream>
+	<iostream>
+
+1536456385 c:\users\ctrek\documents\dataanalytics\include\data_analyzer.h
+	<vector>
+	"dataio.h"
+
+1536456385 c:\users\ctrek\documents\dataanalytics\include\dataio.h
+	<vector>
+	<sstream>
+	<float.h>
+	"dataio.h"
+	"config.h"
+
+1536456385 c:\users\ctrek\documents\dataanalytics\include\config.h
+
+1536456385 c:\users\ctrek\documents\dataanalytics\include\timer.h
+
+1536456385 c:\users\ctrek\documents\dataanalytics\include\state.h
+	<iostream>
+
+1536456385 c:\users\ctrek\documents\dataanalytics\include\save.h
+	<fstream>
+	"dataio.h"
+
+1536456385 c:\users\ctrek\documents\dataanalytics\include\load.h
+	<fstream>
+	"dataio.h"
+
+1536456385 c:\users\ctrek\documents\dataanalytics\include\stream.h
+	<vector>
+
+1536456385 c:\users\ctrek\documents\dataanalytics\include\args.hxx
+	<algorithm>
+	<iterator>
+	<exception>
+	<functional>
+	<sstream>
+	<string>
+	<tuple>
+	<vector>
+	<unordered_map>
+	<unordered_set>
+	<type_traits>
 

@@ -13,6 +13,7 @@
 				<Option compiler="gcc" />
 				<Option parameters="run -p -t -s sine" />
 				<Compiler>
+					<Add option="-std=c++14" />
 					<Add option="-g" />
 					<Add directory="C:/Users/ctrek/Documents/Programming/C++/DataAnalytics2.0/include" />
 				</Compiler>
@@ -22,9 +23,10 @@
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="run -r" />
+				<Option parameters="run -r -s MSFT" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add option="-std=c++11" />
 					<Add directory="C:/Users/ctrek/Documents/Programming/C++/DataAnalytics2.0/include" />
 				</Compiler>
 				<Linker>
@@ -37,13 +39,16 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
+					<Add option="-std=c++14" />
 					<Add directory="C:/Users/ctrek/Documents/Programming/C++/DataAnalytics2.0/include" />
 				</Compiler>
 			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add option="-std=c++14" />
 			<Add option="-fexceptions" />
+			<Add directory="C:/Users/ctrek/Documents/DataAnalytics/include" />
 		</Compiler>
 		<Linker>
 			<Add directory="C:/Users/ctrek/Documents/Programming/C++/DataAnalytics2.0/include" />

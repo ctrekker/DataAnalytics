@@ -4,9 +4,9 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.InsertOneModel;
-import com.mongodb.client.model.WriteModel;
+import com.mongodb.client.model.*;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import pl.zankowski.iextrading4j.api.refdata.ExchangeSymbol;
 import pl.zankowski.iextrading4j.api.stocks.Chart;
 import pl.zankowski.iextrading4j.api.stocks.ChartRange;
@@ -26,57 +26,23 @@ public class IntradayDownloader {
         new IntradayDownloader();
     }
 
+    private IEXTradingClient tradingClient;
+    private List<ExchangeSymbol> symbolList;
     public IntradayDownloader() {
-        IEXTradingClient tradingClient = IEXTradingClient.create();
-        List<ExchangeSymbol> symbolList = tradingClient.executeRequest(new SymbolsRequestBuilder().build());
+        tradingClient = IEXTradingClient.create();
+        symbolList = tradingClient.executeRequest(new SymbolsRequestBuilder().build());
         int symbolNumber = 0;
+        int lastDelay = 0;
         for(ExchangeSymbol symbol : symbolList) {
-            try {
-                List<Chart> chartList = tradingClient.executeRequest(new ChartRequestBuilder()
-                        .withChartRange(ChartRange.INTRADAY)
-                        .withSymbol(symbol.getSymbol())
-                        .build());
-                List<WriteModel<Document>> entryDocuments = new ArrayList<WriteModel<Document>>();
-                for (Chart entry : chartList) {
-                    if (entry.getMarketAverage() == null || entry.getMarketAverage().equals(new BigDecimal(-1)))
-                        continue;
-                    //System.out.println(entry.getMinute());
-
-                    String s_year = entry.getDate().substring(0, 4);
-                    String s_month = entry.getDate().substring(4, 6);
-                    String s_day = entry.getDate().substring(6, 8);
-                    int year = Integer.parseInt(s_year);
-                    int month = Integer.parseInt(s_month);
-                    int day = Integer.parseInt(s_day);
-                    String formattedDate = s_year + "-" + s_month + "-" + s_day;
-
-                    String s_hour = entry.getMinute().substring(0, 2);
-                    String s_minute = entry.getMinute().substring(3, 5);
-                    int hour = Integer.parseInt(s_hour);
-                    int minute = Integer.parseInt(s_minute);
-                    String formattedTime = s_hour + ":" + s_minute + ":00";
-                    //System.out.println(formattedTime);
-
-                    entryDocuments.add(new InsertOneModel<>(new Document("timestamp", new GregorianCalendar(year, month - 1, day, hour, minute).getTime())
-                            .append("date", formattedDate)
-                            .append("time", formattedTime)
-                            .append("open", entry.getMarketOpen())
-                            .append("high", entry.getMarketHigh())
-                            .append("low", entry.getMarketLow())
-                            .append("close", entry.getMarketClose())
-                            .append("volume", entry.getMarketVolume())));
-                    //System.out.println(entryDocuments.get(entryDocuments.size()-1));
+            new Thread(new DownloadThread(symbol, symbolNumber)).start();
+            symbolNumber++;
+            if(symbolNumber - lastDelay > 10) {
+                lastDelay = symbolNumber;
+                try {
+                    Thread.sleep(1000);
+                } catch(InterruptedException e) {
+                    e.printStackTrace();
                 }
-                MongoCollection<Document> dbCollection = db.getCollection(symbol.getSymbol());
-                if (entryDocuments.size() > 0) {
-                    dbCollection.bulkWrite(entryDocuments);
-                }
-
-                symbolNumber++;
-                System.out.println("Finished symbol " + symbolNumber + " / " + symbolList.size());
-            }
-            catch(Exception e) {
-                System.out.println("An error occurred " + symbolNumber + " / " + symbolList.size());
             }
         }
 
@@ -97,5 +63,71 @@ public class IntradayDownloader {
 //        }
 
 
+    }
+
+    private class DownloadThread implements Runnable {
+        private ExchangeSymbol symbol;
+        private int symbolNumber;
+        public DownloadThread(ExchangeSymbol symbol, int symbolNumber) {
+            this.symbol = symbol;
+            this.symbolNumber = symbolNumber;
+        }
+
+        @Override
+        public void run() {
+            try {
+                List<Chart> chartList = tradingClient.executeRequest(new ChartRequestBuilder()
+                        .withChartRange(ChartRange.INTRADAY)
+                        .withSymbol(symbol.getSymbol())
+                        .build());
+                List<Bson> entryDocuments = new ArrayList<>();
+                for (Chart entry : chartList) {
+                    if (entry.getMarketAverage() == null || entry.getMarketAverage().equals(new BigDecimal(-1)))
+                        continue;
+                    //System.out.println(entry.getMinute());
+
+                    String s_year = entry.getDate().substring(0, 4);
+                    String s_month = entry.getDate().substring(4, 6);
+                    String s_day = entry.getDate().substring(6, 8);
+                    int year = Integer.parseInt(s_year);
+                    int month = Integer.parseInt(s_month);
+                    int day = Integer.parseInt(s_day);
+                    String formattedDate = s_year + "-" + s_month + "-" + s_day;
+
+                    String s_hour = entry.getMinute().substring(0, 2);
+                    String s_minute = entry.getMinute().substring(3, 5);
+                    int hour = Integer.parseInt(s_hour);
+                    int minute = Integer.parseInt(s_minute);
+                    String formattedTime = s_hour + ":" + s_minute + ":00";
+                    //System.out.println(formattedTime);
+
+                    entryDocuments.add(new Document("timestamp", new GregorianCalendar(year, month - 1, day, hour, minute).getTime())
+                            .append("date", formattedDate)
+                            .append("time", formattedTime)
+                            .append("open", entry.getMarketOpen())
+                            .append("high", entry.getMarketHigh())
+                            .append("low", entry.getMarketLow())
+                            .append("close", entry.getMarketClose())
+                            .append("volume", entry.getMarketVolume()));
+                    //System.out.println(entryDocuments.get(entryDocuments.size()-1));
+                }
+                MongoCollection<Document> dbCollection = db.getCollection(symbol.getSymbol());
+                if (entryDocuments.size() > 0) {
+                    ReplaceOptions options = new ReplaceOptions()
+                            .upsert(true);
+                    for(Bson bson : entryDocuments) {
+                        dbCollection.replaceOne(new Document("timestamp", ((Document)bson).getDate("timestamp")), ((Document)bson), options);
+                    }
+                    //dbCollection.bulkWrite(entryDocuments);
+                }
+
+                symbolNumber++;
+                System.out.println("Finished symbol " + symbolNumber + " / " + symbolList.size());
+            }
+            catch(Exception e) {
+                //System.out.println("An error occurred " + symbolNumber + " / " + symbolList.size());
+                e.printStackTrace();
+            }
+        }
     }
 }

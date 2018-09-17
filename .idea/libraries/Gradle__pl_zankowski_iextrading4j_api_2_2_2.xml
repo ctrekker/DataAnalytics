@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: pl.zankowski:iextrading4j-api:2.2.2">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/pl.zankowski/iextrading4j-api/2.2.2/9d19cf4458ebc11ba52e29f89c9a492f56b4078f/iextrading4j-api-2.2.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/pl.zankowski/iextrading4j-api/2.2.2/a66415fa0d6ac35854677ae0b27ebe1d6e192791/iextrading4j-api-2.2.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -159,7 +159,7 @@ namespace analyze {
             }
 
             if(bestMatch == nullptr) {
-                LOG.warning(to_string(pid) + " nomatch");
+                // LOG.warning(to_string(pid) + " nomatch");
                 continue;
             }
             double bellWeight = bellCurve(TRAINING_THRESHOLD, 1, bestMatch->error);

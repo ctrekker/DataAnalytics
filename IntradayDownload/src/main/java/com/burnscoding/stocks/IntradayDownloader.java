@@ -7,6 +7,8 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.*;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.json.JSONException;
+import org.json.JSONObject;
 import pl.zankowski.iextrading4j.api.refdata.ExchangeSymbol;
 import pl.zankowski.iextrading4j.api.stocks.Chart;
 import pl.zankowski.iextrading4j.api.stocks.ChartRange;
@@ -14,15 +16,61 @@ import pl.zankowski.iextrading4j.client.IEXTradingClient;
 import pl.zankowski.iextrading4j.client.rest.request.refdata.SymbolsRequestBuilder;
 import pl.zankowski.iextrading4j.client.rest.request.stocks.ChartRequestBuilder;
 
+import java.io.*;
 import java.math.BigDecimal;
 import java.util.*;
 
 public class IntradayDownloader {
-    private static String API_BASE_URL = "https://api.iextrading.com/1.0";
     private static MongoDatabase db;
     public static void main(String[] args) {
-        MongoClient mongoClient = MongoClients.create("mongodb://192.168.1.18:27017");
-        db = mongoClient.getDatabase("stockdata");
+        // Obtain configuration File object
+        File configFile = new File("config/IntradayDownload.json");
+        if(args.length>0) {
+            File tmpConfigFile = new File(args[0]);
+            if(tmpConfigFile.exists()) {
+                configFile = tmpConfigFile;
+            }
+            else {
+                System.out.println("WARNING: No configuration exists at " + tmpConfigFile.getAbsolutePath());
+            }
+        }
+        System.out.println("Using configuration at " + configFile.getAbsolutePath());
+
+        // Read/parse the configuration file
+        JSONObject config = null;
+        try {
+            BufferedReader configReader = new BufferedReader(new InputStreamReader(new FileInputStream(configFile)));
+            StringBuilder configBuilder = new StringBuilder();
+            String line;
+            while((line = configReader.readLine()) != null) {
+                configBuilder.append(line).append("\n");
+            }
+
+            config = new JSONObject(configBuilder.toString());
+        }
+        catch(IOException e) {
+            System.out.println("ERROR: An error occurred while reading the configuration file. Printing trace...");
+            e.printStackTrace();
+            System.exit(1);
+        }
+        catch(JSONException e) {
+            System.out.println("ERROR: An error occurred while parsing the configuration file. Printing trace...");
+            e.printStackTrace();
+            System.exit(1);
+        }
+
+        // Connect to the mongo database
+        try {
+            JSONObject dbconfig = config.getJSONObject("mongo_database");
+
+            MongoClient mongoClient = MongoClients.create(String.format("mongodb://%s:%s", dbconfig.getString("host"), Integer.toString(dbconfig.getInt("port"))));
+            db = mongoClient.getDatabase(dbconfig.getString("database"));
+        }
+        catch(JSONException e) {
+            System.out.println("ERROR: An error occurred while attempting to use configuration values. Printing trace...");
+            e.printStackTrace();
+            System.exit(1);
+        }
         new IntradayDownloader();
     }
 

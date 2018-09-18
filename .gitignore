@@ -63,3 +63,4 @@ sh/deploy/stocks.sh___jb_tmp___
 ftp.json
 save_nan.tar
 save.tar
+config/IntradayDownload.json

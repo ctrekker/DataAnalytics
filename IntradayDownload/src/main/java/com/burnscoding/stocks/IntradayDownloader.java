@@ -18,6 +18,7 @@ import pl.zankowski.iextrading4j.client.rest.request.stocks.ChartRequestBuilder;
 
 import java.io.*;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class IntradayDownloader {
@@ -92,6 +93,24 @@ public class IntradayDownloader {
                     e.printStackTrace();
                 }
             }
+        }
+
+        // Write to execution_date.txt
+        File executionDateFile = new File("execution_date.txt");
+        if(executionDateFile.exists()) {
+            executionDateFile.delete();
+        }
+
+        Date executionDate = new Date();
+        String executionDateStr = new SimpleDateFormat("yyyy-MM-dd").format(executionDate);
+        System.out.println("Using date " + executionDateStr + " for execution_date.txt");
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(executionDateFile, false));
+            writer.write(executionDateStr);
+            writer.close();
+        }
+        catch(IOException e) {
+            e.printStackTrace();
         }
 
 //        StockIndex index = StockIndex.fromUrl(API_BASE_URL + "/ref-data/symbols");

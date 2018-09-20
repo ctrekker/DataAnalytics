@@ -276,15 +276,28 @@ void ExportCommand(args::Subparser &parser) {
     timer::stop("Finished export");
 }
 void CleanCommand(args::Subparser &parser) {
-    args::Flag hardFlag(parser, "HARD", "resets everything as opposed to just caches", {'h', "hard"});
+    args::Flag allFlag(parser, "ALL", "resets all generated data", {'a', "all"});
+    args::Flag dataFlag(parser, "DATA", "resets the data output directory", {'d', "data"});
+    args::Flag inFlag(parser, "IN", "resets the input repository directory", {'i', "in"});
+    args::Flag saveFlag(parser, "SAVE", "resets the save output directory", {'s', "save"});
+
     parser.Parse();
 
     LOG.info("Executing cleaning script");
 
-    timer::start();
-    runScript("clean");
-    if(hardFlag) {
+    if(allFlag) {
         runScript("cleanhard");
+    }
+    else {
+        if(dataFlag) {
+            runScript("cleandata");
+        }
+        if(inFlag) {
+            runScript("cleanin");
+        }
+        if(saveFlag) {
+            runScript("cleansave");
+        }
     }
     cout << endl << endl;
     timer::stop("Finished cleaning");

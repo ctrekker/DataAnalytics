@@ -19,10 +19,10 @@ const static bool SHOW_PROGRESS_BARS = true;
 
 const static int PATTERN_NUMBER = 5;
 // Note that the actual prediction output is 1 value less than the pattern length
-const static int PATTERN_LENGTH = 11;
+const static int PATTERN_LENGTH = 41;
 
-const static double TRAINING_THRESHOLD = 0.1;
-const static double TRAINING_END_THRESHOLD = 0.01;
+const static double TRAINING_THRESHOLD = 0.01;
+const static double TRAINING_END_THRESHOLD = 0.001;
 
 const static short int MATCH_BUFFER_SIZE = 40;
 const static int MATCH_MAX_DATA_SIZE = PATTERN_LENGTH;

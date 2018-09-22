@@ -167,9 +167,6 @@ void RunCommand(args::Subparser &parser) {
     if(nameFlag) {
         EXECUTION_NAME = args::get(nameFlag);
     }
-    else if(sourceFlag) {
-        EXECUTION_NAME = args::get(sourceFlag);
-    }
 
     // Check for custom graph or a test source
     Graph graph;

@@ -13,9 +13,10 @@ namespace timer {
     void start() {
         timer_started=chrono::high_resolution_clock::now();
     }
-    void stop(string str) {
+    uint64_t stop(string str) {
         auto timer_stopped=chrono::high_resolution_clock::now();
         int64_t time = std::chrono::duration_cast<std::chrono::nanoseconds>(timer_stopped-timer_started).count();
+        uint64_t millis_time = time / 1000000;
         string label = "ns";
         if(time>10000) {
             time/=1000;
@@ -41,6 +42,8 @@ namespace timer {
         stringstream ss;
         ss << str << " in " << time << label;
         LOG.info(ss.str());
+
+        return millis_time;
     }
     uint64_t getTimeMillis() {
         return std::chrono::duration_cast<std::chrono::milliseconds>(chrono::high_resolution_clock::now().time_since_epoch()).count();

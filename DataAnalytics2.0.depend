@@ -233,11 +233,12 @@
 	<sstream>
 	"log.h"
 
-1536456385 c:\users\ctrek\documents\dataanalytics\include\progressbar.hpp
+1537583325 c:\users\ctrek\documents\dataanalytics\include\progressbar.hpp
 	<chrono>
 	<iostream>
 	<sstream>
 	"log.h"
+	"config.h"
 
 1536456385 c:\users\ctrek\documents\dataanalytics\include\log.h
 	<fstream>
@@ -254,7 +255,7 @@
 	"dataio.h"
 	"config.h"
 
-1536456385 c:\users\ctrek\documents\dataanalytics\include\config.h
+1537583349 c:\users\ctrek\documents\dataanalytics\include\config.h
 
 1536456385 c:\users\ctrek\documents\dataanalytics\include\timer.h
 

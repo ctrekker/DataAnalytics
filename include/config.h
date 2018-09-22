@@ -15,6 +15,7 @@ const static uint64_t OBJ_PER_FILE = 50000;
 
 const static string INPUT_REPO_LOCATION = "in";
 static string EXECUTION_NAME = "latest";
+const static bool SHOW_PROGRESS_BARS = true;
 
 const static int PATTERN_NUMBER = 5;
 // Note that the actual prediction output is 1 value less than the pattern length

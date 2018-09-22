@@ -1,7 +1,31 @@
+#ifdef _WIN32
+   // Windows (32-bit and 64-bit)
+   #define OS "WIN"
+   #define SEPERATOR "\\"
+#elif __APPLE__
+    // Apple OS
+    #define SEPERATOR "/"
+#elif __linux
+    // linux
+    #define SEPERATOR "/"
+#elif __unix // all unices not caught above
+    // Unix
+    #define SEPERATOR "/"
+#elif __posix
+    // POSIX
+#endif
+
+#ifndef OS
+    #define OS "OTHER"
+#endif // OS
+
+#undef __STRICT_ANSI__
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <cstring>
 #include <cmath>
 #include <stdlib.h>
 
@@ -12,6 +36,7 @@
 #include "save.h"
 #include "load.h"
 #include "state.h"
+#include "log.h"
 #include "config.h"
 #include "args.hxx"
 
@@ -21,6 +46,8 @@ using namespace dataio;
 vector<Pattern> patterns(PATTERN_NUMBER);
 vector<MatchList> matches;
 vector<Prediction> predictions;
+
+Log LOG(true);
 
 inline bool file_exists(string name) {
     ifstream file(name.c_str());
@@ -34,6 +61,24 @@ vector<string> split(const string &s, char delim) {
         tokens.push_back(item);
     }
     return tokens;
+}
+void runScript(string name) {
+    string scriptPath;
+    if(strcmp(name.c_str(), "DNE") == 0) {
+        LOG.error("Unsupported OS: POSIX");
+        exit(EXIT_FAILURE);
+    }
+    else {
+        string suffix = ".bat";
+        if(strcmp(OS, "WIN") != 0) {
+            scriptPath += "./";
+            suffix = ".sh";
+        }
+        scriptPath += "sh" + string(SEPERATOR) + string(name) + suffix;
+    }
+
+    int code = system(scriptPath.c_str());
+    LOG.info("Returned code: " + to_string(code));
 }
 Graph *createSineGraph(unsigned int length) {
     Graph *out = new Graph;
@@ -64,7 +109,7 @@ void ImportCommand(args::Subparser &parser) {
     parser.Parse();
 
     if(!pathFlag&&!viewFlag) {
-        cout << "ERROR: a path is required";
+        LOG.error("ERROR: a path is required");
     }
     else if(viewFlag) {
         string location = INPUT_REPO_LOCATION;
@@ -72,7 +117,7 @@ void ImportCommand(args::Subparser &parser) {
             location = args::get(locationFlag);
         }
 
-        cout << "View is not yet supported" << endl;
+        LOG.warning("View is not yet supported");
     }
     else {
         string path = args::get(pathFlag);
@@ -94,7 +139,7 @@ void ImportCommand(args::Subparser &parser) {
         if(type=="csv") {
             ofstream repoOut(location+"/"+name);
             ifstream repoIn(path);
-            cout << "Importing " << path << " to " << location+"/"+name << endl;
+            LOG.info("Importing "+path+" to "+location+"/"+name);
             string line;
             while(getline(repoIn, line)) {
                 repoOut << line << endl;
@@ -130,66 +175,68 @@ void RunCommand(args::Subparser &parser) {
         while(getline(repoIn, line)) {
             vector<string> csvSplit = split(line, ',');
             if(csvSplit.size()!=2) {
-                cout << "WARNING: Malformed input file" << endl;
+                LOG.warning("Malformed input file");
             }
             graphData.push_back({atof(csvSplit[0].c_str()), atof(csvSplit[1].c_str())});
         }
         graph.init(2, 0, graphData);
     }
     else {
-        cout << "WARNING: Using generated test case: SINE" << endl;
+        LOG.warning("Using generated test case: SINE");
         graph = *createSineGraph(1000);
+    }
+    if(graph.data.size()<PATTERN_LENGTH*2) {
+        LOG.error("Input size is too small");
+        exit(0);
     }
 
     if(patternFlag) {
         analyze::create_patterns(patterns, graph);
     }
     else {
-        cout << "Skipping patterns" << endl;
+        LOG.info("Skipping patterns");
     }
     if(trainFlag) {
         analyze::train(&matches, patterns, graph);
     }
     else {
-        cout << "Skipping training" << endl;
+        LOG.info("Skipping training");
     }
     if(predictFlag) {
         analyze::predict(&predictions, patterns, matches, graph, 0, state::totalPatterns-1, 1, graph.data.size());
     }
     else {
-        cout << "Skipping predictions" << endl;
+        LOG.info("Skipping predictions");
     }
 
     state::preserve();
 
-    cout << endl;
-    cout << "---DEBUG---" << endl;
+    if(predictFlag) {
+        LOG.debug(to_string(predictions.size())+"<-Total Predictions");
 
-    cout << predictions.size() << "<-Total Predictions" << endl;
+        if(predictions.size()>0) {
+            ofstream file(OUT_DIR+"/"+EXECUTION_NAME+".csv");
+            save::csvPredictionList(&graph, &predictions, file);
+            file.close();
 
+            unsigned int pn=0;
+            unsigned int pgn=0;
+            for(unsigned int i=0; i<predictions.size(); i++) {
+                if(predictions[i].result.size()>pgn) {
+                    pn=i;
+                    pgn=predictions[i].result.size();
+                }
+            }
 
-    ofstream file(OUT_DIR+"/"+EXECUTION_NAME+".csv");
-    save::csvPredictionList(&graph, &predictions, file);
-    file.close();
-
-    unsigned int pn=0;
-    unsigned int pgn=0;
-    for(unsigned int i=0; i<predictions.size(); i++) {
-        if(predictions[i].result.size()>pgn) {
-            pn=i;
-            pgn=predictions[i].result.size();
+            LOG.debug("PN:" + to_string(pn) + ";PGN:" + to_string(pgn));
+            LOG.debug(to_string(predictions[pn].result.size()));
+            if(pgn>0) {
+                LOG.debug(predictions[pn].toString());
+            }
         }
-    }
-
-    cout << "PN:" << pn << ";PGN:" << pgn << endl;
-
-    cout << predictions[pn].result.size();
-    if(pgn>0) {
-        for(unsigned int i=0; i<predictions[pn].result.size(); i++) {
-            file << (graph.data.size()+i) << ",";
-            file << predictions[pn].result[i] << endl;
+        else {
+            LOG.debug("No predictions");
         }
-        cout << predictions[pn].toString() << endl;
     }
 }
 void ExportCommand(args::Subparser &parser) {
@@ -208,7 +255,7 @@ void ExportCommand(args::Subparser &parser) {
     string runPath = OUT_DIR+"/"+name+".csv";
 
 
-    cout << "Exporting " << name << " to " << outputPath << endl;
+    LOG.info("Exporting " + name + " to " + outputPath);
     timer::start();
     // The actual output the user expects
     ofstream outputFile(outputPath);
@@ -225,12 +272,40 @@ void ExportCommand(args::Subparser &parser) {
 
     timer::stop("Finished export");
 }
+void CleanCommand(args::Subparser &parser) {
+    args::Flag hardFlag(parser, "HARD", "resets everything as opposed to just caches", {'h', "hard"});
+    parser.Parse();
+
+    LOG.info("Executing cleaning script");
+
+    timer::start();
+    runScript("clean");
+    if(hardFlag) {
+        runScript("cleanhard");
+    }
+    cout << endl << endl;
+    timer::stop("Finished cleaning");
+}
 void InfoCommand(args::Subparser &parser) {
     args::Flag debugFlag(parser, "DEBUG", "shows debug output rather than clean value-pair output", {'d', "debug"});
     parser.Parse();
 
     state::init(false);
     state::print(!debugFlag);
+}
+void InitCommand(args::Subparser &parser) {
+    parser.Parse();
+
+    string scriptPath;
+    // Avoid a warning with strcmp
+
+
+    LOG.info("Executing OS-specific executable: " + scriptPath);
+
+    timer::start();
+    runScript("dir");
+    cout << endl << endl;
+    timer::stop("Finished init");
 }
 int main(int argc, const char **argv)
 {
@@ -239,16 +314,18 @@ int main(int argc, const char **argv)
     args::Command import(commands, "import", "import a file to the input repository", &ImportCommand);
     args::Command run(commands, "run", "execute an entire program cycle", &RunCommand);
     args::Command exportCmd(commands, "export", "export the last or a specified run's output to a usable format and external location", &ExportCommand);
+    args::Command cleanCmd(commands, "clean", "cleans out generated folders and resets configurations", &CleanCommand);
     args::Command info(commands, "info", "view information about current run state", &InfoCommand);
+    args::Command init(commands, "init", "initialize the directory structure with the required paths", &InitCommand);
 
     try {
         p.ParseCLI(argc, argv);
     }
     catch(args::Help) {
-        std::cout << p;
+        cout << p;
     }
     catch(args::Error& e) {
-        std::cerr << e.what() << std::endl << p;
+        LOG.error(e.what());
         return 1;
     }
 

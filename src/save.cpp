@@ -7,9 +7,12 @@
 #include "config.h"
 #include "timer.h"
 #include "state.h"
+#include "log.h"
 
 using namespace std;
 using namespace dataio;
+
+extern Log LOG;
 
 namespace save {
     void createdPatterns(vector<Pattern>* patterns) {
@@ -149,22 +152,49 @@ namespace save {
         }
     }
     void csvPredictionList(Graph* graph, vector<Prediction>* predictions, ofstream &outFile) {
-        for(unsigned int i=0; i<graph->data.size(); i++) {
-            for(unsigned int j=0; j<graph->data[i].size(); j++) {
-                outFile << graph->data[i][j];
-                if(j!=graph->data[i].size()-1) {
+        vector<double> plotArr = graph->getPlotArray(graph->timeIndex);
+        vector<double> plotArrData = graph->getPlotArray(1);
+        for(int i=-1; i<int(plotArr.size()); i++) {
+            if(i==-1) {
+                outFile << ",";
+                for(unsigned int j=0; j<predictions->size(); j++) {
+                    outFile << "P" << j;
+                    if(j!=predictions->size()-1) {
+                        outFile << ",";
+                    }
+                }
+            }
+            else {
+                outFile << plotArr[i] << ",";
+                for(unsigned int j=0; j<predictions->size(); j++) {
+                    outFile << plotArrData[i];
+                    if(j!=predictions->size()-1) {
+                        outFile << ",";
+                    }
+                }
+            }
+
+            outFile << endl;
+        }
+        unsigned int maxPredLength = 0;
+        if(!PREDICTION_RECURSIVE) {
+            maxPredLength = PATTERN_LENGTH - 1;
+        }
+        else {
+            maxPredLength = (PATTERN_LENGTH - 1) * PREDICTION_MAX_RECURSIVE_ATTEMPTS;
+        }
+        LOG.debug(to_string(maxPredLength));
+        for(unsigned int i=0; i<maxPredLength; i++) {
+            outFile << plotArr.size()+i << ",";
+            for(unsigned int j=0; j<predictions->size(); j++) {
+                if((*predictions)[j].result.size()>i+1) {
+                    outFile << (*predictions)[j].result[i];
+                }
+                if(j!=predictions->size()-1) {
                     outFile << ",";
                 }
             }
             outFile << endl;
-        }
-        outFile << "<-NL->" << endl;
-        for(unsigned int pn = 0; pn < predictions->size(); pn++) {
-            for(unsigned int i=0; i<(*predictions)[pn].result.size(); i++) {
-                outFile << i << ",";
-                outFile << (*predictions)[pn].result[i] << endl;
-            }
-            outFile << "<-NL->" << endl;
         }
     }
 

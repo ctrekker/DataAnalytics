@@ -4,8 +4,11 @@
 
 #include "config.h"
 #include "state.h"
+#include "log.h"
 
 using namespace std;
+
+extern Log LOG;
 
 namespace state {
     string metaPath = SAVE_DIR + "/meta.txt";
@@ -49,12 +52,11 @@ namespace state {
     }
     void print(bool pretty) {
         if(pretty) {
-            cout << "Total Saved Patterns: " << totalPatterns << endl;
+            LOG.debug("Total Saved Patterns: " + to_string(totalPatterns));
         }
         else {
-            cout << "State:" << endl;
-            cout << "\ttotalPatterns = " << totalPatterns << endl;
-            cout << endl;
+            LOG.debug("State:");
+            LOG.debug("\ttotalPatterns = " + to_string(totalPatterns));
         }
     }
 

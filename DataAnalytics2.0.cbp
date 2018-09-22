@@ -11,7 +11,9 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
+				<Option parameters="run -p -t -s sine" />
 				<Compiler>
+					<Add option="-std=c++14" />
 					<Add option="-g" />
 					<Add directory="C:/Users/ctrek/Documents/Programming/C++/DataAnalytics2.0/include" />
 				</Compiler>
@@ -21,20 +23,36 @@
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="run -r -s line1-2" />
+				<Option parameters="run -r -s MSFT" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add option="-std=c++11" />
 					<Add directory="C:/Users/ctrek/Documents/Programming/C++/DataAnalytics2.0/include" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
 				</Linker>
 			</Target>
+			<Target title="Test">
+				<Option output="bin/Test/DataAnalytics2" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Test/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-std=c++14" />
+					<Add directory="C:/Users/ctrek/Documents/Programming/C++/DataAnalytics2.0/include" />
+				</Compiler>
+			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add option="-std=c++14" />
 			<Add option="-fexceptions" />
+			<Add directory="C:/Users/ctrek/Documents/DataAnalytics/include" />
 		</Compiler>
+		<Linker>
+			<Add directory="C:/Users/ctrek/Documents/Programming/C++/DataAnalytics2.0/include" />
+		</Linker>
 		<Unit filename="include/ProgressBar.hpp" />
 		<Unit filename="include/archive.h" />
 		<Unit filename="include/args.hxx" />
@@ -42,18 +60,26 @@
 		<Unit filename="include/data_analyzer.h" />
 		<Unit filename="include/dataio.h" />
 		<Unit filename="include/load.h" />
+		<Unit filename="include/log.h" />
 		<Unit filename="include/save.h" />
 		<Unit filename="include/state.h" />
 		<Unit filename="include/stream.h" />
 		<Unit filename="include/timer.h" />
-		<Unit filename="main.cpp" />
+		<Unit filename="main.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="src/archive.cpp" />
 		<Unit filename="src/data_analyzer.cpp" />
 		<Unit filename="src/load.cpp" />
+		<Unit filename="src/log.cpp" />
 		<Unit filename="src/save.cpp" />
 		<Unit filename="src/state.cpp" />
 		<Unit filename="src/stream.cpp" />
 		<Unit filename="src/timer.cpp" />
+		<Unit filename="test/log_test.cpp">
+			<Option target="Test" />
+		</Unit>
 		<Extensions>
 			<code_completion />
 			<envvars />

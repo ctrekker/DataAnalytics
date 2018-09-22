@@ -3,6 +3,11 @@
 
 #include <chrono>
 #include <iostream>
+#include <sstream>
+
+#include "log.h"
+
+extern Log LOG;
 
 class ProgressBar {
 private:
@@ -33,15 +38,19 @@ public:
         std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
         auto time_elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now-start_time).count();
 
-        std::cout << "[";
+        std::stringstream stream;
+        stream << "[";
 
         for (unsigned int i = 0; i < bar_width; ++i) {
-            if (i < pos) std::cout << complete_char;
-            else if (i == pos) std::cout << ">";
-            else std::cout << incomplete_char;
+            if (i < pos) stream << complete_char;
+            else if (i == pos) stream << ">";
+            else stream << incomplete_char;
         }
-        std::cout << "] " << int(progress * 100.0) << "% "
+        stream << "] " << int(progress * 100.0) << "% "
                   << float(time_elapsed) / 1000.0 << "s\r";
+        stream.flush();
+
+        LOG.print(LogLevel::INFO, stream.str(), false);
         std::cout.flush();
     }
 
@@ -49,7 +58,8 @@ public:
     {
         ticks = total_ticks;
         display();
-        std::cout << std::endl;
+        std::cout << endl;
+        std::cout.flush();
     }
 };
 

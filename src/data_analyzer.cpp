@@ -12,12 +12,15 @@
 #include "state.h"
 #include "save.h"
 #include "load.h"
+#include "log.h"
 
 using namespace dataio;
 
+extern Log LOG;
+
 namespace analyze {
     void create_patterns(vector<Pattern> &patternArr, Graph graph) {
-        std::cout << "Creating patterns..." << std::endl;
+        LOG.info("Creating patterns...");
         timer::start();
 
         ProgressBar pb(PATTERN_NUMBER, 50);
@@ -51,10 +54,9 @@ namespace analyze {
 
         pb.done();
         timer::stop("Created patterns");
-        cout << endl;
     }
     void train(vector<MatchList>* matchArr, vector<Pattern> patterns, Graph graph) {
-        std::cout << "Training model..." << std::endl;
+       LOG.info("Training model...");
         timer::start();
 
         ProgressBar pb(state::totalPatterns, 50);
@@ -107,11 +109,10 @@ namespace analyze {
 
         pb.done();
         timer::stop("Trained model");
-        cout << endl;
     }
     bool predict(vector<Prediction>* predictions, vector<Pattern> &patterns, vector<MatchList> matches, Graph graph, uint64_t patternStart, uint64_t patternEnd, int layer, int initialGraphSize) {
         if(layer==1) {
-            cout << "Predicting outcomes..." << endl;
+            LOG.info("Predicting outcomes...");
             timer::start();
         }
         ProgressBar pb(patternEnd-patternStart, 50);
@@ -158,7 +159,7 @@ namespace analyze {
             }
 
             if(bestMatch == nullptr) {
-                cout << pid << " nomatch" << endl;
+                // LOG.warning(to_string(pid) + " nomatch");
                 continue;
             }
             double bellWeight = bellCurve(TRAINING_THRESHOLD, 1, bestMatch->error);
@@ -178,40 +179,37 @@ namespace analyze {
 
                 prediction.init(pid, matchIndex, predictedData, bellWeight, bellWeight/totalBellWeight);
                 rawPrediction.init(pid, matchIndex, rawPredictedData, bellWeight, bellWeight/totalBellWeight);
-                if(PREDICTION_HANDLER == PredictionHandler::MERGED) {
-                    predictions->push_back(prediction);
-                }
-                else if(PREDICTION_HANDLER == PredictionHandler::SEPARATE) {
-                    if(!PREDICTION_RECURSIVE||layer>=PREDICTION_MAX_RECURSIVE_ATTEMPTS) {
+                if(PREDICTION_HANDLER == PredictionHandler::MERGED||((PREDICTION_HANDLER == PredictionHandler::SEPARATE)&&(!PREDICTION_RECURSIVE||layer>=PREDICTION_MAX_RECURSIVE_ATTEMPTS))) {
+                    if(!prediction.containedIn(predictions)) {
                         predictions->push_back(prediction);
                     }
-                    else {
-                        vector<vector<double>> addedData(graph.data.size()+rawPrediction.result.size(), vector<double>(graph.dimensions));
-                        double diff = graph.getPlotArray(graph.timeIndex)[graph.data.size()-1]-graph.getPlotArray(graph.timeIndex)[graph.data.size()-2];
-                        double lastTime = graph.getPlotArray(graph.timeIndex)[graph.data.size()-1];
-                        for(unsigned int x=0; x<addedData.size(); x++) {
-                            for(unsigned int y=0; y<addedData[0].size(); y++) {
-                                if(x<graph.data.size()) {
-                                    addedData[x][y] = graph.data[x][y];
+                }
+                else {
+                    vector<vector<double>> addedData(graph.data.size()+rawPrediction.result.size(), vector<double>(graph.dimensions));
+                    double diff = graph.getPlotArray(graph.timeIndex)[graph.data.size()-1]-graph.getPlotArray(graph.timeIndex)[graph.data.size()-2];
+                    double lastTime = graph.getPlotArray(graph.timeIndex)[graph.data.size()-1];
+                    for(unsigned int x=0; x<addedData.size(); x++) {
+                        for(unsigned int y=0; y<addedData[0].size(); y++) {
+                            if(x<graph.data.size()) {
+                                addedData[x][y] = graph.data[x][y];
+                            }
+                            else {
+                                if(y==0) {
+                                    // Apply a linear regressive algorithm to determine predicted time value
+                                    addedData[x][y] = lastTime+diff*((x+1)-graph.data.size());
                                 }
                                 else {
-                                    if(y==0) {
-                                        // Apply a linear regressive algorithm to determine predicted time value
-                                        addedData[x][y] = lastTime+diff*((x+1)-graph.data.size());
-                                    }
-                                    else {
-                                        // Apply the actual predicted values to the addedData vector
-                                        addedData[x][y] = rawPrediction.result[x-graph.data.size()];
-                                    }
+                                    // Apply the actual predicted values to the addedData vector
+                                    addedData[x][y] = rawPrediction.result[x-graph.data.size()];
                                 }
                             }
                         }
+                    }
 
-                        Graph addedGraph;
-                        addedGraph.init(graph.dimensions, graph.timeIndex, addedData);
-                        if(!predict(predictions, patterns, matches, addedGraph, patternStart, patternEnd, layer+1, initialGraphSize)) {
-                            predictions->push_back(prediction);
-                        }
+                    Graph addedGraph;
+                    addedGraph.init(graph.dimensions, graph.timeIndex, addedData);
+                    if(!predict(predictions, patterns, matches, addedGraph, patternStart, patternEnd, layer+1, initialGraphSize)) {
+                        predictions->push_back(prediction);
                     }
                 }
 
@@ -239,7 +237,6 @@ namespace analyze {
         if(layer==1) {
             pb.done();
             timer::stop("Predicted outcomes");
-            cout << endl;
         }
         return added;
     }
@@ -273,7 +270,7 @@ namespace analyze {
             // Slope-intercept (distance formula kinda)
             double si = (g1 - g0) / (p1 - p0);
             double endError = DBL_MAX;
-            if(isnan(si)) si = 1;
+            if(p1 - p0 == 0) continue;
 
             vector<double> gResultMod(PATTERN_LENGTH);
 
@@ -332,11 +329,14 @@ namespace analyze {
         double s2_1 = set2[1];
         double translation = s1_0 - s2_0;
         double si = (s1_1 - s1_0) / (s2_1 - s2_0);
+        if(s2_1 - s2_0 == 0) si = (s1_1 - s1_0);
+
         for(int i=0; i<length; i++) {
             double pv = set2[i];
             double s2_mod = (si * (pv - s2_0) + s2_0 + translation);
             translatedSet[i] = s2_mod;
         }
+
         return translatedSet;
     }
     vector<double> sequenceTranslate(double base, vector<double> ls) {

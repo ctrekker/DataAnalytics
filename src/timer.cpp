@@ -1,7 +1,12 @@
 #include <iostream>
 #include <chrono>
+#include <sstream>
+
+#include "log.h"
 
 using namespace std;
+
+extern Log LOG;
 
 namespace timer {
     chrono::time_point<chrono::high_resolution_clock> timer_started;
@@ -33,7 +38,9 @@ namespace timer {
                 label="h";
             }
         }
-        cout << str << " in " << time << label << endl;
+        stringstream ss;
+        ss << str << " in " << time << label;
+        LOG.info(ss.str());
     }
     uint64_t getTimeMillis() {
         return std::chrono::duration_cast<std::chrono::milliseconds>(chrono::high_resolution_clock::now().time_since_epoch()).count();

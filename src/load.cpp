@@ -6,9 +6,12 @@
 #include "timer.h"
 #include "config.h"
 #include "load.h"
+#include "log.h"
 
 using namespace std;
 using namespace dataio;
+
+extern Log LOG;
 
 namespace load {
     void patternFile(vector<Pattern>* patterns, uint64_t fid) {
@@ -25,7 +28,7 @@ namespace load {
     }
 
     void state(string name, vector<Pattern>* patterns, vector<MatchList>* matches, vector<Prediction>* predictions) {
-        cout << "Loading state..." << endl;
+        LOG.info("Loading state...");
         timer::start();
 
         ifstream patternFile(SAVE_DIR+"/"+name+".pbin", ios::binary);
@@ -118,7 +121,7 @@ namespace load {
                 patterns->push_back(*p);
             }
             catch(ios_base::failure& e) {
-                cout << "PATTERN LIST LOAD EXCEPTION" << endl;
+                LOG.error("PATTERN LIST LOAD EXCEPTION");
             }
         }
     }

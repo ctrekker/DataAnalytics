@@ -27,8 +27,11 @@ done <tmp/collections.txt
 # Execute the batch script which downloads all files
 node sh/util/mdb mdb.json mdbbatch "tmp/symbol_download.msh"
 
+COLLECTION_COUNT=`cat tmp/collections.txt | wc -l`
+COMPLETION_COUNT=0
 while read collection; do
-  echo "$collection"
+  ((COMPLETION_COUNT+=1))
+  echo "$collection - $COMPLETION_COUNT / $COLLECTION_COUNT"
   # Format for import
   node sh/util/csvformat tmp/$collection.csv close > tmp/$collection-import.csv
   # Import the csv import to the local repo
@@ -39,9 +42,10 @@ while read collection; do
   rm tmp/$collection.csv
   rm tmp/$collection-import.csv
 done <tmp/collections.txt
+COMPLETION_COUNT=0
 # Predict outcomes
 while read collection; do
-  echo "$collection"
+  echo "$collection - $COMPLETION_COUNT / $COLLECTION_COUNTn"
   ./da2 run -r -s $collection -n $collection
 done <tmp/collections.txt
 

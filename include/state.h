@@ -9,6 +9,7 @@ namespace state {
     extern string metaPath;
     extern uint64_t totalPatterns;
     extern uint64_t initTotalPatterns;
+    extern uint64_t runId;
 
     void init(bool printState=true);
     void preserve();

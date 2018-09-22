@@ -39,6 +39,7 @@
 #include "log.h"
 #include "config.h"
 #include "args.hxx"
+#include "stats.h"
 
 using namespace std;
 using namespace dataio;
@@ -48,6 +49,7 @@ vector<MatchList> matches;
 vector<Prediction> predictions;
 
 Log LOG(true);
+Stats STATS;
 
 inline bool file_exists(string name) {
     ifstream file(name.c_str());
@@ -193,6 +195,7 @@ void RunCommand(args::Subparser &parser) {
         exit(0);
     }
 
+    uint64_t startTime = timer::getTimeMillis();
     if(patternFlag) {
         analyze::create_patterns(patterns, graph);
     }
@@ -211,7 +214,9 @@ void RunCommand(args::Subparser &parser) {
     else {
         LOG.info("Skipping predictions");
     }
+    STATS.setRunTime(timer::getTimeMillis() - startTime);
 
+    STATS.save();
     state::preserve();
 
     if(predictFlag) {
@@ -280,10 +285,12 @@ void CleanCommand(args::Subparser &parser) {
     args::Flag dataFlag(parser, "DATA", "resets the data output directory", {'d', "data"});
     args::Flag inFlag(parser, "IN", "resets the input repository directory", {'i', "in"});
     args::Flag saveFlag(parser, "SAVE", "resets the save output directory", {'s', "save"});
+    args::Flag statsFlag(parser, "STATS", "resets the stats directory", {'t', "stats"});
 
     parser.Parse();
 
     LOG.info("Executing cleaning script");
+    timer::start();
 
     if(allFlag) {
         runScript("cleanhard");
@@ -297,6 +304,9 @@ void CleanCommand(args::Subparser &parser) {
         }
         if(saveFlag) {
             runScript("cleansave");
+        }
+        if(statsFlag) {
+            runScript("cleanstats");
         }
     }
     cout << endl << endl;

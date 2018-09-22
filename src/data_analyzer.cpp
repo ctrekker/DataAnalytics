@@ -13,10 +13,12 @@
 #include "save.h"
 #include "load.h"
 #include "log.h"
+#include "stats.h"
 
 using namespace dataio;
 
 extern Log LOG;
+extern Stats STATS;
 
 namespace analyze {
     void create_patterns(vector<Pattern> &patternArr, Graph graph) {
@@ -53,7 +55,7 @@ namespace analyze {
         save::createdPatterns(&patternArr);
 
         pb.done();
-        timer::stop("Created patterns");
+        STATS.setPatternTime(timer::stop("Created patterns"));
     }
     void train(vector<MatchList>* matchArr, vector<Pattern> patterns, Graph graph) {
        LOG.info("Training model...");
@@ -108,7 +110,7 @@ namespace analyze {
         save::createdMatches(matchArr, currentPatternFileId, true);
 
         pb.done();
-        timer::stop("Trained model");
+        STATS.setTrainingTime(timer::stop("Trained model"));
     }
     bool predict(vector<Prediction>* predictions, vector<Pattern> &patterns, vector<MatchList> matches, Graph graph, uint64_t patternStart, uint64_t patternEnd, int layer, int initialGraphSize) {
         if(layer==1) {
@@ -236,7 +238,7 @@ namespace analyze {
         }
         if(layer==1) {
             pb.done();
-            timer::stop("Predicted outcomes");
+            STATS.setPredictionTime(timer::stop("Predicted outcomes"));
         }
         return added;
     }

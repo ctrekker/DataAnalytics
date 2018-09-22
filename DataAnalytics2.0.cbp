@@ -23,7 +23,7 @@
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="run -p -t" />
+				<Option parameters="run -r" />
 				<Compiler>
 					<Add option="-O2" />
 					<Add option="-std=c++11" />
@@ -63,6 +63,7 @@
 		<Unit filename="include/log.h" />
 		<Unit filename="include/save.h" />
 		<Unit filename="include/state.h" />
+		<Unit filename="include/stats.h" />
 		<Unit filename="include/stream.h" />
 		<Unit filename="include/timer.h" />
 		<Unit filename="main.cpp">
@@ -75,6 +76,7 @@
 		<Unit filename="src/log.cpp" />
 		<Unit filename="src/save.cpp" />
 		<Unit filename="src/state.cpp" />
+		<Unit filename="src/stats.cpp" />
 		<Unit filename="src/stream.cpp" />
 		<Unit filename="src/timer.cpp" />
 		<Unit filename="test/log_test.cpp">

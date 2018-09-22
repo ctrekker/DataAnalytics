@@ -3,7 +3,7 @@
 
 namespace timer {
     void start();
-    void stop(std::string);
+    uint64_t stop(std::string);
     uint64_t getTimeMillis();
 }
 

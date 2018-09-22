@@ -1,11 +1,14 @@
 #!/bin/bash
 
+# Include configuration values
+source sh/deploy/stocks.config
+
 # Set up a temporary directory
 mkdir tmp
 # Make sure the prediction archive repository path exists
-mkdir /mnt/blue/DataAnalytics
-mkdir /mnt/blue/DataAnalytics/predictions
-mkdir /mnt/blue/DataAnalytics/save
+mkdir $ARCHIVE_ROOT
+mkdir $ARCHIVE_ROOT/predictions
+mkdir $ARCHIVE_ROOT/save
 
 # Download newline separated list of stock collections
 node sh/util/mdb mdb.json mdbcollections > tmp/collections.txt
@@ -45,12 +48,12 @@ done <tmp/collections.txt
 # Clean out the input repository
 rm in/*
 # Export data to the prediction archive
-tar -cvf /mnt/blue/DataAnalytics/predictions/data_$DATE.tar.bz2 --use-compress-prog=pbzip2 data
+tar -cvf $ARCHIVE_ROOT/predictions/data_$DATE.tar.bz2 --use-compress-prog=pbzip2 data
 # Export save data to the save archive
-tar -cvf /mnt/blue/DataAnalytics/save/save_$DATE.tar.bz2 --use-compress-prog=pbzip2 save
+tar -cvf $ARCHIVE_ROOT/save/save_$DATE.tar.bz2 --use-compress-prog=pbzip2 save
 # Upload the tar backups to a remote ftp backup server
-node sh/util/ftpupload ftp.json "/mnt/blue/DataAnalytics/predictions/data_$DATE.tar.bz2" "DataAnalytics/predictions/data_$DATE.tar.bz2"
-node sh/util/ftpupload ftp.json "/mnt/blue/DataAnalytics/save/save_$DATE.tar.bz2" "DataAnalytics/save/save_$DATE.tar.bz2"
+node sh/util/ftpupload ftp.json "$ARCHIVE_ROOT/predictions/data_$DATE.tar.bz2" "$FTP_ARCHIVE_ROOT/predictions/data_$DATE.tar.bz2"
+node sh/util/ftpupload ftp.json "$ARCHIVE_ROOT/save/save_$DATE.tar.bz2" "$FTP_ARCHIVE_ROOT/save/save_$DATE.tar.bz2"
 
 rm data/*
 # Clean tmp directory

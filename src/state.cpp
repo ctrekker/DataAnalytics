@@ -79,7 +79,7 @@ namespace state {
         return totalPatterns + off;
     }
     int getFileId(uint64_t pid) {
-        return pid/OBJ_PER_FILE;
+        return pid/C.OBJ_PER_FILE;
     }
     string getFilePath(uint64_t pid) {
         return C.SAVE_DIR+"/"+to_string(getFileId(pid))+".pbin";

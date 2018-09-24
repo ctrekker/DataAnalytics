@@ -9,6 +9,7 @@
 #include "config.h"
 
 extern Log LOG;
+extern Config C;
 
 class ProgressBar {
 private:
@@ -33,7 +34,7 @@ public:
 
     void display() const
     {
-        if(SHOW_PROGRESS_BARS) {
+        if(C.SHOW_PROGRESS_BARS) {
             float progress = (float) ticks / total_ticks;
             unsigned int pos = (int) (bar_width * progress);
 
@@ -61,7 +62,7 @@ public:
     {
         ticks = total_ticks;
         display();
-        if(SHOW_PROGRESS_BARS) {
+        if(C.SHOW_PROGRESS_BARS) {
             std::cout << endl;
         }
         std::cout.flush();

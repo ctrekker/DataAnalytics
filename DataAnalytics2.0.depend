@@ -151,7 +151,7 @@
 	<vector>
 	<cstring>
 
-1537761453 source:c:\users\ctrek\documents\dataanalytics\main.cpp
+1537803792 source:c:\users\ctrek\documents\dataanalytics\main.cpp
 	<iostream>
 	<fstream>
 	<sstream>
@@ -171,7 +171,7 @@
 	"args.hxx"
 	"stats.h"
 
-1537650554 source:c:\users\ctrek\documents\dataanalytics\src\data_analyzer.cpp
+1537824674 source:c:\users\ctrek\documents\dataanalytics\src\data_analyzer.cpp
 	<iostream>
 	<chrono>
 	<cstdlib>
@@ -209,7 +209,7 @@
 	<stdio.h>
 	<time.h>
 
-1537761413 source:c:\users\ctrek\documents\dataanalytics\src\save.cpp
+1537824534 source:c:\users\ctrek\documents\dataanalytics\src\save.cpp
 	<fstream>
 	<iostream>
 	<climits>
@@ -221,7 +221,7 @@
 	"state.h"
 	"log.h"
 
-1537761388 source:c:\users\ctrek\documents\dataanalytics\src\state.cpp
+1537797095 source:c:\users\ctrek\documents\dataanalytics\src\state.cpp
 	<iostream>
 	<fstream>
 	<string>
@@ -235,7 +235,7 @@
 	<sstream>
 	"log.h"
 
-1537650554 c:\users\ctrek\documents\dataanalytics\include\progressbar.hpp
+1537797123 c:\users\ctrek\documents\dataanalytics\include\progressbar.hpp
 	<chrono>
 	<iostream>
 	<sstream>
@@ -250,14 +250,14 @@
 	<vector>
 	"dataio.h"
 
-1536456385 c:\users\ctrek\documents\dataanalytics\include\dataio.h
+1537803717 c:\users\ctrek\documents\dataanalytics\include\dataio.h
 	<vector>
 	<sstream>
 	<float.h>
 	"dataio.h"
 	"config.h"
 
-1537761275 c:\users\ctrek\documents\dataanalytics\include\config.h
+1537824621 c:\users\ctrek\documents\dataanalytics\include\config.h
 
 1537650554 c:\users\ctrek\documents\dataanalytics\include\timer.h
 

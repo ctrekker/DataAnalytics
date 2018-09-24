@@ -23,7 +23,7 @@
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="run -p -t -a save2" />
+				<Option parameters="run -p -t" />
 				<Compiler>
 					<Add option="-O2" />
 					<Add option="-std=c++11" />

@@ -44,13 +44,13 @@
 using namespace std;
 using namespace dataio;
 
-vector<Pattern> patterns(PATTERN_NUMBER);
-vector<MatchList> matches;
-vector<Prediction> predictions;
-
 Log LOG(true);
 Stats STATS;
 Config C;
+
+vector<Pattern> patterns(C.PATTERN_NUMBER);
+vector<MatchList> matches;
+vector<Prediction> predictions;
 
 inline bool file_exists(string name) {
     ifstream file(name.c_str());
@@ -115,7 +115,7 @@ void ImportCommand(args::Subparser &parser) {
         LOG.error("ERROR: a path is required");
     }
     else if(viewFlag) {
-        string location = INPUT_REPO_LOCATION;
+        string location = C.INPUT_REPO_LOCATION;
         if(locationFlag) {
             location = args::get(locationFlag);
         }
@@ -126,7 +126,7 @@ void ImportCommand(args::Subparser &parser) {
         string path = args::get(pathFlag);
         vector<string> pathSplit = split(path, '/');
         string type = "csv";
-        string location = INPUT_REPO_LOCATION;
+        string location = C.INPUT_REPO_LOCATION;
         string name = pathSplit[pathSplit.size()-1];
 
         if(typeFlag) {
@@ -173,13 +173,13 @@ void RunCommand(args::Subparser &parser) {
 
     // Default is defined in config.h
     if(nameFlag) {
-        EXECUTION_NAME = args::get(nameFlag);
+        C.EXECUTION_NAME = args::get(nameFlag);
     }
 
     // Check for custom graph or a test source
     Graph graph;
     if(sourceFlag) {
-        ifstream repoIn(INPUT_REPO_LOCATION+"/"+args::get(sourceFlag));
+        ifstream repoIn(C.INPUT_REPO_LOCATION+"/"+args::get(sourceFlag));
         string line;
         vector<vector<double>> graphData;
         while(getline(repoIn, line)) {
@@ -228,7 +228,7 @@ void RunCommand(args::Subparser &parser) {
         LOG.debug(to_string(predictions.size())+"<-Total Predictions");
 
         if(predictions.size()>0) {
-            ofstream file(OUT_DIR+"/"+EXECUTION_NAME+".csv");
+            ofstream file(C.OUT_DIR+"/"+C.EXECUTION_NAME+".csv");
             save::csvPredictionList(&graph, &predictions, file);
             file.close();
 
@@ -265,7 +265,7 @@ void ExportCommand(args::Subparser &parser) {
     if(nameFlag) {
         name = args::get(nameFlag);
     }
-    string runPath = OUT_DIR+"/"+name+".csv";
+    string runPath = C.OUT_DIR+"/"+name+".csv";
 
 
     LOG.info("Exporting " + name + " to " + outputPath);

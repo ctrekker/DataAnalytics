@@ -7,7 +7,12 @@ enum PredictionHandler {
     SEPARATE, MERGED
 };
 
-const static string SAVE_DIR = "save";
+class Config {
+public:
+    string SAVE_DIR = "save";
+    string SAVE_DIR_DEFAULT = "save";
+};
+//const static string SAVE_DIR = "save";
 const static string ARCH_DIR = "arch";
 const static string OUT_DIR = "data";
 
@@ -17,7 +22,7 @@ const static string INPUT_REPO_LOCATION = "in";
 static string EXECUTION_NAME = "latest";
 const static bool SHOW_PROGRESS_BARS = true;
 
-const static int PATTERN_NUMBER = 5;
+const static int PATTERN_NUMBER = 500;
 // Note that the actual prediction output is 1 value less than the pattern length
 const static int PATTERN_LENGTH = 41;
 

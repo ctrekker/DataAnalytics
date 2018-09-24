@@ -50,6 +50,7 @@ vector<Prediction> predictions;
 
 Log LOG(true);
 Stats STATS;
+Config C;
 
 inline bool file_exists(string name) {
     ifstream file(name.c_str());
@@ -154,12 +155,19 @@ void ImportCommand(args::Subparser &parser) {
 void RunCommand(args::Subparser &parser) {
     args::ValueFlag<string> sourceFlag(parser, "SOURCE", "source of the resource to run from. Defaults to test case", {'s', "source"});
     args::ValueFlag<string> nameFlag(parser, "NAME", "name of the current execution. Defaults to \"latest\"", {'n', "name"});
+    args::ValueFlag<string> savePathFlag(parser, "SAVE-PATH", "set a custom data save path", {'a', "save-path"});
     args::Flag patternFlag(parser, "PATTERN", "create patterns or not", {'p'});
     args::Flag trainFlag(parser, "TRAIN", "train model or not", {'t'});
     args::Flag predictFlag(parser, "PREDICT", "make predictions for source", {'r'});
     args::Flag verboseFlag(parser, "VERBOSE", "turn on verbose output - UNIMPLEMENTED", {'v', "verbose"});
     args::Flag debugFlag(parser, "DEBUG", "turn on debug mode - UNIMPLEMENTED", {'d', "debug"});
     parser.Parse();
+
+    if(savePathFlag) {
+        C.SAVE_DIR = args::get(savePathFlag);
+        LOG.debug("Using savePath: " + args::get(savePathFlag));
+        LOG.debug(C.SAVE_DIR);
+    }
 
     state::init();
 

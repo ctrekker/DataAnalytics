@@ -9,9 +9,10 @@
 using namespace std;
 
 extern Log LOG;
+extern Config C;
 
 namespace state {
-    string metaPath = SAVE_DIR + "/meta.txt";
+    string metaPath = C.SAVE_DIR + "/meta.txt";
     uint64_t totalPatterns = 0;
     uint64_t initTotalPatterns = 0;
     uint64_t runId = 0;
@@ -21,6 +22,9 @@ namespace state {
         return file.good();
     }
     void init(bool printState) {
+        // Refresh metaPath in case C.SAVE_DIR has changed
+        metaPath = C.SAVE_DIR + "/meta.txt";
+
         if(!file_exists(metaPath)) {
             ofstream metaCreate(metaPath);
             metaCreate << 0 << " ";
@@ -59,6 +63,7 @@ namespace state {
         metaOut.close();
     }
     void print(bool pretty) {
+        LOG.debug("SAVE_DIR: "+C.SAVE_DIR);
         if(pretty) {
             LOG.debug("Total Saved Patterns: " + to_string(totalPatterns));
             LOG.debug("Run ID: " + to_string(runId));
@@ -77,12 +82,12 @@ namespace state {
         return pid/OBJ_PER_FILE;
     }
     string getFilePath(uint64_t pid) {
-        return SAVE_DIR+"/"+to_string(getFileId(pid))+".pbin";
+        return C.SAVE_DIR+"/"+to_string(getFileId(pid))+".pbin";
     }
     bool patternFileExists(int fid) {
-        return file_exists(SAVE_DIR+"/"+to_string(fid)+".pbin");
+        return file_exists(C.SAVE_DIR+"/"+to_string(fid)+".pbin");
     }
     bool matchFileExists(int fid) {
-        return file_exists(SAVE_DIR+"/"+to_string(fid)+".mbin");
+        return file_exists(C.SAVE_DIR+"/"+to_string(fid)+".mbin");
     }
 }

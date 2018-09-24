@@ -13,6 +13,7 @@ using namespace std;
 using namespace dataio;
 
 extern Log LOG;
+extern Config C;
 
 namespace save {
     void createdPatterns(vector<Pattern>* patterns) {
@@ -25,10 +26,10 @@ namespace save {
     void createdMatches(vector<MatchList>* matches, int fileId, bool overwrite) {
         ofstream outFile;
         if(overwrite) {
-            outFile = ofstream(SAVE_DIR+"/"+to_string(fileId)+".mbin", ios::binary);
+            outFile = ofstream(C.SAVE_DIR+"/"+to_string(fileId)+".mbin", ios::binary);
         }
         else {
-            outFile = ofstream(SAVE_DIR+"/"+to_string(fileId)+".mbin", ios::binary | ios::app);
+            outFile = ofstream(C.SAVE_DIR+"/"+to_string(fileId)+".mbin", ios::binary | ios::app);
         }
 
         save::matchListCollection(matches, &outFile);
@@ -40,9 +41,9 @@ namespace save {
         cout << "Saving state..." << endl;
         timer::start();
 
-        ofstream patternFile(SAVE_DIR+"/"+name+".pbin", ios::binary);
-        ofstream matchFile(SAVE_DIR+"/"+name+".mbin", ios::binary);
-        ofstream predictionFile(SAVE_DIR+"/"+name+".prbin", ios::binary);
+        ofstream patternFile(C.SAVE_DIR+"/"+name+".pbin", ios::binary);
+        ofstream matchFile(C.SAVE_DIR+"/"+name+".mbin", ios::binary);
+        ofstream predictionFile(C.SAVE_DIR+"/"+name+".prbin", ios::binary);
 
         save::patternList(patterns, &patternFile);
         save::matchListCollection(matches, &matchFile);

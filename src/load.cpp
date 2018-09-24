@@ -12,17 +12,18 @@ using namespace std;
 using namespace dataio;
 
 extern Log LOG;
+extern Config C;
 
 namespace load {
     void patternFile(vector<Pattern>* patterns, uint64_t fid) {
         patterns->clear();
-        ifstream fileIn(SAVE_DIR+"/"+to_string(fid)+".pbin", ios::binary);
+        ifstream fileIn(C.SAVE_DIR+"/"+to_string(fid)+".pbin", ios::binary);
         load::patternList(&fileIn, patterns);
         fileIn.close();
     }
     void matchFile(vector<MatchList>* matches, uint64_t fid) {
         matches->clear();
-        ifstream fileIn(SAVE_DIR+"/"+to_string(fid)+".mbin", ios::binary);
+        ifstream fileIn(C.SAVE_DIR+"/"+to_string(fid)+".mbin", ios::binary);
         load::matchListCollection(&fileIn, matches);
         fileIn.close();
     }
@@ -31,9 +32,9 @@ namespace load {
         LOG.info("Loading state...");
         timer::start();
 
-        ifstream patternFile(SAVE_DIR+"/"+name+".pbin", ios::binary);
-        ifstream matchFile(SAVE_DIR+"/"+name+".mbin", ios::binary);
-        ifstream predictionFile(SAVE_DIR+"/"+name+".prbin", ios::binary);
+        ifstream patternFile(C.SAVE_DIR+"/"+name+".pbin", ios::binary);
+        ifstream matchFile(C.SAVE_DIR+"/"+name+".mbin", ios::binary);
+        ifstream predictionFile(C.SAVE_DIR+"/"+name+".prbin", ios::binary);
 
         load::patternList(&patternFile, patterns);
         load::matchListCollection(&matchFile, matches);

@@ -64,3 +64,5 @@ ftp.json
 save_nan.tar
 save.tar
 config/IntradayDownload.json
+*.xlsx
+training_graph.pdf

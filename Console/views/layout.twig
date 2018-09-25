@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{ title }}</title>
+        <link rel='stylesheet' href='/lib/css/main.css' />
+        <link rel="stylesheet" href="/lib/css/spin.css"/>
+        <script type="text/javascript" src="/lib/js/jquery.min.js"></script>
+        <script type="text/javascript" src="/lib/js/underscore.min.js"></script>
+        <script type="text/javascript" src="/lib/js/backbone.js"></script>
+        <script type="text/javascript" src="/lib/js/backbone.radio.js"></script>
+        <script type="text/javascript" src="/lib/js/backbone.marionette.js"></script>
+        <script type="text/javascript" src="/lib/js/json2.js"></script>
+        <script type="text/javascript" src="/lib/js/Chart.min.js"></script>
+        <script type="text/javascript" src="/lib/js/spin.js"></script>
+        <script type="text/javascript" src="/lib/js/lib.js"></script>
+        <script type="text/javascript" src="{{ jsPath }}"></script>
+    </head>
+    <body>
+        {% block body %}{% endblock %}
+
+        <div class="symbol-loader"></div>
+
+        <script type="x-template/underscore" id="symbol_view_template">
+            <div class="symbol-view-container">
+                <div class="symbol-graph-container">
+                    <canvas class="symbol-graph" width="640" height="480"></canvas>
+                </div>
+            </div>
+        </script>
+        <script type="x-template/underscore" id="symbol_list_view_template">
+            <div class="symbol-list-container">
+                <div class="symbol-list-search">
+
+                </div>
+                <div class="symbol-list-alphabet">
+
+                </div>
+                <div class="symbol-list-contents">
+
+                </div>
+            </div>
+        </script>
+        <script type="x-template/underscore" id="search_view_template">
+            <input type="text" class="search-box"/>
+        </script>
+        <script type="x-template/underscore" id="alphabet_view_template">
+            <div class="alphabet-container">
+
+            </div>
+        </script>
+        <script type="x-template/underscore" id="list_view_template">
+            <div class="list-container">
+                <ul>
+
+                </ul>
+            </div>
+        </script>
+    </body>
+</html>

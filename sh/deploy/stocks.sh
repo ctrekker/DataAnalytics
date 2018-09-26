@@ -37,7 +37,7 @@ if [ $RAMDISK_SAVE -eq $true ]; then
     # Set the save option to append to the run commands
     SAVE_OPTION=" -a $RAMDISK_MOUNT_PATH"
     # Copy the current disk configuration to the ramdisk
-    cp -r save $RAMDISK_MOUNT_PATH
+    cp save/* $RAMDISK_MOUNT_PATH
 fi
 
 echo $SAVE_OPTION

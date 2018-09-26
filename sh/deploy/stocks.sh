@@ -41,7 +41,7 @@ if [ $RAMDISK_SAVE -eq $true ]; then
 fi
 
 echo $SAVE_OPTION
-pause
+read -p "Press enter to continue"
 
 COLLECTION_COUNT=`cat tmp/collections.txt | wc -l`
 COMPLETION_COUNT=0
@@ -68,7 +68,7 @@ done <tmp/collections.txt
 if [ $RAMDISK_SAVE -eq $true ]; then
     rm save/*
     cp -r $RAMDISK_MOUNT_PATH save
-    unmount $RAMDISK_MOUNT_PATH
+    umount $RAMDISK_MOUNT_PATH
 fi
 
 

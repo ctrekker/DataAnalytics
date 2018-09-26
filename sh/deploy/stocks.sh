@@ -40,9 +40,6 @@ if [ $RAMDISK_SAVE -eq $true ]; then
     cp save/* $RAMDISK_MOUNT_PATH
 fi
 
-echo $SAVE_OPTION
-read -p "Press enter to continue"
-
 COLLECTION_COUNT=`cat tmp/collections.txt | wc -l`
 COMPLETION_COUNT=0
 while read collection; do

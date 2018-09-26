@@ -61,7 +61,8 @@ done <tmp/collections.txt
 COMPLETION_COUNT=0
 # Predict outcomes
 while read collection; do
-  echo "$collection - $COMPLETION_COUNT / $COLLECTION_COUNTn"
+  ((COMPLETION_COUNT+=1))
+  echo "$collection - $COMPLETION_COUNT / $COLLECTION_COUNT"
   ./da2 run -r -s $collection -n $collection $SAVE_OPTION
 done <tmp/collections.txt
 
@@ -78,9 +79,11 @@ rm in/*
 tar -cvf $ARCHIVE_ROOT/predictions/data_$DATE.tar.bz2 --use-compress-prog=pbzip2 data
 # Export save data to the save archive
 tar -cvf $ARCHIVE_ROOT/save/save_$DATE.tar.bz2 --use-compress-prog=pbzip2 save
-# Upload the tar backups to a remote ftp backup server
-node sh/util/ftpupload ftp.json "$ARCHIVE_ROOT/predictions/data_$DATE.tar.bz2" "$FTP_ARCHIVE_ROOT/predictions/data_$DATE.tar.bz2"
-node sh/util/ftpupload ftp.json "$ARCHIVE_ROOT/save/save_$DATE.tar.bz2" "$FTP_ARCHIVE_ROOT/save/save_$DATE.tar.bz2"
+if [ $FTP_UPLOAD -eq $true ]; then
+    # Upload the tar backups to a remote ftp backup server
+    node sh/util/ftpupload ftp.json "$ARCHIVE_ROOT/predictions/data_$DATE.tar.bz2" "$FTP_ARCHIVE_ROOT/predictions/data_$DATE.tar.bz2"
+    node sh/util/ftpupload ftp.json "$ARCHIVE_ROOT/save/save_$DATE.tar.bz2" "$FTP_ARCHIVE_ROOT/save/save_$DATE.tar.bz2"
+fi
 
 rm data/*
 # Clean tmp directory

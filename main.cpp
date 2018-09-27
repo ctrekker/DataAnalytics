@@ -319,10 +319,17 @@ void CleanCommand(args::Subparser &parser) {
 }
 void InfoCommand(args::Subparser &parser) {
     args::Flag debugFlag(parser, "DEBUG", "shows debug output rather than clean value-pair output", {'d', "debug"});
+    args::Flag configFlag(parser, "CONFIG", "shows important configuration values", {'c', "config"});
+
     parser.Parse();
 
-    state::init(false);
-    state::print(!debugFlag);
+    if(!configFlag) {
+        state::init(false);
+        state::print(!debugFlag);
+    }
+    else {
+        C.print(!debugFlag);
+    }
 }
 void InitCommand(args::Subparser &parser) {
     parser.Parse();

@@ -151,7 +151,7 @@
 	<vector>
 	<cstring>
 
-1537803792 source:c:\users\ctrek\documents\dataanalytics\main.cpp
+1538060872 source:c:\users\ctrek\documents\dataanalytics\main.cpp
 	<iostream>
 	<fstream>
 	<sstream>
@@ -221,7 +221,7 @@
 	"state.h"
 	"log.h"
 
-1537797095 source:c:\users\ctrek\documents\dataanalytics\src\state.cpp
+1538059925 source:c:\users\ctrek\documents\dataanalytics\src\state.cpp
 	<iostream>
 	<fstream>
 	<string>
@@ -257,7 +257,8 @@
 	"dataio.h"
 	"config.h"
 
-1537824621 c:\users\ctrek\documents\dataanalytics\include\config.h
+1538063223 c:\users\ctrek\documents\dataanalytics\include\config.h
+	"log.h"
 
 1537650554 c:\users\ctrek\documents\dataanalytics\include\timer.h
 

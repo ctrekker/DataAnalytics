@@ -63,7 +63,6 @@ namespace state {
         metaOut.close();
     }
     void print(bool pretty) {
-        LOG.debug("SAVE_DIR: "+C.SAVE_DIR);
         if(pretty) {
             LOG.debug("Total Saved Patterns: " + to_string(totalPatterns));
             LOG.debug("Run ID: " + to_string(runId));

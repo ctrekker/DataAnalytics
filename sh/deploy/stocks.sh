@@ -65,7 +65,7 @@ done <tmp/collections.txt
 
 if [ $RAMDISK_SAVE -eq $true ]; then
     rm save/*
-    cp -r $RAMDISK_MOUNT_PATH save
+    cp $RAMDISK_MOUNT_PATH/* save
     umount $RAMDISK_MOUNT_PATH
 fi
 

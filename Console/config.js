@@ -5,7 +5,7 @@ module.exports = {
     databaseType: 'static',
     // If the server type was static, set the ip of the remote database here
     // *Ignored if set to 'dynamic'
-    databaseIp: '192.168.1.30',
+    databaseIp: '192.168.1.18',
     // If server type was dynamic, set url of DynamicIpTracker endpoint here
     // *Ignored if set to 'static'
     databaseIpEndpoint: 'http://ctrekker.mjtrekkers.com/utilities/DynamicIpTracker/get.php?name=RASPI_1',
@@ -18,7 +18,7 @@ module.exports = {
     // Database schema (or database name)
     databaseSchema: 'stockdata',
     // Whether or not to host an ssl server as well on port 443
-    sslServer: true,
+    sslServer: false,
     // Root location of ssl keys and certificates to use
     sslRoot: './stocks.burnscoding.com'
 };

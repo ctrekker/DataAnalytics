@@ -112,24 +112,6 @@ public class IntradayDownloader {
         catch(IOException e) {
             e.printStackTrace();
         }
-
-//        StockIndex index = StockIndex.fromUrl(API_BASE_URL + "/ref-data/symbols");
-//        if(index == null) {
-//            System.out.println("ERROR: Stock index is null!");
-//            System.exit(1);
-//        }
-//
-//        Set<String> symbols = index.keySet();
-//        for(String symbol : symbols) {
-//            StockData symbolData = StockData.fromUrl(API_BASE_URL + "/stock/" + symbol + "/chart/1d");
-//            if(symbolData == null) {
-//                System.out.println("WARNING: Stock symbol data for " + symbol + " is null!");
-//                continue;
-//            }
-//            symbolData.mongoInsert();
-//        }
-
-
     }
 
     private class DownloadThread implements Runnable {
@@ -149,7 +131,7 @@ public class IntradayDownloader {
                         .build());
                 List<Bson> entryDocuments = new ArrayList<>();
                 for (Chart entry : chartList) {
-                    if (entry.getMarketAverage() == null || entry.getMarketAverage().equals(new BigDecimal(-1)))
+                    if (entry.getMarketAverage() == null || entry.getMarketAverage().equals(new BigDecimal(-1)) || entry.getMarketClose().doubleValue() <= 0.0)
                         continue;
                     //System.out.println(entry.getMinute());
 

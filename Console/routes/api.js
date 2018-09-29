@@ -43,13 +43,17 @@ function getSymbolData(params, res) {
     if(dateStr.split('-').length !== 2) {
         Model.find({date: dateStr}, (err, entries) => {
             res.json(entries);
+        }).sort({
+            'timestamp': -1
         });
     }
     else {
         Model.find({date: new RegExp(`${dateStr}.*`)}, (err, closeEntries) => {
             if(err) res.send('There was an error');
             else res.json(closeEntries);
-        })
+        }).sort({
+            'timestamp': -1
+        });
     }
 }
 

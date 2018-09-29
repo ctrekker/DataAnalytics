@@ -1,5 +1,3 @@
-var DEFAULT_SYMBOL = 'AABA';
-
 var SymbolView = Mn.View.extend({
     template: '#symbol_view_template',
     ui: {},
@@ -24,12 +22,8 @@ var SymbolView = Mn.View.extend({
             for(var i=keys.length-1; i>=0; i--) {
                 var current = self.collection.changed[keys[i]];
                 if(window.viewDate !== undefined && window.viewDate.split('-').length === 2) {
-                    if(labels.indexOf(current.date) === -1) {
-                        labels.push(current.date);
-                    }
-                    else {
-                        labels.push('');
-                    }
+                    console.log(current.date);
+                    labels.push(current.date+" "+current.time);
                 }
                 else {
                     labels.push(current.time);

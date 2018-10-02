@@ -66,3 +66,5 @@ save.tar
 config/IntradayDownload.json
 *.xlsx
 training_graph.pdf
+config/stocks.config
+config/Console.js

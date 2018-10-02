@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Include configuration values
-source sh/deploy/stocks.config
+source config/stocks.config
 
 # Set up a temporary directory
 mkdir tmp

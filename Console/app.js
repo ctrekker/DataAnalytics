@@ -5,7 +5,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-const config = require('./config');
+const config = require('../config/Console');
 const request = require('request');
 
 const indexRouter = require('./routes/index');

@@ -5,7 +5,7 @@ module.exports = {
     databaseType: 'static',
     // If the server type was static, set the ip of the remote database here
     // *Ignored if set to 'dynamic'
-    databaseIp: '192.168.1.18',
+    databaseIp: '127.0.0.1',
     // If server type was dynamic, set url of DynamicIpTracker endpoint here
     // *Ignored if set to 'static'
     databaseIpEndpoint: 'http://ctrekker.mjtrekkers.com/utilities/DynamicIpTracker/get.php?name=RASPI_1',

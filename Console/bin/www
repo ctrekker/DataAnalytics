@@ -9,7 +9,7 @@ var debug = require('debug')('dataanalyticsconsole:server');
 var http = require('http');
 var https = require('https');
 const fs = require('fs');
-var config = require('../config');
+var config = require('../../config/Console');
 
 /**
  * Get port from environment and store in Express.

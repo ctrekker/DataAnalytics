@@ -13,20 +13,23 @@
 #include "save.h"
 #include "load.h"
 #include "log.h"
+#include "stats.h"
 
 using namespace dataio;
 
 extern Log LOG;
+extern Stats STATS;
+extern Config C;
 
 namespace analyze {
     void create_patterns(vector<Pattern> &patternArr, Graph graph) {
         LOG.info("Creating patterns...");
         timer::start();
 
-        ProgressBar pb(PATTERN_NUMBER, 50);
+        ProgressBar pb(C.PATTERN_NUMBER, 50);
         uint64_t lastLoadUpdate = timer::getTimeMillis();
 
-        for(int i=0; i<PATTERN_NUMBER; i++) {
+        for(int i=0; i<C.PATTERN_NUMBER; i++) {
             int startPos = rand() % (graph.data.size() - PATTERN_LENGTH*2);
 
             Pattern p;
@@ -49,11 +52,11 @@ namespace analyze {
                 lastLoadUpdate = timer::getTimeMillis();
             }
         }
-        state::totalPatterns += PATTERN_NUMBER;
+        state::totalPatterns += C.PATTERN_NUMBER;
         save::createdPatterns(&patternArr);
 
         pb.done();
-        timer::stop("Created patterns");
+        STATS.setPatternTime(timer::stop("Created patterns"));
     }
     void train(vector<MatchList>* matchArr, vector<Pattern> patterns, Graph graph) {
        LOG.info("Training model...");
@@ -83,16 +86,16 @@ namespace analyze {
                 // Load next patterns
                 load::patternFile(&patterns, currentPatternFileId);
             }
-            if(matchArr->size()<=i%OBJ_PER_FILE) {
+            if(matchArr->size()<=i%C.OBJ_PER_FILE) {
                 MatchList m = *(new MatchList);
                 m.id = i;
                 matchArr->push_back(m);
             }
-            Pattern p = patterns[i%OBJ_PER_FILE];
+            Pattern p = patterns[i%C.OBJ_PER_FILE];
             vector<Match> mList;
             patternMatch(&mList, graph, p, true);
 
-            MatchList* m = &((*matchArr)[i%OBJ_PER_FILE]);
+            MatchList* m = &((*matchArr)[i%C.OBJ_PER_FILE]);
             for(unsigned int j=0; j<mList.size(); j++) {
                 if(j>MATCH_BUFFER_SIZE) {
                     break;
@@ -108,7 +111,7 @@ namespace analyze {
         save::createdMatches(matchArr, currentPatternFileId, true);
 
         pb.done();
-        timer::stop("Trained model");
+        STATS.setTrainingTime(timer::stop("Trained model"));
     }
     bool predict(vector<Prediction>* predictions, vector<Pattern> &patterns, vector<MatchList> matches, Graph graph, uint64_t patternStart, uint64_t patternEnd, int layer, int initialGraphSize) {
         if(layer==1) {
@@ -130,9 +133,9 @@ namespace analyze {
                 load::matchFile(&matches, currentPatternFileId);
             }
 
-            Pattern p = patterns[pid%OBJ_PER_FILE];
+            Pattern p = patterns[pid%C.OBJ_PER_FILE];
             vector<Match> mList;
-            mList = matches[pid%OBJ_PER_FILE].matches;
+            mList = matches[pid%C.OBJ_PER_FILE].matches;
 
             vector<Match> data;
             patternMatch(&data, graph, p, false);
@@ -142,7 +145,7 @@ namespace analyze {
                 Match m = mList[i];
 
                 //if(m==nullptr) continue;
-                double bell = bellCurve(TRAINING_THRESHOLD, 1, m.error);
+                double bell = bellCurve(C.TRAINING_THRESHOLD, 1, m.error);
                 totalBellWeight += bell;
             }
 
@@ -162,8 +165,8 @@ namespace analyze {
                 // LOG.warning(to_string(pid) + " nomatch");
                 continue;
             }
-            double bellWeight = bellCurve(TRAINING_THRESHOLD, 1, bestMatch->error);
-            if(bellWeight < PREDICTION_ACCEPTANCE_THRESHOLD) {
+            double bellWeight = bellCurve(C.TRAINING_THRESHOLD, 1, bestMatch->error);
+            if(bellWeight < C.PREDICTION_ACCEPTANCE_THRESHOLD) {
                 continue;
             }
             for(uint64_t i=0; i<data.size(); i++) {
@@ -179,7 +182,7 @@ namespace analyze {
 
                 prediction.init(pid, matchIndex, predictedData, bellWeight, bellWeight/totalBellWeight);
                 rawPrediction.init(pid, matchIndex, rawPredictedData, bellWeight, bellWeight/totalBellWeight);
-                if(PREDICTION_HANDLER == PredictionHandler::MERGED||((PREDICTION_HANDLER == PredictionHandler::SEPARATE)&&(!PREDICTION_RECURSIVE||layer>=PREDICTION_MAX_RECURSIVE_ATTEMPTS))) {
+                if(C.PREDICTION_HANDLER == PredictionHandler::MERGED||((C.PREDICTION_HANDLER == PredictionHandler::SEPARATE)&&(!C.PREDICTION_RECURSIVE||layer>=C.PREDICTION_MAX_RECURSIVE_ATTEMPTS))) {
                     if(!prediction.containedIn(predictions)) {
                         predictions->push_back(prediction);
                     }
@@ -213,7 +216,7 @@ namespace analyze {
                     }
                 }
 
-                if(predictions->size()>=PREDICTION_MAX_NUMBER) {
+                if(predictions->size()>=C.PREDICTION_MAX_NUMBER) {
                     if(layer==1) {
                         pb.done();
                     }
@@ -236,7 +239,7 @@ namespace analyze {
         }
         if(layer==1) {
             pb.done();
-            timer::stop("Predicted outcomes");
+            STATS.setPredictionTime(timer::stop("Predicted outcomes"));
         }
         return added;
     }
@@ -274,7 +277,7 @@ namespace analyze {
 
             vector<double> gResultMod(PATTERN_LENGTH);
 
-            for(int j = 0; j < PATTERN_LENGTH; j++) {
+            for(unsigned int j = 0; j < PATTERN_LENGTH; j++) {
                 vector<double>* graphPoint = &graph.data[i + j];
                 vector<double>* patternPoint = &pBody[j];
                 double gv = (*graphPoint)[1];
@@ -287,7 +290,7 @@ namespace analyze {
 
                 if(doResult) gResultMod[j] = graph.data[i + j + PATTERN_LENGTH][1];
             }
-            if(totalError < TRAINING_THRESHOLD && endError < TRAINING_END_THRESHOLD) {
+            if(totalError < C.TRAINING_THRESHOLD && endError < C.TRAINING_END_THRESHOLD) {
                 Match match;
                 match.data = gResultMod;
                 match.slopeIntercept = si;

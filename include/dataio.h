@@ -9,6 +9,8 @@
 
 using namespace std;
 
+extern Config C;
+
 namespace dataio {
     struct Graph {
     public:
@@ -66,6 +68,7 @@ namespace dataio {
     public:
         /*** NOTE: this value must be changed if new fields are added ***/
         const static int SIZE = 8+2+8+4+4+8+(8*PATTERN_LENGTH*DIMENSIONS)*2;
+
         uint64_t id;
         uint16_t dimensions;
         uint64_t created;

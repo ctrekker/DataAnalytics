@@ -6,8 +6,10 @@
 #include <sstream>
 
 #include "log.h"
+#include "config.h"
 
 extern Log LOG;
+extern Config C;
 
 class ProgressBar {
 private:
@@ -32,33 +34,37 @@ public:
 
     void display() const
     {
-        float progress = (float) ticks / total_ticks;
-        unsigned int pos = (int) (bar_width * progress);
+        if(C.SHOW_PROGRESS_BARS) {
+            float progress = (float) ticks / total_ticks;
+            unsigned int pos = (int) (bar_width * progress);
 
-        std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
-        auto time_elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now-start_time).count();
+            std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+            auto time_elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now-start_time).count();
 
-        std::stringstream stream;
-        stream << "[";
+            std::stringstream stream;
+            stream << "[";
 
-        for (unsigned int i = 0; i < bar_width; ++i) {
-            if (i < pos) stream << complete_char;
-            else if (i == pos) stream << ">";
-            else stream << incomplete_char;
+            for (unsigned int i = 0; i < bar_width; ++i) {
+                if (i < pos) stream << complete_char;
+                else if (i == pos) stream << ">";
+                else stream << incomplete_char;
+            }
+            stream << "] " << int(progress * 100.0) << "% "
+                      << float(time_elapsed) / 1000.0 << "s\r";
+            stream.flush();
+
+            LOG.print(LogLevel::INFO, stream.str(), false);
+            std::cout.flush();
         }
-        stream << "] " << int(progress * 100.0) << "% "
-                  << float(time_elapsed) / 1000.0 << "s\r";
-        stream.flush();
-
-        LOG.print(LogLevel::INFO, stream.str(), false);
-        std::cout.flush();
     }
 
     void done()
     {
         ticks = total_ticks;
         display();
-        std::cout << endl;
+        if(C.SHOW_PROGRESS_BARS) {
+            std::cout << endl;
+        }
         std::cout.flush();
     }
 };

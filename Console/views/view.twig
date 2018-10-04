@@ -1,0 +1,11 @@
+{% extends 'layout.twig' %}
+
+{% block body %}
+    <div id="symbol_view">
+
+    </div>
+    <div id="symbol" style="display:none">{{ symbol | upper }}</div>
+    <script>
+        window.viewDate = '{{ date }}'
+    </script>
+{% endblock %}

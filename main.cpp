@@ -39,15 +39,18 @@
 #include "log.h"
 #include "config.h"
 #include "args.hxx"
+#include "stats.h"
 
 using namespace std;
 using namespace dataio;
 
-vector<Pattern> patterns(PATTERN_NUMBER);
+Log LOG(true);
+Stats STATS;
+Config C;
+
+vector<Pattern> patterns(C.PATTERN_NUMBER);
 vector<MatchList> matches;
 vector<Prediction> predictions;
-
-Log LOG(true);
 
 inline bool file_exists(string name) {
     ifstream file(name.c_str());
@@ -112,7 +115,7 @@ void ImportCommand(args::Subparser &parser) {
         LOG.error("ERROR: a path is required");
     }
     else if(viewFlag) {
-        string location = INPUT_REPO_LOCATION;
+        string location = C.INPUT_REPO_LOCATION;
         if(locationFlag) {
             location = args::get(locationFlag);
         }
@@ -123,7 +126,7 @@ void ImportCommand(args::Subparser &parser) {
         string path = args::get(pathFlag);
         vector<string> pathSplit = split(path, '/');
         string type = "csv";
-        string location = INPUT_REPO_LOCATION;
+        string location = C.INPUT_REPO_LOCATION;
         string name = pathSplit[pathSplit.size()-1];
 
         if(typeFlag) {
@@ -152,6 +155,7 @@ void ImportCommand(args::Subparser &parser) {
 void RunCommand(args::Subparser &parser) {
     args::ValueFlag<string> sourceFlag(parser, "SOURCE", "source of the resource to run from. Defaults to test case", {'s', "source"});
     args::ValueFlag<string> nameFlag(parser, "NAME", "name of the current execution. Defaults to \"latest\"", {'n', "name"});
+    args::ValueFlag<string> savePathFlag(parser, "SAVE-PATH", "set a custom data save path", {'a', "save-path"});
     args::Flag patternFlag(parser, "PATTERN", "create patterns or not", {'p'});
     args::Flag trainFlag(parser, "TRAIN", "train model or not", {'t'});
     args::Flag predictFlag(parser, "PREDICT", "make predictions for source", {'r'});
@@ -159,17 +163,23 @@ void RunCommand(args::Subparser &parser) {
     args::Flag debugFlag(parser, "DEBUG", "turn on debug mode - UNIMPLEMENTED", {'d', "debug"});
     parser.Parse();
 
+    if(savePathFlag) {
+        C.SAVE_DIR = args::get(savePathFlag);
+        LOG.debug("Using savePath: " + args::get(savePathFlag));
+        LOG.debug(C.SAVE_DIR);
+    }
+
     state::init();
 
     // Default is defined in config.h
     if(nameFlag) {
-        EXECUTION_NAME = args::get(nameFlag);
+        C.EXECUTION_NAME = args::get(nameFlag);
     }
 
     // Check for custom graph or a test source
     Graph graph;
     if(sourceFlag) {
-        ifstream repoIn(INPUT_REPO_LOCATION+"/"+args::get(sourceFlag));
+        ifstream repoIn(C.INPUT_REPO_LOCATION+"/"+args::get(sourceFlag));
         string line;
         vector<vector<double>> graphData;
         while(getline(repoIn, line)) {
@@ -190,6 +200,7 @@ void RunCommand(args::Subparser &parser) {
         exit(0);
     }
 
+    uint64_t startTime = timer::getTimeMillis();
     if(patternFlag) {
         analyze::create_patterns(patterns, graph);
     }
@@ -208,14 +219,16 @@ void RunCommand(args::Subparser &parser) {
     else {
         LOG.info("Skipping predictions");
     }
+    STATS.setRunTime(timer::getTimeMillis() - startTime);
 
+    STATS.save();
     state::preserve();
 
     if(predictFlag) {
         LOG.debug(to_string(predictions.size())+"<-Total Predictions");
 
         if(predictions.size()>0) {
-            ofstream file(OUT_DIR+"/"+EXECUTION_NAME+".csv");
+            ofstream file(C.OUT_DIR+"/"+C.EXECUTION_NAME+".csv");
             save::csvPredictionList(&graph, &predictions, file);
             file.close();
 
@@ -252,7 +265,7 @@ void ExportCommand(args::Subparser &parser) {
     if(nameFlag) {
         name = args::get(nameFlag);
     }
-    string runPath = OUT_DIR+"/"+name+".csv";
+    string runPath = C.OUT_DIR+"/"+name+".csv";
 
 
     LOG.info("Exporting " + name + " to " + outputPath);
@@ -273,25 +286,50 @@ void ExportCommand(args::Subparser &parser) {
     timer::stop("Finished export");
 }
 void CleanCommand(args::Subparser &parser) {
-    args::Flag hardFlag(parser, "HARD", "resets everything as opposed to just caches", {'h', "hard"});
+    args::Flag allFlag(parser, "ALL", "resets all generated data", {'a', "all"});
+    args::Flag dataFlag(parser, "DATA", "resets the data output directory", {'d', "data"});
+    args::Flag inFlag(parser, "IN", "resets the input repository directory", {'i', "in"});
+    args::Flag saveFlag(parser, "SAVE", "resets the save output directory", {'s', "save"});
+    args::Flag statsFlag(parser, "STATS", "resets the stats directory", {'t', "stats"});
+
     parser.Parse();
 
     LOG.info("Executing cleaning script");
-
     timer::start();
-    runScript("clean");
-    if(hardFlag) {
+
+    if(allFlag) {
         runScript("cleanhard");
+    }
+    else {
+        if(dataFlag) {
+            runScript("cleandata");
+        }
+        if(inFlag) {
+            runScript("cleanin");
+        }
+        if(saveFlag) {
+            runScript("cleansave");
+        }
+        if(statsFlag) {
+            runScript("cleanstats");
+        }
     }
     cout << endl << endl;
     timer::stop("Finished cleaning");
 }
 void InfoCommand(args::Subparser &parser) {
     args::Flag debugFlag(parser, "DEBUG", "shows debug output rather than clean value-pair output", {'d', "debug"});
+    args::Flag configFlag(parser, "CONFIG", "shows important configuration values", {'c', "config"});
+
     parser.Parse();
 
-    state::init(false);
-    state::print(!debugFlag);
+    if(!configFlag) {
+        state::init(false);
+        state::print(!debugFlag);
+    }
+    else {
+        C.print(!debugFlag);
+    }
 }
 void InitCommand(args::Subparser &parser) {
     parser.Parse();

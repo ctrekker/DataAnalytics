@@ -57,7 +57,7 @@ public class EsdacServer implements Runnable {
                 DataInputStream clientIn = new DataInputStream(client.getInputStream());
                 DataOutputStream clientOut = new DataOutputStream(client.getOutputStream());
 
-                clientOut.write("ENTER CONNECTION PROTOCOL: ".getBytes());
+                EsdacUtil.writeString(clientOut, "ENTER CONNECTION PROTOCOL: ");
 
                 char protocolString = (char)clientIn.readByte();
 
@@ -106,8 +106,12 @@ public class EsdacServer implements Runnable {
             }
             public void auto(DataInputStream clientIn, DataOutputStream clientOut) throws IOException {
                 EsdacCommandExecutor executor = new EsdacCommandExecutor(client, clientIn, clientOut);
+                while(clientIn.available()>0) {
+                    clientIn.read();
+                }
                 while(!client.isClosed()) {
-                    JSONObject request = new JSONObject(clientIn.readUTF());
+                    JSONObject request = new JSONObject(EsdacUtil.readString(clientIn));
+                    System.out.println(request);
                     executor.execute(request);
                 }
             }

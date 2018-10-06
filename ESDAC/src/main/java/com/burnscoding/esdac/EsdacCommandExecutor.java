@@ -106,9 +106,11 @@ public class EsdacCommandExecutor {
 
     }
     public void fileTransfer() throws IOException {
+        JSONObject extra = lastReq.getJSONObject("extra");
+
         final int chunkSize = 2048;
 
-        File outFile = new File(lastReq.getJSONObject("extra").getString("remotePath"));
+        File outFile = new File(extra.getString("remotePath"));
         DataOutputStream fileWriter = new DataOutputStream(new FileOutputStream(outFile, false));
 
         long byteNum = clientIn.readLong();
@@ -132,13 +134,26 @@ public class EsdacCommandExecutor {
             currentIndex += chunkSize;
         }
 
+        String hash = EsdacUtil.fileHash(outFile);
+
         fileWriter.close();
 
-        new EsdacResponseBuilder()
-                .type(EsdacResponseType.SUCCESS)
-                .message("Transferred file")
-                .code(0)
-                .send(clientOut);
+        if(hash != null && hash.equalsIgnoreCase(extra.getString("hash"))) {
+            new EsdacResponseBuilder()
+                    .type(EsdacResponseType.SUCCESS)
+                    .message("Transferred file")
+                    .code(0)
+                    .extra(new JSONObject("{\"hash\":\"" + hash + "\"}"))
+                    .send(clientOut);
+        }
+        else {
+            new EsdacResponseBuilder()
+                    .type(EsdacResponseType.ERROR)
+                    .message("Bad checksum")
+                    .code(1)
+                    .extra(new JSONObject("{\"hash\":\"" + hash + "\"}"))
+                    .send(clientOut);
+        }
     }
     public void saveTransfer() {
 

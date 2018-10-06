@@ -21,8 +21,9 @@ public class Main {
 
                 JSONObject fileExtra = new JSONObject();
                 fileExtra.put("type", "file");
-                fileExtra.put("localPath", "D:/2018-06-27-raspbian-stretch-lite.zip");
+                fileExtra.put("localPath", "D:/test.zip");
                 fileExtra.put("remotePath", "D:/temp.zip");
+                fileExtra.put("hash", EsdacUtil.fileHash(fileExtra.getString("localPath")));
 //                fileExtra.put()
                 System.out.println(client.request(new EsdacRequestBuilder()
                         .command(EsdacCommand.FILE_TRANSFER)

@@ -25,6 +25,10 @@ public class EsdacResponseBuilder {
         response.put("code", code);
         return this;
     }
+    public EsdacResponseBuilder extra(JSONObject extra) {
+        response.put("extra", extra);
+        return this;
+    }
     public JSONObject build() {
         return response;
     }

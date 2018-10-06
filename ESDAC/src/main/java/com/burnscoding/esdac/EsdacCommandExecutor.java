@@ -1,5 +1,6 @@
 package com.burnscoding.esdac;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.DataInputStream;
@@ -11,65 +12,48 @@ public class EsdacCommandExecutor {
     private Socket client;
     private DataInputStream clientIn;
     private DataOutputStream clientOut;
+
+    private JSONObject lastReq;
     public EsdacCommandExecutor(Socket client, DataInputStream clientIn, DataOutputStream clientOut) {
         this.client = client;
         this.clientIn = clientIn;
         this.clientOut = clientOut;
     }
-    public void execute(String command) throws IOException {
-        execute(command, new JSONObject());
-    }
-    public void execute(String command, JSONObject meta) throws IOException {
-        try {
-            execute(EsdacCommand.valueOf(command.toUpperCase()), meta);
-        }
-        catch(IllegalArgumentException e) {
-            clientOut.write("COMMAND NOT FOUND\n".getBytes());
-        }
-    }
     public void execute(JSONObject request) throws IOException {
-        if(request.has("command")) {
-            if (request.has("meta")) {
-                execute(request.getString("command"), request.getJSONObject("meta"));
-            } else {
-                execute(request.getString("command"));
+        lastReq = request;
+        EsdacCommand command = EsdacCommand.valueOf(request.getString("command"));
+        try {
+            switch (command) {
+                case RPS:
+                    rps();
+                    break;
+                case ECHO:
+                    echo();
+                    break;
+                case PREDICT:
+                    predict();
+                    break;
+                case FILE_TRANSFER:
+                    fileTransfer();
+                    break;
+                case SAVE_TRANSFER:
+                    saveTransfer();
+                    break;
+                case PREDICTION_TRANSFER:
+                    predictionTransfer();
+                    break;
+                case EXIT:
+                    close();
+                    break;
             }
-        }
-        else {
-            clientOut.write("NO COMMAND PROVIDED\n".getBytes());
-        }
-    }
-    public void execute(EsdacCommand command) throws IOException {
-        execute(command, new JSONObject());
-    }
-    public void execute(EsdacCommand command, JSONObject meta) throws IOException {
-        switch(command) {
-            case RPS:
-                rps();
-                break;
-            case TEST:
-                test();
-                break;
-            case PREDICT:
-                predict();
-                break;
-            case FILE_TRANSFER:
-                fileTransfer();
-                break;
-            case SAVE_TRANSFER:
-                saveTransfer();
-                break;
-            case PREDICTION_TRANSFER:
-                predictionTransfer();
-                break;
-            case EXIT:
-                client.close();
-                break;
-        }
-        if(command!=EsdacCommand.EXIT) {
-            while (clientIn.available() > 0) {
-                clientIn.read();
+            if (command != EsdacCommand.EXIT) {
+                while (clientIn.available() > 0) {
+                    clientIn.read();
+                }
             }
+        } catch(JSONException e) {
+            e.printStackTrace();
+            clientOut.writeUTF("COMMAND MISSING ARGUMENTS");
         }
     }
 
@@ -112,8 +96,12 @@ public class EsdacCommandExecutor {
             }
         }
     }
-    public void test() throws IOException {
-        clientOut.write(clientIn.readLine().getBytes());
+    public void echo() throws IOException {
+        new EsdacResponseBuilder()
+                .type(EsdacResponseType.SUCCESS)
+                .message(lastReq.getString("message"))
+                .code(0)
+                .send(clientOut);
     }
     public void predict() {
 
@@ -126,5 +114,14 @@ public class EsdacCommandExecutor {
     }
     public void predictionTransfer() {
 
+    }
+    public void close() throws IOException {
+        EsdacUtil.writeString(clientOut, "CLOSED");
+        new EsdacResponseBuilder()
+                .type(EsdacResponseType.SUCCESS)
+                .message("Connection close scheduled")
+                .code(0)
+                .send(clientOut);
+        client.close();
     }
 }

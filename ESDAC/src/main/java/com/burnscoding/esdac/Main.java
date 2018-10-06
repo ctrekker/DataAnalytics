@@ -22,7 +22,7 @@ public class Main {
                 JSONObject fileExtra = new JSONObject();
                 fileExtra.put("type", "file");
                 fileExtra.put("localPath", "D:/test.zip");
-                fileExtra.put("remotePath", "D:/temp.zip");
+                fileExtra.put("remotePath", "temp.zip");
                 fileExtra.put("hash", EsdacUtil.fileHash(fileExtra.getString("localPath")));
 //                fileExtra.put()
                 System.out.println(client.request(new EsdacRequestBuilder()

@@ -87,8 +87,10 @@ public class EsdacServer implements Runnable {
 
                     StringBuilder requestBuilder = new StringBuilder();
                     char last;
+                    char beforeLast = ' ';
                     while((last=(char)clientIn.readByte())!='~') {
                         requestBuilder.append(last);
+                        beforeLast = last;
                     }
                     clientOut.write("\r\n".getBytes());
 

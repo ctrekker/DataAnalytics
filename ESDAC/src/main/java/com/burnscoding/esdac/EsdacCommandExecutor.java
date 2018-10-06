@@ -5,7 +5,6 @@ import org.json.JSONObject;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Arrays;
 
 public class EsdacCommandExecutor {
     private Socket client;
@@ -20,7 +19,7 @@ public class EsdacCommandExecutor {
     }
     public void execute(JSONObject request) throws IOException {
         lastReq = request;
-        EsdacCommand command = EsdacCommand.valueOf(request.getString("command"));
+        EsdacCommand command = EsdacCommand.valueOf(request.getString("command").toUpperCase());
         try {
             switch (command) {
                 case RPS:
@@ -155,8 +154,17 @@ public class EsdacCommandExecutor {
                     .send(clientOut);
         }
     }
-    public void saveTransfer() {
+    public void saveTransfer() throws IOException {
+        JSONObject extra = lastReq.getJSONObject("extra");
 
+        File tmp = new File("tmp");
+        tmp.mkdir();
+        File tmpFile = new File("tmp/"+System.currentTimeMillis()+".tar.bz2");
+
+        extra.put("remotePath", tmpFile.getPath());
+
+        fileTransfer();
+        Runtime.getRuntime().exec("tar -xvf "+tmpFile.getPath());
     }
     public void predictionTransfer() {
 

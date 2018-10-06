@@ -10,6 +10,7 @@ public class EsdacRequestBuilder {
     private JSONObject request;
     public EsdacRequestBuilder() {
         request = new JSONObject();
+        request.put("id", EsdacUtil.hash(Math.random()+""));
         request.put("command", EsdacCommand.ECHO);
         request.put("message", "<null>");
     }

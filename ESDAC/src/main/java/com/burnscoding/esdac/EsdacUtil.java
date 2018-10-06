@@ -47,6 +47,29 @@ public class EsdacUtil {
         String replaced = string.replaceAll("~", "\\~");
         out.write((replaced+"~").getBytes());
     }
+    public static String hash(String input) {
+        MessageDigest md = null;
+        try {
+            md = MessageDigest.getInstance("MD5");
+        } catch(NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        if(md != null) {
+            try (InputStream is = new ByteArrayInputStream(input.getBytes());
+                 DigestInputStream dis = new DigestInputStream(is, md)) {
+
+                byte[] buffer = new byte[2048];
+                while(dis.read(buffer) > 0) { }
+
+                byte[] digest = md.digest();
+                return bytesToHex(digest).toLowerCase();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
     public static String fileHash(String path) {
         return fileHash(new File(path));
     }

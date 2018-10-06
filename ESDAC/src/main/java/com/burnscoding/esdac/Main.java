@@ -18,7 +18,17 @@ public class Main {
                         .command(EsdacCommand.ECHO)
                         .message("Echo!")
                         .build()));
-                client.close();
+
+                JSONObject fileExtra = new JSONObject();
+                fileExtra.put("type", "file");
+                fileExtra.put("localPath", "D:/2018-06-27-raspbian-stretch-lite.zip");
+                fileExtra.put("remotePath", "D:/temp.zip");
+//                fileExtra.put()
+                System.out.println(client.request(new EsdacRequestBuilder()
+                        .command(EsdacCommand.FILE_TRANSFER)
+                        .extra(fileExtra)
+                        .build()));
+                System.out.println(client.close());
             } catch(IOException e) {
                 e.printStackTrace();
             }

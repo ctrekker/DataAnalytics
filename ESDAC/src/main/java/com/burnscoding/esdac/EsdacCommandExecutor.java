@@ -3,10 +3,9 @@ package com.burnscoding.esdac;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
+import java.util.Arrays;
 
 public class EsdacCommandExecutor {
     private Socket client;
@@ -106,8 +105,40 @@ public class EsdacCommandExecutor {
     public void predict() {
 
     }
-    public void fileTransfer() {
+    public void fileTransfer() throws IOException {
+        final int chunkSize = 2048;
 
+        File outFile = new File(lastReq.getJSONObject("extra").getString("remotePath"));
+        DataOutputStream fileWriter = new DataOutputStream(new FileOutputStream(outFile, false));
+
+        long byteNum = clientIn.readLong();
+
+        long currentIndex = 0;
+        while(currentIndex < byteNum) {
+            byte[] buffer = new byte[chunkSize];
+            clientIn.readFully(buffer);
+
+            if(byteNum - currentIndex < chunkSize) {
+                byte[] trimmedBuffer = new byte[(int)(byteNum - currentIndex)];
+                for(int i=0; i<((int)(byteNum - currentIndex)); i++) {
+                    trimmedBuffer[i] = buffer[i];
+                }
+                fileWriter.write(trimmedBuffer);
+            }
+            else {
+                fileWriter.write(buffer);
+            }
+
+            currentIndex += chunkSize;
+        }
+
+        fileWriter.close();
+
+        new EsdacResponseBuilder()
+                .type(EsdacResponseType.SUCCESS)
+                .message("Transferred file")
+                .code(0)
+                .send(clientOut);
     }
     public void saveTransfer() {
 

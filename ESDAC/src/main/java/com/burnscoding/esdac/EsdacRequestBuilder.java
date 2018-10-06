@@ -12,7 +12,6 @@ public class EsdacRequestBuilder {
         request = new JSONObject();
         request.put("command", EsdacCommand.ECHO);
         request.put("message", "<null>");
-        request.put("extra", new JSONArray());
     }
     public EsdacRequestBuilder command(EsdacCommand command) {
         request.put("command", command.toString());
@@ -22,7 +21,7 @@ public class EsdacRequestBuilder {
         request.put("message", message);
         return this;
     }
-    public EsdacRequestBuilder extra(JSONArray extra) {
+    public EsdacRequestBuilder extra(JSONObject extra) {
         request.put("extra", extra);
         return this;
     }

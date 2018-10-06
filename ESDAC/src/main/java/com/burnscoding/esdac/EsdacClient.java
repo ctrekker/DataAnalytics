@@ -2,10 +2,9 @@ package com.burnscoding.esdac;
 
 import org.json.JSONObject;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
+import java.util.Arrays;
 
 // NOTE: This class follows the "AUTO" protocol for
 //       performing operations
@@ -39,7 +38,45 @@ public class EsdacClient {
         if(!valid) return null;
         EsdacUtil.writeString(clientOut, request.toString());
 
+        if(request.has("extra")) {
+            JSONObject extra = request.getJSONObject("extra");
+            switch(extra.getString("type").toUpperCase()) {
+                case "FILE":
+                    fileTransfer(extra);
+                    break;
+            }
+        }
+
         return EsdacUtil.readString(clientIn);
+    }
+    public void fileTransfer(JSONObject extra) throws IOException {
+        final int chunkSize = 2048;
+
+        File localFile = new File(extra.getString("localPath"));
+        DataInputStream fileReader = new DataInputStream(new FileInputStream(localFile));
+        long byteNum = localFile.length();
+        clientOut.writeLong(byteNum);
+
+        long currentIndex = 0;
+
+        long lastPrint = System.currentTimeMillis();
+        long start = System.currentTimeMillis();
+        while(currentIndex < byteNum) {
+            byte[] buffer = new byte[chunkSize];
+            fileReader.read(buffer);
+            clientOut.write(buffer);
+
+            if(System.currentTimeMillis() - lastPrint > 500) {
+                System.out.println((((double)currentIndex/byteNum)*100)+"%");
+                lastPrint = System.currentTimeMillis();
+            }
+
+            currentIndex += chunkSize;
+        }
+
+        System.out.println("Finished in "+(System.currentTimeMillis()-start)+"ms");
+
+        fileReader.close();
     }
     public String close() throws IOException {
         String res = request(new EsdacRequestBuilder().command(EsdacCommand.EXIT).build());

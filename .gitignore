@@ -68,3 +68,5 @@ config/IntradayDownload.json
 training_graph.pdf
 config/stocks.config
 config/Console.js
+.idea/modules/IntradayDownload.iml
+.idea/modules/IntradayDownload.iml

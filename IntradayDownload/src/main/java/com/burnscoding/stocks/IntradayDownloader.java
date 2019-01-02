@@ -1,5 +1,8 @@
 package com.burnscoding.stocks;
 
+import com.mongodb.ConnectionString;
+import com.mongodb.MongoClientSettings;
+import com.mongodb.MongoCredential;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
@@ -64,7 +67,14 @@ public class IntradayDownloader {
         try {
             JSONObject dbconfig = config.getJSONObject("mongo_database");
 
-            MongoClient mongoClient = MongoClients.create(String.format("mongodb://%s:%s", dbconfig.getString("host"), Integer.toString(dbconfig.getInt("port"))));
+            MongoCredential c = MongoCredential.createScramSha1Credential(dbconfig.getString("user"), dbconfig.getString("authDatabase"), dbconfig.getString("password").toCharArray());
+            MongoClient mongoClient = MongoClients.create(MongoClientSettings.builder()
+                    .credential(c)
+                    .applyConnectionString(new ConnectionString(String.format("mongodb://%s:%s",
+                            dbconfig.getString("host"),
+                            Integer.toString(dbconfig.getInt("port")))))
+                    .build());
+//            MongoClient mongoClient = MongoClients.create();
             db = mongoClient.getDatabase(dbconfig.getString("database"));
         }
         catch(JSONException e) {
